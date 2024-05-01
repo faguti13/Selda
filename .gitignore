@@ -1,2 +1,8 @@
+<<<<<<< HEAD
 # Godot 4+ specific ignores
 .godot/
+=======
+*.exe
+*.dsym
+main
+>>>>>>> e310c9c (init)
