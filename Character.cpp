@@ -71,7 +71,7 @@ void Character::tick(float deltaTime)
             getScreenPos().y + offset.y - weapon.height * scale,
             weapon.width * scale,
             weapon.height * scale};
-        IsMouseButtonDown(MOUSE_LEFT_BUTTON) ? rotate = 35.f : rotate = 0.f;
+        IsKeyDown(KEY_SPACE) ? rotate = 35.f : rotate = 0.f;
     }
     else
     {
@@ -82,7 +82,7 @@ void Character::tick(float deltaTime)
             getScreenPos().y + offset.y - weapon.height * scale,
             weapon.width * scale,
             weapon.height * scale};
-        IsMouseButtonDown(MOUSE_LEFT_BUTTON) ? rotate = -35.f : rotate = 0.f;
+        IsKeyDown(KEY_SPACE) ? rotate = -35.f : rotate = 0.f;
     }
 
     // draw sword
@@ -90,12 +90,6 @@ void Character::tick(float deltaTime)
     Rectangle dest{getScreenPos().x + offset.x, getScreenPos().y + offset.y, weapon.width * scale, weapon.height * scale};
     DrawTexturePro(weapon, source, dest, origin, rotate, WHITE);
 
-    // DrawRectangleLines(
-    //     weaponCollisionRec.x,
-    //     weaponCollisionRec.y,
-    //     weaponCollisionRec.width,
-    //     weaponCollisionRec.height,
-    //     RED);
 }
 
 void Character::takeDamage(float damage)

@@ -11,7 +11,7 @@ int main()
     const int windowWidth{800};
     const int windowHeight{800};
 
-    InitWindow(windowWidth, windowHeight, "Selda");
+    InitWindow(windowWidth, windowHeight, "RPG! Top-Down");
     SetTargetFPS(60);
 
     Texture2D map = LoadTexture("nature_tileset/OpenWorldMap24x24.png");
@@ -30,12 +30,11 @@ int main()
     Texture2D slime_idle = LoadTexture("characters/slime_idle_spritesheet.png");
     Texture2D slime_run = LoadTexture("characters/slime_run_spritesheet.png");
 
-    Enemy goblin1{Vector2{400.f, 800.f}, goblin_idle, goblin_run};
-    Enemy goblin2{Vector2{500.f, 800.f}, goblin_idle, goblin_run};
+    Enemy goblin1(Vector2{400.f, 800.f}, goblin_idle, goblin_run, 300.f);
+    Enemy goblin2(Vector2{500.f, 800.f}, goblin_idle, goblin_run, 300.f);
 
-    Enemy slime1{Vector2{400.f, 700.f}, slime_idle, slime_run};
-    Enemy slime2{Vector2{500.f, 700.f}, slime_idle, slime_run};
-
+    Enemy slime1(Vector2{400.f, 700.f}, slime_idle, slime_run, 200.f);
+    Enemy slime2(Vector2{500.f, 700.f}, slime_idle, slime_run, 200.f);
     Enemy *enemies[]{
         &goblin1,
         &goblin2,
@@ -46,6 +45,11 @@ int main()
     for (auto enemy : enemies)
     {
         enemy->SetTarget(&knight);
+    }
+
+    for (Enemy* enemy : enemies) 
+    {
+        enemy->drawVisionRange();
     }
 
     while (!WindowShouldClose())
@@ -62,6 +66,7 @@ int main()
         {
             prop.Render(knight.getWorldPos());
         }
+
 
         if (!knight.getAlive())
         {
@@ -98,7 +103,10 @@ int main()
         for (auto enemy : enemies)
         {
             enemy->tick(GetFrameTime());
+            enemy->drawVisionRange();
+
         }
+
 
         if (IsKeyDown(KEY_SPACE))
         {
