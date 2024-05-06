@@ -4,6 +4,7 @@
 #include "raylib.h"
 #include "BaseCharacter.h"
 #include "Character.h"
+#include <vector> // Asegúrate de incluir este header para usar std::vector
 
 class Enemy : public BaseCharacter
 {
@@ -14,6 +15,10 @@ public:
     void SetTarget(Character* character);
     virtual Vector2 getScreenPos() override;
     void drawVisionRange(); // Declara la función drawVisionRange
+
+    std::vector<Vector2> patrolPoints; // Añade esta línea
+    int currentPatrolPoint = 0; // Añade esta línea
+
 private:
     Character* target;
     float damagePerSec{10.f};
