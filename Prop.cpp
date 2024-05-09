@@ -1,7 +1,8 @@
 #include "Prop.h"
 #include "raymath.h"
+#include <string>
 
-Prop::Prop(Vector2 pos, Texture2D tex) : worldPos(pos), texture(tex) {}
+Prop::Prop(Vector2 pos, Texture2D tex, const std::string fileName) : worldPos(pos), texture(tex), name(fileName) {}
 
 void Prop::Render(Vector2 knightPos)
 {
@@ -17,4 +18,8 @@ Rectangle Prop::getCollisionRec(Vector2 knightPos)
         texture.width * scale,
         texture.height * scale,
     };
+}
+
+std::string Prop::getName() const {
+    return name;
 }
