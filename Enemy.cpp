@@ -75,13 +75,13 @@ void Enemy::tick(float deltaTime)
         // Actualizar la velocidad para seguir al jugador
         velocity = Vector2Subtract(target->getScreenPos(), getScreenPos());
 
-        // Si el enemigo está demasiado cerca del jugador, detenerse
+        // Si el enemigo está demasiado cerca del jugador, se detiene
         if (Vector2Length(velocity) < radius) {
             velocity = {};
         }
 
-        // Añadir la posición actual del enemigo a la pila de breadcrumbs
-        // Esto se hace para que el enemigo pueda volver sobre sus pasos cuando pierda al jugador de vista
+        // Añade la posición actual del enemigo a la pila de breadcrumbs
+        // Esto hace que el enemigo pueda volver a la ruta de patrullaje cuando pierda al jugador de vista
         breadcrumbs.push(getScreenPos());
     } 
     // Si el jugador está fuera del rango de visión del enemigo
@@ -102,10 +102,10 @@ void Enemy::tick(float deltaTime)
                 return;
             }
 
-            // Calcular la dirección hacia el próximo punto de patrulla
+            // Calcular la dirección hacia el próximo punto de la ruta de patrullaje
             Vector2 direction = Vector2Subtract(patrolPoints[currentPatrolPoint], worldPos);
 
-            // Si el enemigo está cerca del punto de patrulla, moverse al siguiente punto
+            // Si el enemigo está cerca del punto de la ruta, moverse al siguiente punto
             if (Vector2Length(direction) < patrol_speed * deltaTime) {
                 currentPatrolPoint = (currentPatrolPoint + 1) % patrolPoints.size();
             } 
@@ -126,7 +126,7 @@ void Enemy::tick(float deltaTime)
     if (CheckCollisionCircleRec(worldPos, visionRange, target->getCollisionRec())) {}
     
     if (patrolPoints.empty()) {
-        // Si patrolPoints está vacío, no intentes acceder a sus elementos
+        // Si patrolPoints está vacío, no accede a sus elementos
         return;
     }
 

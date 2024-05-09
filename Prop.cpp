@@ -8,6 +8,11 @@ void Prop::Render(Vector2 knightPos)
 {
     Vector2 screenPos{Vector2Subtract(worldPos, knightPos)};
     DrawTextureEx(texture, screenPos, 0.f, scale, WHITE);
+
+        // Dibujar el rectángulo de colisión para depuración
+    Rectangle collisionRec = getCollisionRec(knightPos);
+    DrawRectangleLinesEx(collisionRec, 2, RED);
+
 }
 
 Rectangle Prop::getCollisionRec(Vector2 knightPos)
@@ -23,3 +28,4 @@ Rectangle Prop::getCollisionRec(Vector2 knightPos)
 std::string Prop::getName() const {
     return name;
 }
+

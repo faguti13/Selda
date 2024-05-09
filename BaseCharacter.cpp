@@ -20,6 +20,12 @@ Rectangle BaseCharacter::getCollisionRec()
         height * scale};
 }
 
+void BaseCharacter::drawCollisionRec()
+{
+    Rectangle rec = getCollisionRec();
+    DrawRectangleLinesEx(rec, 2, RED); // Dibuja el rectángulo con un grosor de 2 y en color rojo
+}
+
 void BaseCharacter::tick(float deltaTime)
 {
     worldPosLastFrame = worldPos;

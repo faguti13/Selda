@@ -11,6 +11,7 @@ public:
     Vector2 getWorldPos() { return worldPos; }
     void undoMovement();
     Rectangle getCollisionRec();
+    void drawCollisionRec();
     virtual void tick(float deltaTime);
     virtual Vector2 getScreenPos() = 0;
     bool getAlive(){return alive;}

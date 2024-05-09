@@ -15,7 +15,7 @@ int main()
     const int windowWidth{900};
     const int windowHeight{550};
 
-    InitWindow(windowWidth, windowHeight, "RPG! Top-Down");
+    InitWindow(windowWidth, windowHeight, "Selda");
     SetTargetFPS(60);
 
     while (!WindowShouldClose())
@@ -76,16 +76,16 @@ void drawScene1(const int& windowWidth, const int& windowHeight){
     Texture2D slime_idle = LoadTexture("characters/slime_idle_spritesheet.png");
     Texture2D slime_run = LoadTexture("characters/slime_run_spritesheet.png");
 
-    Enemy* goblin1 = new Enemy(Vector2{400.f, 800.f}, goblin_idle, goblin_run, 400.f);
+    Enemy* goblin1 = new Enemy(Vector2{400.f, 800.f}, goblin_idle, goblin_run, 500.f);
     goblin1->patrolPoints = {Vector2{400.f, 800.f}, Vector2{600.f, 800.f}, Vector2{600.f, 600.f}, Vector2{400.f, 600.f}};
 
-    Enemy* goblin2 = new Enemy(Vector2{500.f, 800.f}, goblin_idle, goblin_run, 400.f);
+    Enemy* goblin2 = new Enemy(Vector2{500.f, 800.f}, goblin_idle, goblin_run, 500.f);
     goblin2->patrolPoints = {Vector2{500.f, 800.f}, Vector2{700.f, 800.f}, Vector2{700.f, 600.f}, Vector2{500.f, 600.f}};
 
-    Enemy* slime1 = new Enemy(Vector2{400.f, 700.f}, slime_idle, slime_run, 400.f);
+    Enemy* slime1 = new Enemy(Vector2{400.f, 700.f}, slime_idle, slime_run, 500.f);
     slime1->patrolPoints = {Vector2{400.f, 700.f}, Vector2{600.f, 700.f}, Vector2{600.f, 500.f}, Vector2{400.f, 500.f}};
 
-    Enemy* slime2 = new Enemy(Vector2{500.f, 700.f}, slime_idle, slime_run, 400.f);
+    Enemy* slime2 = new Enemy(Vector2{500.f, 700.f}, slime_idle, slime_run, 500.f);
     slime2->patrolPoints = {Vector2{500.f, 700.f}, Vector2{700.f, 700.f}, Vector2{700.f, 500.f}, Vector2{500.f, 500.f}};
 
 
@@ -119,10 +119,21 @@ void drawScene1(const int& windowWidth, const int& windowHeight){
         DrawTextureEx(map, mapPos, 0.0, mapScale, WHITE);
 
         // dibuja los props
-        for (auto prop : props)
+        for (auto& prop : props)
         {
             prop.Render(knight.getWorldPos());
         }
+
+        //  BUG PROPS ENEMIGOS
+
+        // for (auto& prop : props)
+        // {
+        //     for (auto& enemy : enemies)
+        //     {
+        //         prop.Render(enemy->getWorldPos());
+        //     }
+        //     prop.Render(knight.getWorldPos());
+        // }
 
 
         if (!knight.getAlive())
@@ -149,8 +160,9 @@ void drawScene1(const int& windowWidth, const int& windowHeight){
             knight.undoMovement();
         }
 
-        for (auto prop : props) // Iterar sobre props para detectar la colisión con el caballero
-        {   //CheckCollusionRecs de Raylibs compara los rectangulos 
+        for (auto& prop : props) // Iterar sobre props para detectar la colisión con el caballero
+{   
+            //CheckCollusionRecs de Raylibs compara los rectangulos 
             if (CheckCollisionRecs(prop.getCollisionRec(knight.getWorldPos()), knight.getCollisionRec()))
             {
                 std::string name = prop.getName();
@@ -159,21 +171,32 @@ void drawScene1(const int& windowWidth, const int& windowHeight){
                     actualScene = "scene2";
                     break;
                 }
-                knight.undoMovement();
+                knight.undoMovement();   
+            }
+
+            // Ahora también comprobamos la colisión con cada enemigo
+            for (auto enemy : enemies) {
+                if (CheckCollisionRecs(prop.getCollisionRec(knight.getWorldPos()), enemy->getCollisionRec())) {
+                    enemy->undoMovement();
+                }
             }
         }
+
+        Rectangle rec = knight.getCollisionRec();
+        DrawRectangleLinesEx(rec, 2, RED); // Dibuja el rectángulo con un grosor de 2 y en color rojo
+
 
         for (auto enemy : enemies)
         {
             enemy->tick(GetFrameTime());
             enemy->drawVisionRange();
-
+            Rectangle enemyRec = enemy->getCollisionRec();
+            DrawRectangleLinesEx(enemyRec, 2, RED); // Dibuja el rectángulo con un grosor de 2 y en color rojos
         }
 
 
         if (IsKeyDown(KEY_SPACE))
         {
-
             for (auto enemy : enemies)
             {
                 if (CheckCollisionRecs(enemy->getCollisionRec(), knight.getWeaponCollisionRec()))
@@ -350,6 +373,11 @@ void drawScene2 (const int& windowWidth, const int& windowHeight){
 
         if (actualScene == "scene3") {
             return;
+        }
+
+        for (auto& enemy : enemies)
+        {
+            enemy->drawCollisionRec();
         }
 
         EndDrawing();
