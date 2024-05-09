@@ -9,9 +9,11 @@ void Prop::Render(Vector2 knightPos)
     Vector2 screenPos{Vector2Subtract(worldPos, knightPos)};
     DrawTextureEx(texture, screenPos, 0.f, scale, WHITE);
 
-        // Dibujar el rectángulo de colisión para depuración
+    //DEBUG
+    // Dibujar el rectángulo de colisión para depuración
     Rectangle collisionRec = getCollisionRec(knightPos);
     DrawRectangleLinesEx(collisionRec, 2, RED);
+    //DEBUG
 
 }
 

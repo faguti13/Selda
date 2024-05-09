@@ -41,6 +41,7 @@ void drawScene1(const int& windowWidth, const int& windowHeight){
     Vector2 mapPos{0.0, 0.0};
     const float mapScale{4.0f}; // escala del mapa
 
+    
     Character knight{windowWidth, windowHeight, LoadTexture("characters/knight_idle_spritesheet.png"), LoadTexture("characters/knight_run_spritesheet.png")};
 
     Prop props[15]{
@@ -76,16 +77,16 @@ void drawScene1(const int& windowWidth, const int& windowHeight){
     Texture2D slime_idle = LoadTexture("characters/slime_idle_spritesheet.png");
     Texture2D slime_run = LoadTexture("characters/slime_run_spritesheet.png");
 
-    Enemy* goblin1 = new Enemy(Vector2{400.f, 800.f}, goblin_idle, goblin_run, 500.f);
-    goblin1->patrolPoints = {Vector2{400.f, 800.f}, Vector2{600.f, 800.f}, Vector2{600.f, 600.f}, Vector2{400.f, 600.f}};
+    Enemy* goblin1 = new Enemy(Vector2{400.f, 800.f}, goblin_idle, goblin_run, 10.f);
+    goblin1->patrolPoints = {Vector2{400.f, 800.f}, Vector2{1000.f, 800.f}, Vector2{600.f, 600.f}, Vector2{400.f, 600.f}};
 
-    Enemy* goblin2 = new Enemy(Vector2{500.f, 800.f}, goblin_idle, goblin_run, 500.f);
+    Enemy* goblin2 = new Enemy(Vector2{500.f, 800.f}, goblin_idle, goblin_run, 10.f);
     goblin2->patrolPoints = {Vector2{500.f, 800.f}, Vector2{700.f, 800.f}, Vector2{700.f, 600.f}, Vector2{500.f, 600.f}};
 
-    Enemy* slime1 = new Enemy(Vector2{400.f, 700.f}, slime_idle, slime_run, 500.f);
+    Enemy* slime1 = new Enemy(Vector2{400.f, 700.f}, slime_idle, slime_run, 10.f);
     slime1->patrolPoints = {Vector2{400.f, 700.f}, Vector2{600.f, 700.f}, Vector2{600.f, 500.f}, Vector2{400.f, 500.f}};
 
-    Enemy* slime2 = new Enemy(Vector2{500.f, 700.f}, slime_idle, slime_run, 500.f);
+    Enemy* slime2 = new Enemy(Vector2{500.f, 700.f}, slime_idle, slime_run, 10.f);
     slime2->patrolPoints = {Vector2{500.f, 700.f}, Vector2{700.f, 700.f}, Vector2{700.f, 500.f}, Vector2{500.f, 500.f}};
 
 
@@ -123,18 +124,6 @@ void drawScene1(const int& windowWidth, const int& windowHeight){
         {
             prop.Render(knight.getWorldPos());
         }
-
-        //  BUG PROPS ENEMIGOS
-
-        // for (auto& prop : props)
-        // {
-        //     for (auto& enemy : enemies)
-        //     {
-        //         prop.Render(enemy->getWorldPos());
-        //     }
-        //     prop.Render(knight.getWorldPos());
-        // }
-
 
         if (!knight.getAlive())
         {
@@ -182,6 +171,7 @@ void drawScene1(const int& windowWidth, const int& windowHeight){
             }
         }
 
+        //debug collisionrec jugador
         Rectangle rec = knight.getCollisionRec();
         DrawRectangleLinesEx(rec, 2, RED); // Dibuja el rectángulo con un grosor de 2 y en color rojo
 
@@ -190,6 +180,9 @@ void drawScene1(const int& windowWidth, const int& windowHeight){
         {
             enemy->tick(GetFrameTime());
             enemy->drawVisionRange();
+
+        //debug collisionrec enemigos
+
             Rectangle enemyRec = enemy->getCollisionRec();
             DrawRectangleLinesEx(enemyRec, 2, RED); // Dibuja el rectángulo con un grosor de 2 y en color rojos
         }
@@ -264,16 +257,16 @@ void drawScene2 (const int& windowWidth, const int& windowHeight){
     Texture2D slime_idle = LoadTexture("characters/slime_idle_spritesheet.png");
     Texture2D slime_run = LoadTexture("characters/slime_run_spritesheet.png");
 
-    Enemy* goblin1 = new Enemy(Vector2{400.f, 800.f}, goblin_idle, goblin_run, 400.f);
+    Enemy* goblin1 = new Enemy(Vector2{400.f, 800.f}, goblin_idle, goblin_run, 200.f);
     goblin1->patrolPoints = {Vector2{400.f, 800.f}, Vector2{600.f, 800.f}, Vector2{600.f, 600.f}, Vector2{400.f, 600.f}};
 
-    Enemy* goblin2 = new Enemy(Vector2{500.f, 800.f}, goblin_idle, goblin_run, 400.f);
+    Enemy* goblin2 = new Enemy(Vector2{500.f, 800.f}, goblin_idle, goblin_run, 200.f);
     goblin2->patrolPoints = {Vector2{500.f, 800.f}, Vector2{700.f, 800.f}, Vector2{700.f, 600.f}, Vector2{500.f, 600.f}};
 
-    Enemy* slime1 = new Enemy(Vector2{400.f, 700.f}, slime_idle, slime_run, 400.f);
+    Enemy* slime1 = new Enemy(Vector2{400.f, 700.f}, slime_idle, slime_run, 200.f);
     slime1->patrolPoints = {Vector2{400.f, 700.f}, Vector2{600.f, 700.f}, Vector2{600.f, 500.f}, Vector2{400.f, 500.f}};
 
-    Enemy* slime2 = new Enemy(Vector2{500.f, 700.f}, slime_idle, slime_run, 400.f);
+    Enemy* slime2 = new Enemy(Vector2{500.f, 700.f}, slime_idle, slime_run, 200.f);
     slime2->patrolPoints = {Vector2{500.f, 700.f}, Vector2{700.f, 700.f}, Vector2{700.f, 500.f}, Vector2{500.f, 500.f}};
 
 
@@ -379,6 +372,10 @@ void drawScene2 (const int& windowWidth, const int& windowHeight){
         {
             enemy->drawCollisionRec();
         }
+        
+        std::cout<<map.width*mapScale<<std::endl;
+        std::cout<<map.height*mapScale<<std::endl;
+        
 
         EndDrawing();
     }
