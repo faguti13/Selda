@@ -27,6 +27,7 @@ protected:
     int maxFrames{6};
     float updateTime{1.f / 12.f};
     float speed{4.f};
+    float patrol_speed{2.f};
     float width{};
     float height{};
     float scale{4.0f};

@@ -76,16 +76,24 @@ void drawScene1(const int& windowWidth, const int& windowHeight){
     Texture2D slime_idle = LoadTexture("characters/slime_idle_spritesheet.png");
     Texture2D slime_run = LoadTexture("characters/slime_run_spritesheet.png");
 
-    Enemy goblin1(Vector2{400.f, 800.f}, goblin_idle, goblin_run, 300.f);
-    Enemy goblin2(Vector2{500.f, 800.f}, goblin_idle, goblin_run, 300.f);
+    Enemy* goblin1 = new Enemy(Vector2{400.f, 800.f}, goblin_idle, goblin_run, 400.f);
+    goblin1->patrolPoints = {Vector2{400.f, 800.f}, Vector2{600.f, 800.f}, Vector2{600.f, 600.f}, Vector2{400.f, 600.f}};
 
-    Enemy slime1(Vector2{400.f, 700.f}, slime_idle, slime_run, 200.f);
-    Enemy slime2(Vector2{500.f, 700.f}, slime_idle, slime_run, 200.f);
-    Enemy *enemies[]{
-        &goblin1,
-        &goblin2,
-        &slime1,
-        &slime2,
+    Enemy* goblin2 = new Enemy(Vector2{500.f, 800.f}, goblin_idle, goblin_run, 400.f);
+    goblin2->patrolPoints = {Vector2{500.f, 800.f}, Vector2{700.f, 800.f}, Vector2{700.f, 600.f}, Vector2{500.f, 600.f}};
+
+    Enemy* slime1 = new Enemy(Vector2{400.f, 700.f}, slime_idle, slime_run, 400.f);
+    slime1->patrolPoints = {Vector2{400.f, 700.f}, Vector2{600.f, 700.f}, Vector2{600.f, 500.f}, Vector2{400.f, 500.f}};
+
+    Enemy* slime2 = new Enemy(Vector2{500.f, 700.f}, slime_idle, slime_run, 400.f);
+    slime2->patrolPoints = {Vector2{500.f, 700.f}, Vector2{700.f, 700.f}, Vector2{700.f, 500.f}, Vector2{500.f, 500.f}};
+
+
+    Enemy* enemies[]{
+        goblin1,
+        goblin2,
+        slime1,
+        slime2,
     };
 
     for (auto enemy : enemies)
@@ -182,6 +190,11 @@ void drawScene1(const int& windowWidth, const int& windowHeight){
         EndDrawing();
     }
 
+    for (auto enemy : enemies)
+    {
+        delete enemy;
+    }
+
     UnloadTexture(map);
     return ;
 }
@@ -228,16 +241,24 @@ void drawScene2 (const int& windowWidth, const int& windowHeight){
     Texture2D slime_idle = LoadTexture("characters/slime_idle_spritesheet.png");
     Texture2D slime_run = LoadTexture("characters/slime_run_spritesheet.png");
 
-    Enemy goblin1(Vector2{400.f, 800.f}, goblin_idle, goblin_run, 300.f);
-    Enemy goblin2(Vector2{500.f, 800.f}, goblin_idle, goblin_run, 300.f);
+    Enemy* goblin1 = new Enemy(Vector2{400.f, 800.f}, goblin_idle, goblin_run, 400.f);
+    goblin1->patrolPoints = {Vector2{400.f, 800.f}, Vector2{600.f, 800.f}, Vector2{600.f, 600.f}, Vector2{400.f, 600.f}};
 
-    Enemy slime1(Vector2{400.f, 700.f}, slime_idle, slime_run, 200.f);
-    Enemy slime2(Vector2{500.f, 700.f}, slime_idle, slime_run, 200.f);
-    Enemy *enemies[]{
-        &goblin1,
-        &goblin2,
-        &slime1,
-        &slime2,
+    Enemy* goblin2 = new Enemy(Vector2{500.f, 800.f}, goblin_idle, goblin_run, 400.f);
+    goblin2->patrolPoints = {Vector2{500.f, 800.f}, Vector2{700.f, 800.f}, Vector2{700.f, 600.f}, Vector2{500.f, 600.f}};
+
+    Enemy* slime1 = new Enemy(Vector2{400.f, 700.f}, slime_idle, slime_run, 400.f);
+    slime1->patrolPoints = {Vector2{400.f, 700.f}, Vector2{600.f, 700.f}, Vector2{600.f, 500.f}, Vector2{400.f, 500.f}};
+
+    Enemy* slime2 = new Enemy(Vector2{500.f, 700.f}, slime_idle, slime_run, 400.f);
+    slime2->patrolPoints = {Vector2{500.f, 700.f}, Vector2{700.f, 700.f}, Vector2{700.f, 500.f}, Vector2{500.f, 500.f}};
+
+
+    Enemy* enemies[]{
+        goblin1,
+        goblin2,
+        slime1,
+        slime2,
     };
 
     for (auto enemy : enemies)
@@ -334,6 +355,11 @@ void drawScene2 (const int& windowWidth, const int& windowHeight){
         EndDrawing();
     }
 
+    for (auto enemy : enemies)
+    {
+        delete enemy;
+    }
     UnloadTexture(map);
+    
     return ;
 }
