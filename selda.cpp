@@ -5,6 +5,9 @@
 #include "Enemy.h"
 #include <string>
 #include <iostream> 
+#include <fstream>
+#include <vector>
+#include <sstream>
 
 void drawScene1(const int& windowWidth, const int& windowHeight);
 void drawScene2(const int& windowWidth, const int& windowHeight);
@@ -32,16 +35,75 @@ int main()
     return 0;
 }
 
+// Carga las texturas
+Texture2D heartTexture;
+Texture2D emptyHeartTexture;
+
+void DrawHeart(int x, int y) {
+    // Define el rectángulo de origen como toda la textura
+    Rectangle sourceRec = {0, 0, heartTexture.width, heartTexture.height};
+
+    // Define el rectángulo de destino como el área en la que quieres dibujar la textura
+    Rectangle destRec = {x, y, heartTexture.width / 30, heartTexture.height / 30}; // reducido a la vigésima parte
+
+    // Define el punto de origen como el centro de la textura
+    Vector2 origin = {heartTexture.width / 50, heartTexture.height / 50}; // ajustado para el nuevo tamaño
+
+    // Dibuja la textura
+    DrawTexturePro(heartTexture, sourceRec, destRec, origin, 0.0f, WHITE);
+}
+
+void DrawEmptyHeart(int x, int y) {
+    // Define el rectángulo de origen como toda la textura
+    Rectangle sourceRec = {0, 0, emptyHeartTexture.width, emptyHeartTexture.height};
+
+    // Define el rectángulo de destino como el área en la que quieres dibujar la textura
+    Rectangle destRec = {x, y, emptyHeartTexture.width / 30, emptyHeartTexture.height / 30}; // reducido a la vigésima parte
+
+    // Define el punto de origen como el centro de la textura
+    Vector2 origin = {emptyHeartTexture.width / 50, emptyHeartTexture.height / 50}; // ajustado para el nuevo tamaño
+
+    // Dibuja la textura
+    DrawTexturePro(emptyHeartTexture, sourceRec, destRec, origin, 0.0f, WHITE);
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void drawScene1(const int& windowWidth, const int& windowHeight){
 
+    // Abrir el archivo de texto para lectura
+    std::ifstream archivo("/home/fabiangj/AC1-CE2103/mapa1.txt");
+    // Carga las texturas
+    heartTexture = LoadTexture("/home/fabiangj/Selda/nature_tileset/heart.png");
+    emptyHeartTexture = LoadTexture("/home/fabiangj/Selda/nature_tileset/eheart.png");
+
+    // Crear una matriz para almacenar los datos del archivo
+    std::vector<std::vector<int>> mapa1;
+    std::string linea;
+
+    // Leer cada línea del archivo y almacenar los datos en la matriz
+    while (std::getline(archivo, linea)) {
+        std::istringstream ss(linea);
+        int valor;
+        std::vector<int> fila;
+        while (ss >> valor) {
+            fila.push_back(valor);
+        }
+        mapa1.push_back(fila);
+    }
+
+    // Cerrar el archivo después de leer los datos
+    archivo.close();
+
+    // Mostrar mensaje de carga exitosa y dimensiones de la matriz
+    std::cout << "La matriz se cargó exitosamente en C++." << std::endl;
+    std::cout << "Dimensiones de la matriz: " << mapa1.size() << " filas x " << mapa1[0].size() << " columnas." << std::endl;
+
     Texture2D map = LoadTexture("nature_tileset/piso1.png");
     Vector2 mapPos{0.0, 0.0};
     const float mapScale{4.0f}; // escala del mapa
 
-    
     Character knight{windowWidth, windowHeight, LoadTexture("characters/knight_idle_spritesheet.png"), LoadTexture("characters/knight_run_spritesheet.png")};
 
     Prop props[15]{
@@ -77,16 +139,16 @@ void drawScene1(const int& windowWidth, const int& windowHeight){
     Texture2D slime_idle = LoadTexture("characters/slime_idle_spritesheet.png");
     Texture2D slime_run = LoadTexture("characters/slime_run_spritesheet.png");
 
-    Enemy* goblin1 = new Enemy(Vector2{400.f, 800.f}, goblin_idle, goblin_run, 10.f);
-    goblin1->patrolPoints = {Vector2{400.f, 800.f}, Vector2{1000.f, 800.f}, Vector2{600.f, 600.f}, Vector2{400.f, 600.f}};
+    Enemy* goblin1 = new Enemy(Vector2{400.f, 800.f}, goblin_idle, goblin_run, 400.f);
+    goblin1->patrolPoints = {Vector2{400.f, 800.f}, Vector2{600.f, 800.f}, Vector2{600.f, 600.f}, Vector2{400.f, 600.f}};
 
-    Enemy* goblin2 = new Enemy(Vector2{500.f, 800.f}, goblin_idle, goblin_run, 10.f);
+    Enemy* goblin2 = new Enemy(Vector2{500.f, 800.f}, goblin_idle, goblin_run, 400.f);
     goblin2->patrolPoints = {Vector2{500.f, 800.f}, Vector2{700.f, 800.f}, Vector2{700.f, 600.f}, Vector2{500.f, 600.f}};
 
-    Enemy* slime1 = new Enemy(Vector2{400.f, 700.f}, slime_idle, slime_run, 10.f);
+    Enemy* slime1 = new Enemy(Vector2{400.f, 700.f}, slime_idle, slime_run, 400.f);
     slime1->patrolPoints = {Vector2{400.f, 700.f}, Vector2{600.f, 700.f}, Vector2{600.f, 500.f}, Vector2{400.f, 500.f}};
 
-    Enemy* slime2 = new Enemy(Vector2{500.f, 700.f}, slime_idle, slime_run, 10.f);
+    Enemy* slime2 = new Enemy(Vector2{500.f, 700.f}, slime_idle, slime_run, 400.f);
     slime2->patrolPoints = {Vector2{500.f, 700.f}, Vector2{700.f, 700.f}, Vector2{700.f, 500.f}, Vector2{500.f, 500.f}};
 
 
@@ -96,6 +158,7 @@ void drawScene1(const int& windowWidth, const int& windowHeight){
         slime1,
         slime2,
     };
+
 
     for (auto enemy : enemies)
     {
@@ -133,9 +196,18 @@ void drawScene1(const int& windowWidth, const int& windowHeight){
         }
         else
         {
-            std::string knightsHealth = "Health: ";
-            knightsHealth.append(std::to_string(knight.getHealth()), 0, 5);
-            DrawText(knightsHealth.c_str(), windowWidth / 5, 50.f, 40, RED);
+            int health = knight.getHealth();
+            int numHearts = (health + 19) / 20; // Redondea hacia arriba
+
+            for (int i = 0; i < numHearts; i++) {
+                // Dibuja un corazón en la posición (windowWidth / 5 + i * 50, 50)
+                DrawHeart(windowWidth / 5 + i * 50, 50);
+            }
+
+            for (int i = numHearts; i < 5; i++) {
+                // Dibuja un corazón vacío en la posición (windowWidth / 5 + i * 50, 50)
+                DrawEmptyHeart(windowWidth / 5 + i * 50, 50);
+            }
         }
 
         knight.tick(GetFrameTime());
@@ -150,7 +222,7 @@ void drawScene1(const int& windowWidth, const int& windowHeight){
         }
 
         for (auto& prop : props) // Iterar sobre props para detectar la colisión con el caballero
-{   
+        {   
             //CheckCollusionRecs de Raylibs compara los rectangulos 
             if (CheckCollisionRecs(prop.getCollisionRec(knight.getWorldPos()), knight.getCollisionRec()))
             {
@@ -170,6 +242,8 @@ void drawScene1(const int& windowWidth, const int& windowHeight){
                 }
             }
         }
+
+        
 
         //debug collisionrec jugador
         Rectangle rec = knight.getCollisionRec();
@@ -218,6 +292,34 @@ void drawScene1(const int& windowWidth, const int& windowHeight){
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void drawScene2 (const int& windowWidth, const int& windowHeight){
+
+        // Abrir el archivo de texto para lectura
+    std::ifstream archivo("/home/fabiangj/AC1-CE2103/mapa1.txt");
+    heartTexture = LoadTexture("/home/fabiangj/Selda/nature_tileset/heart.png");
+    emptyHeartTexture = LoadTexture("/home/fabiangj/Selda/nature_tileset/eheart.png");
+
+
+    // Crear una matriz para almacenar los datos del archivo
+    std::vector<std::vector<int>> mapa1;
+    std::string linea;
+
+    // Leer cada línea del archivo y almacenar los datos en la matriz
+    while (std::getline(archivo, linea)) {
+        std::istringstream ss(linea);
+        int valor;
+        std::vector<int> fila;
+        while (ss >> valor) {
+            fila.push_back(valor);
+        }
+        mapa1.push_back(fila);
+    }
+
+    // Cerrar el archivo después de leer los datos
+    archivo.close();
+
+    // Mostrar mensaje de carga exitosa y dimensiones de la matriz
+    std::cout << "La matriz se cargó exitosamente en C++." << std::endl;
+    std::cout << "Dimensiones de la matriz: " << mapa1.size() << " filas x " << mapa1[0].size() << " columnas." << std::endl;
 
     Texture2D map = LoadTexture("nature_tileset/piso2.png");
     Vector2 mapPos{0.0, 0.0};
@@ -314,9 +416,18 @@ void drawScene2 (const int& windowWidth, const int& windowHeight){
         }
         else
         {
-            std::string knightsHealth = "Health: ";
-            knightsHealth.append(std::to_string(knight.getHealth()), 0, 5);
-            DrawText(knightsHealth.c_str(), windowWidth / 5, 50.f, 40, RED);
+            int health = knight.getHealth();
+            int numHearts = (health + 19) / 20; // Redondea hacia arriba
+
+            for (int i = 0; i < numHearts; i++) {
+                // Dibuja un corazón en la posición (windowWidth / 5 + i * 50, 50)
+                DrawHeart(windowWidth / 5 + i * 50, 50);
+            }
+
+            for (int i = numHearts; i < 5; i++) {
+                // Dibuja un corazón vacío en la posición (windowWidth / 5 + i * 50, 50)
+                DrawEmptyHeart(windowWidth / 5 + i * 50, 50);
+            }
         }
 
         knight.tick(GetFrameTime());
@@ -373,10 +484,6 @@ void drawScene2 (const int& windowWidth, const int& windowHeight){
             enemy->drawCollisionRec();
         }
         
-        std::cout<<map.width*mapScale<<std::endl;
-        std::cout<<map.height*mapScale<<std::endl;
-        
-
         EndDrawing();
     }
 
