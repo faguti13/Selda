@@ -3,15 +3,11 @@
 #include "raylib.h"
 #include "list.h"
 #include <limits>
-
-int min_score = std::numeric_limits<int>::max();  // Utilizando INT_MAX de forma segura
+#include <fstream>
+#include <vector>
+#include <sstream>
 
 #define INT_MAX 2147483647  // Valor máximo para un int de 32 bits con signo
-#define SCREEN_WIDTH (960)
-#define SCREEN_HEIGHT (640)
-#define TILE_SIZE (32)
-
-#define WINDOW_TITLE "A* - raylib"
 
 struct AStarNode {
     AStarNode* parent;
@@ -24,7 +20,31 @@ struct AStarNode {
     int f;
 };
 
-int map[960*4][640*4] = {0};
+int map[30][20] = {0};
+
+void LoadMapFromFile(const std::string& filename) {
+    std::ifstream file(filename);  // Abrir el archivo para lectura
+    if (!file.is_open()) {
+        std::cerr << "Error al abrir el archivo: " << filename << std::endl;
+        return;
+    }
+
+    std::string line;
+    int row = 0;
+    while (std::getline(file, line)) {  // Leer cada línea del archivo
+        std::istringstream iss(line);
+        int value;
+        int col = 0;
+        while (iss >> value) {  // Leer cada valor de la línea
+            map[row][col] = value;  // Almacenar el valor en la matriz
+            col++;
+        }
+        row++;
+    }
+
+    file.close();  // Cerrar el archivo después de leer los datos
+}
+
 
 AStarNode* CreateAStarNode(float x, float y, int g, int h) {
     AStarNode* node = new AStarNode();
@@ -152,42 +172,4 @@ t_List* AStar(Vector2 start, Vector2 target) {
     list_erase(closedList);
     list_erase(pathList);
     return nullptr;
-}
-
-Entity player = {{3.0f, 3.0f}, BLUE, TILE_SIZE};
-Entity enemy = {{15.0f, 7.0f}, RED, TILE_SIZE};
-t_List* pathList = nullptr;
-
-void UpdatePlayerPosition() {
-    if (IsKeyDown(KEY_W)) player.position.y -= 1;
-    if (IsKeyDown(KEY_S)) player.position.y += 1;
-    if (IsKeyDown(KEY_A)) player.position.x -= 1;
-    if (IsKeyDown(KEY_D)) player.position.x += 1;
-}
-
-void UpdateEnemyPosition() {
-    // Si no hay un camino calculado, calcularlo
-    if (pathList == nullptr || pathList->size == 0) {
-        Vector2 start = { enemy.position.x, enemy.position.y };
-        Vector2 target = { player.position.x, player.position.y };
-        pathList = AStar(start, target);
-    }
-
-    // Si hay un camino válido
-    if (pathList != nullptr && pathList->size > 0) {
-        // Obtener el siguiente nodo en el camino
-        AStarNode* nextNode = static_cast<AStarNode*>(list_get(pathList, 0));
-        if (nextNode != nullptr) {
-            // Mover al enemigo hacia el siguiente nodo en el camino
-            enemy.position.x = nextNode->x;
-            enemy.position.y = nextNode->y;
-
-            // Eliminar el nodo actual del camino
-            list_remove_first(pathList);
-        }
-        else {
-            // Si no hay más nodos en el camino, eliminar el camino actual
-            list_erase(pathList);
-        }
-    }
 }

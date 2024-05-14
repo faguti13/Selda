@@ -86,7 +86,7 @@ void Enemy::tick(float deltaTime)
     // Si el jugador está fuera del rango de visión del enemigo
     else {
         // Si hay breadcrumbs en la pila
-        if (!breadcrumbs.empty()) {
+        if (!breadcrumbs.empty()&& !pathPoints.empty()) {
             // Sacar el breadcrumb superior de la pila
             // Backtracking: el enemigo está volviendo sobre sus pasos
             Vector2 nextPos = breadcrumbs.pop();
@@ -138,6 +138,8 @@ void Enemy::tick(float deltaTime)
         direction = Vector2Normalize(direction);
         worldPos = Vector2Add(worldPos, Vector2Scale(direction, speed * deltaTime));
     }
+
+    
 
 }
 

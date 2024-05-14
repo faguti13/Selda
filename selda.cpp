@@ -8,6 +8,7 @@
 #include <fstream>
 #include <vector>
 #include <sstream>
+#include "astar.h"
 
 void drawScene1(const int& windowWidth, const int& windowHeight);
 void drawScene2(const int& windowWidth, const int& windowHeight);
@@ -67,38 +68,39 @@ void DrawEmptyHeart(int x, int y) {
     DrawTexturePro(emptyHeartTexture, sourceRec, destRec, origin, 0.0f, WHITE);
 }
 
+// Cargar la matriz del mapa desde un archivo
+std::vector<std::vector<int>> LoadMatFromFile(const std::string& filePath) {
+    std::ifstream file(filePath);
+    std::vector<std::vector<int>> map;
+    std::string line;
+
+    while (std::getline(file, line)) {
+        std::istringstream ss(line);
+        std::vector<int> row;
+        int value;
+
+        while (ss >> value) {
+            row.push_back(value);
+        }
+
+        map.push_back(row);
+    }
+
+    file.close();
+    return map;
+}
+
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void drawScene1(const int& windowWidth, const int& windowHeight){
 
-    // Abrir el archivo de texto para lectura
-    std::ifstream archivo("/home/fabiangj/AC1-CE2103/mapa1.txt");
+    LoadMapFromFile("mapa1.txt");
+
     // Carga las texturas
-    heartTexture = LoadTexture("/home/fabiangj/Selda/nature_tileset/heart.png");
-    emptyHeartTexture = LoadTexture("/home/fabiangj/Selda/nature_tileset/eheart.png");
-
-    // Crear una matriz para almacenar los datos del archivo
-    std::vector<std::vector<int>> mapa1;
-    std::string linea;
-
-    // Leer cada línea del archivo y almacenar los datos en la matriz
-    while (std::getline(archivo, linea)) {
-        std::istringstream ss(linea);
-        int valor;
-        std::vector<int> fila;
-        while (ss >> valor) {
-            fila.push_back(valor);
-        }
-        mapa1.push_back(fila);
-    }
-
-    // Cerrar el archivo después de leer los datos
-    archivo.close();
-
-    // Mostrar mensaje de carga exitosa y dimensiones de la matriz
-    std::cout << "La matriz se cargó exitosamente en C++." << std::endl;
-    std::cout << "Dimensiones de la matriz: " << mapa1.size() << " filas x " << mapa1[0].size() << " columnas." << std::endl;
+    heartTexture = LoadTexture("nature_tileset/heart.png");
+    emptyHeartTexture = LoadTexture("nature_tileset/eheart.png");
 
     Texture2D map = LoadTexture("nature_tileset/piso1.png");
     Vector2 mapPos{0.0, 0.0};
@@ -151,7 +153,6 @@ void drawScene1(const int& windowWidth, const int& windowHeight){
     Enemy* slime2 = new Enemy(Vector2{500.f, 700.f}, slime_idle, slime_run, 400.f);
     slime2->patrolPoints = {Vector2{500.f, 700.f}, Vector2{700.f, 700.f}, Vector2{700.f, 500.f}, Vector2{500.f, 500.f}};
 
-
     Enemy* enemies[]{
         goblin1,
         goblin2,
@@ -159,16 +160,11 @@ void drawScene1(const int& windowWidth, const int& windowHeight){
         slime2,
     };
 
-
     for (auto enemy : enemies)
     {
         enemy->SetTarget(&knight);
     }
 
-    for (Enemy* enemy : enemies) 
-    {
-        enemy->drawVisionRange();
-    }
 
     bool collisionLLadder= false; // Para controlar la detección de choques con la bandera
 
@@ -182,32 +178,23 @@ void drawScene1(const int& windowWidth, const int& windowHeight){
         mapPos = Vector2Scale(knight.getWorldPos(), -1.f);
         DrawTextureEx(map, mapPos, 0.0, mapScale, WHITE);
 
+    ////debug matriz de colision
+
+        // std::vector<std::vector<int>> mapmat = LoadMatFromFile("mapa1.txt");
+        // for (int x = 0; x < mapmat.size(); ++x) {
+        //     for (int y = 0; y < mapmat[x].size(); ++y) {
+        //         // Dibujar la celda en la posición (x, y) ajustada por la posición del jugador
+        //         Vector2 rectPos = Vector2Add(Vector2Scale({(float)y, (float)x}, 8.f), mapPos);
+        //         DrawRectangle(rectPos.y, rectPos.x, 8, 8, mapmat[x][y] == 1 ? BLACK : WHITE);
+        //     }
+        // }
+        
+    ////debug matriz de colision
+
         // dibuja los props
         for (auto& prop : props)
         {
             prop.Render(knight.getWorldPos());
-        }
-
-        if (!knight.getAlive())
-        {
-            DrawText("Game Over!", windowWidth / 4, windowHeight / 3, 40, RED);
-            EndDrawing();
-            continue;
-        }
-        else
-        {
-            int health = knight.getHealth();
-            int numHearts = (health + 19) / 20; // Redondea hacia arriba
-
-            for (int i = 0; i < numHearts; i++) {
-                // Dibuja un corazón en la posición (windowWidth / 5 + i * 50, 50)
-                DrawHeart(windowWidth / 5 + i * 50, 50);
-            }
-
-            for (int i = numHearts; i < 5; i++) {
-                // Dibuja un corazón vacío en la posición (windowWidth / 5 + i * 50, 50)
-                DrawEmptyHeart(windowWidth / 5 + i * 50, 50);
-            }
         }
 
         knight.tick(GetFrameTime());
@@ -235,30 +222,71 @@ void drawScene1(const int& windowWidth, const int& windowHeight){
                 knight.undoMovement();   
             }
 
-            // Ahora también comprobamos la colisión con cada enemigo
+
+            Vector2 startPoint = {2.0f, 3.0f};
+            Vector2 targetPoint = {3.0f, 4.0f};
+            t_List* pathList = AStar(startPoint, targetPoint);
+            
+            LoadMapFromFile("mapa1.txt");
+
+            // Colision enemigo con prop
             for (auto enemy : enemies) {
                 if (CheckCollisionRecs(prop.getCollisionRec(knight.getWorldPos()), enemy->getCollisionRec())) {
-                    enemy->undoMovement();
+                    float currentTime = GetTime(); // Obtén el tiempo actual
+                    if (currentTime - enemy->lastPathCalculationTime > 1.0f) { // Si ha pasado más de 1 segundo
+                        float ex = round((enemy->getWorldPos().x/128));
+                        float ey = round((enemy->getWorldPos().y/128));
+                        float kx = round((knight.getWorldPos().x/128));
+                        float ky = round((knight.getWorldPos().y/128));
+
+                        Vector2 startPoint = {ex, ey};
+                        Vector2 targetPoint = {kx, ky};
+                        pathList = AStar(startPoint, targetPoint);
+
+                        std::vector<Vector2> pathPoints;
+                        if (pathList != nullptr) {
+                            for (int i = 0; i < pathList->size; i++) {
+                                AStarNode* node = static_cast<AStarNode*>(list_get(pathList, i));
+                                if (node != nullptr) {
+                                    Vector2 point = {node->x, node->y};
+                                    pathPoints.push_back(point);
+                                }
+                            }
+                        }
+
+                        enemy->pathPoints = pathPoints; // Almacena la ruta en el enemigo
+                        enemy->currentPathPoint = 0; // Reinicia el punto de ruta actual
+                        enemy->lastPathCalculationTime = currentTime; // Actualiza la hora de la última calculación
+                    }
+
+                    // Mueve al enemigo a lo largo de la ruta
+                    if (!enemy->pathPoints.empty()) {
+                        Vector2 direction = Vector2Subtract(enemy->pathPoints[enemy->currentPathPoint], enemy->getWorldPos());
+                        if (Vector2Length(direction) < enemy->speed * GetFrameTime()) {
+                            enemy->currentPathPoint = (enemy->currentPathPoint + 1) % enemy->pathPoints.size();
+                        } else {
+                            direction = Vector2Normalize(direction);
+                            enemy->setWorldPos(Vector2Add(enemy->getWorldPos(), Vector2Scale(direction, enemy->speed * GetFrameTime())));
+                        }
+                    }
                 }
             }
-        }
-
+        }        
         
-
         //debug collisionrec jugador
-        Rectangle rec = knight.getCollisionRec();
-        DrawRectangleLinesEx(rec, 2, RED); // Dibuja el rectángulo con un grosor de 2 y en color rojo
+        // Rectangle rec = knight.getCollisionRec();
+        // DrawRectangleLinesEx(rec, 2, RED); // Dibuja el rectángulo con un grosor de 2 y en color rojo
 
 
         for (auto enemy : enemies)
         {
             enemy->tick(GetFrameTime());
-            enemy->drawVisionRange();
+            ////debug vision range
+            //enemy->drawVisionRange();
 
-        //debug collisionrec enemigos
-
-            Rectangle enemyRec = enemy->getCollisionRec();
-            DrawRectangleLinesEx(enemyRec, 2, RED); // Dibuja el rectángulo con un grosor de 2 y en color rojos
+            ////debug collisionrec enemigos
+            // Rectangle enemyRec = enemy->getCollisionRec();
+            // DrawRectangleLinesEx(enemyRec, 2, RED); // Dibuja el rectángulo con un grosor de 2 y en color rojos
         }
 
 
@@ -277,6 +305,41 @@ void drawScene1(const int& windowWidth, const int& windowHeight){
             return;
         }
 
+        std::vector<std::vector<int>> mapmat = LoadMatFromFile("mapa1.txt");
+
+        // Define la posición del minimapa en la pantalla
+        Vector2 minimapPos = {windowHeight-160, windowWidth-240};
+
+        for (int x = 0; x < mapmat.size(); ++x) {
+            for (int y = 0; y < mapmat[x].size(); ++y) {
+                // Dibujar la celda en la posición (x, y) ajustada por la posición del minimapa
+                Vector2 rectPos = Vector2Add(Vector2Scale({(float)y, (float)x}, 8.f), minimapPos);
+                DrawRectangle(rectPos.y, rectPos.x, 8, 8, mapmat[x][y] == 1 ? Color{ 0, 0, 0, 128 } : Color{ 255, 255, 255, 128 });
+            }
+        }
+
+        if (!knight.getAlive())
+        {
+            DrawText("Game Over!", windowWidth / 4, windowHeight / 3, 40, RED);
+            EndDrawing();
+            continue;
+        }
+        else
+        {
+            int health = knight.getHealth();
+            int numHearts = (health + 19) / 20; // Redondea hacia arriba
+
+            for (int i = 0; i < numHearts; i++) {
+                // Dibuja un corazón en la posición (windowWidth / 5 + i * 50, 50)
+                DrawHeart(windowWidth / 5 + i * 50, 50);
+            }
+
+            for (int i = numHearts; i < 5; i++) {
+                // Dibuja un corazón vacío en la posición (windowWidth / 5 + i * 50, 50)
+                DrawEmptyHeart(windowWidth / 5 + i * 50, 50);
+            }
+        }
+
         EndDrawing();
     }
 
@@ -293,33 +356,9 @@ void drawScene1(const int& windowWidth, const int& windowHeight){
 
 void drawScene2 (const int& windowWidth, const int& windowHeight){
 
-        // Abrir el archivo de texto para lectura
-    std::ifstream archivo("/home/fabiangj/AC1-CE2103/mapa1.txt");
-    heartTexture = LoadTexture("/home/fabiangj/Selda/nature_tileset/heart.png");
-    emptyHeartTexture = LoadTexture("/home/fabiangj/Selda/nature_tileset/eheart.png");
-
-
-    // Crear una matriz para almacenar los datos del archivo
-    std::vector<std::vector<int>> mapa1;
-    std::string linea;
-
-    // Leer cada línea del archivo y almacenar los datos en la matriz
-    while (std::getline(archivo, linea)) {
-        std::istringstream ss(linea);
-        int valor;
-        std::vector<int> fila;
-        while (ss >> valor) {
-            fila.push_back(valor);
-        }
-        mapa1.push_back(fila);
-    }
-
-    // Cerrar el archivo después de leer los datos
-    archivo.close();
-
-    // Mostrar mensaje de carga exitosa y dimensiones de la matriz
-    std::cout << "La matriz se cargó exitosamente en C++." << std::endl;
-    std::cout << "Dimensiones de la matriz: " << mapa1.size() << " filas x " << mapa1[0].size() << " columnas." << std::endl;
+    // Carga las texturas
+    heartTexture = LoadTexture("nature_tileset/heart.png");
+    emptyHeartTexture = LoadTexture("nature_tileset/eheart.png");
 
     Texture2D map = LoadTexture("nature_tileset/piso2.png");
     Vector2 mapPos{0.0, 0.0};
@@ -359,16 +398,16 @@ void drawScene2 (const int& windowWidth, const int& windowHeight){
     Texture2D slime_idle = LoadTexture("characters/slime_idle_spritesheet.png");
     Texture2D slime_run = LoadTexture("characters/slime_run_spritesheet.png");
 
-    Enemy* goblin1 = new Enemy(Vector2{400.f, 800.f}, goblin_idle, goblin_run, 200.f);
+    Enemy* goblin1 = new Enemy(Vector2{400.f, 800.f}, goblin_idle, goblin_run, 400.f);
     goblin1->patrolPoints = {Vector2{400.f, 800.f}, Vector2{600.f, 800.f}, Vector2{600.f, 600.f}, Vector2{400.f, 600.f}};
 
-    Enemy* goblin2 = new Enemy(Vector2{500.f, 800.f}, goblin_idle, goblin_run, 200.f);
+    Enemy* goblin2 = new Enemy(Vector2{500.f, 800.f}, goblin_idle, goblin_run, 400.f);
     goblin2->patrolPoints = {Vector2{500.f, 800.f}, Vector2{700.f, 800.f}, Vector2{700.f, 600.f}, Vector2{500.f, 600.f}};
 
-    Enemy* slime1 = new Enemy(Vector2{400.f, 700.f}, slime_idle, slime_run, 200.f);
+    Enemy* slime1 = new Enemy(Vector2{400.f, 700.f}, slime_idle, slime_run, 400.f);
     slime1->patrolPoints = {Vector2{400.f, 700.f}, Vector2{600.f, 700.f}, Vector2{600.f, 500.f}, Vector2{400.f, 500.f}};
 
-    Enemy* slime2 = new Enemy(Vector2{500.f, 700.f}, slime_idle, slime_run, 200.f);
+    Enemy* slime2 = new Enemy(Vector2{500.f, 700.f}, slime_idle, slime_run, 400.f);
     slime2->patrolPoints = {Vector2{500.f, 700.f}, Vector2{700.f, 700.f}, Vector2{700.f, 500.f}, Vector2{500.f, 500.f}};
 
 
@@ -384,6 +423,7 @@ void drawScene2 (const int& windowWidth, const int& windowHeight){
         enemy->SetTarget(&knight);
     }
 
+//debug vision range
     for (Enemy* enemy : enemies) 
     {
         enemy->drawVisionRange();
@@ -407,6 +447,81 @@ void drawScene2 (const int& windowWidth, const int& windowHeight){
             prop.Render(knight.getWorldPos());
         }
 
+        knight.tick(GetFrameTime());
+
+        // barreras del mapa
+        if (knight.getWorldPos().x < -256.f ||
+            knight.getWorldPos().y < 0.f ||
+            knight.getWorldPos().x + windowWidth > map.width * mapScale + 256||
+            knight.getWorldPos().y + windowHeight > map.height * mapScale)
+        {
+            knight.undoMovement();
+        }
+
+        for (auto& prop : props) // Iterar sobre props para detectar la colisión con el caballero
+        {   
+            //CheckCollusionRecs de Raylibs compara los rectangulos 
+            if (CheckCollisionRecs(prop.getCollisionRec(knight.getWorldPos()), knight.getCollisionRec()))
+            {
+                std::string name = prop.getName();
+                if (name == "nature_tileset/ladder.png" && not collisionLLadder){
+                    collisionLLadder= true;
+                    actualScene = "scene2";
+                    break;
+                }
+                knight.undoMovement();   
+            }
+
+            // Colision enemigo con prop
+            for (auto enemy : enemies) {
+                if (CheckCollisionRecs(prop.getCollisionRec(knight.getWorldPos()), enemy->getCollisionRec())) {
+                    enemy->undoMovement();
+                }
+            }
+        }
+
+        for (auto enemy : enemies)
+        {
+            enemy->tick(GetFrameTime());
+            //debug vision range
+            //enemy->drawVisionRange();
+        }
+
+
+        if (IsKeyDown(KEY_SPACE))
+        {
+
+            for (auto enemy : enemies)
+            {
+                if (CheckCollisionRecs(enemy->getCollisionRec(), knight.getWeaponCollisionRec()))
+                {
+                    enemy->setAlive(false);
+                }
+            }
+        }
+
+        if (actualScene == "scene3") {
+            return;
+        }
+
+        ////debug collsiionrec enemigos
+        // for (auto& enemy : enemies)
+        // {
+        //     enemy->drawCollisionRec();
+        // }
+
+        std::vector<std::vector<int>> mapmat = LoadMatFromFile("mapa2.txt");
+
+        // Define la posición del minimapa en la pantalla
+        Vector2 minimapPos = {windowHeight-160, windowWidth-240};
+
+        for (int x = 0; x < mapmat.size(); ++x) {
+            for (int y = 0; y < mapmat[x].size(); ++y) {
+                // Dibujar la celda en la posición (x, y) ajustada por la posición del minimapa
+                Vector2 rectPos = Vector2Add(Vector2Scale({(float)y, (float)x}, 8.f), minimapPos);
+                DrawRectangle(rectPos.y, rectPos.x, 8, 8, mapmat[x][y] == 1 ? Color{ 0, 0, 0, 128 } : Color{ 255, 255, 255, 128 });
+            }
+        }
 
         if (!knight.getAlive())
         {
@@ -430,60 +545,6 @@ void drawScene2 (const int& windowWidth, const int& windowHeight){
             }
         }
 
-        knight.tick(GetFrameTime());
-
-        // barreras del mapa
-        if (knight.getWorldPos().x < -256.f ||
-            knight.getWorldPos().y < 0.f ||
-            knight.getWorldPos().x + windowWidth > map.width * mapScale + 256||
-            knight.getWorldPos().y + windowHeight > map.height * mapScale)
-        {
-            knight.undoMovement();
-        }
-
-        for (auto prop : props) // Iterar sobre props para detectar la colisión con el caballero
-        {   //CheckCollusionRecs de Raylibs compara los rectangulos 
-            if (CheckCollisionRecs(prop.getCollisionRec(knight.getWorldPos()), knight.getCollisionRec()))
-            {
-                std::string name = prop.getName();
-                if (name == "nature_tileset/ladder.png" && not collisionLLadder){
-                    collisionLLadder= true;
-                    //actualScene = "scene3";
-                    break;
-                }
-                knight.undoMovement();
-            }
-        }
-
-        for (auto enemy : enemies)
-        {
-            enemy->tick(GetFrameTime());
-            enemy->drawVisionRange();
-
-        }
-
-
-        if (IsKeyDown(KEY_SPACE))
-        {
-
-            for (auto enemy : enemies)
-            {
-                if (CheckCollisionRecs(enemy->getCollisionRec(), knight.getWeaponCollisionRec()))
-                {
-                    enemy->setAlive(false);
-                }
-            }
-        }
-
-        if (actualScene == "scene3") {
-            return;
-        }
-
-        for (auto& enemy : enemies)
-        {
-            enemy->drawCollisionRec();
-        }
-        
         EndDrawing();
     }
 

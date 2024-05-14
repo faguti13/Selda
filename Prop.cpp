@@ -11,8 +11,8 @@ void Prop::Render(Vector2 knightPos)
 
     //DEBUG
     // Dibujar el rectángulo de colisión para depuración
-    Rectangle collisionRec = getCollisionRec(knightPos);
-    DrawRectangleLinesEx(collisionRec, 2, RED);
+    // Rectangle collisionRec = getCollisionRec(knightPos);
+    // DrawRectangleLinesEx(collisionRec, 2, RED);
     //DEBUG
 
 }
