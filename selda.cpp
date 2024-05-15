@@ -13,6 +13,7 @@
 void drawScene1(const int& windowWidth, const int& windowHeight);
 void drawScene2(const int& windowWidth, const int& windowHeight);
 std::string actualScene = "scene1";
+int pts = 0;
 
 int main()
 {
@@ -141,16 +142,16 @@ void drawScene1(const int& windowWidth, const int& windowHeight){
     Texture2D slime_idle = LoadTexture("characters/slime_idle_spritesheet.png");
     Texture2D slime_run = LoadTexture("characters/slime_run_spritesheet.png");
 
-    Enemy* goblin1 = new Enemy(Vector2{400.f, 800.f}, goblin_idle, goblin_run, 400.f);
+    Enemy* goblin1 = new Enemy(Vector2{400.f, 800.f}, goblin_idle, goblin_run, 500.f);
     goblin1->patrolPoints = {Vector2{400.f, 800.f}, Vector2{600.f, 800.f}, Vector2{600.f, 600.f}, Vector2{400.f, 600.f}};
 
-    Enemy* goblin2 = new Enemy(Vector2{500.f, 800.f}, goblin_idle, goblin_run, 400.f);
+    Enemy* goblin2 = new Enemy(Vector2{500.f, 800.f}, goblin_idle, goblin_run, 500.f);
     goblin2->patrolPoints = {Vector2{500.f, 800.f}, Vector2{700.f, 800.f}, Vector2{700.f, 600.f}, Vector2{500.f, 600.f}};
 
-    Enemy* slime1 = new Enemy(Vector2{400.f, 700.f}, slime_idle, slime_run, 400.f);
+    Enemy* slime1 = new Enemy(Vector2{400.f, 700.f}, slime_idle, slime_run, 500.f);
     slime1->patrolPoints = {Vector2{400.f, 700.f}, Vector2{600.f, 700.f}, Vector2{600.f, 500.f}, Vector2{400.f, 500.f}};
 
-    Enemy* slime2 = new Enemy(Vector2{500.f, 700.f}, slime_idle, slime_run, 400.f);
+    Enemy* slime2 = new Enemy(Vector2{500.f, 700.f}, slime_idle, slime_run, 500.f);
     slime2->patrolPoints = {Vector2{500.f, 700.f}, Vector2{700.f, 700.f}, Vector2{700.f, 500.f}, Vector2{500.f, 500.f}};
 
     Enemy* enemies[]{
@@ -169,7 +170,7 @@ void drawScene1(const int& windowWidth, const int& windowHeight){
     bool collisionLLadder= false; // Para controlar la detección de choques con la bandera
 
     while (!WindowShouldClose())
-    {
+    {   
 
         BeginDrawing();
         ClearBackground({51, 1, 6, 255});
@@ -221,15 +222,17 @@ void drawScene1(const int& windowWidth, const int& windowHeight){
                 }
                 knight.undoMovement();   
             }
+        }    
 
-
+        // Colision enemigo con prop
+        for (auto& prop : props)
+        {
             Vector2 startPoint = {2.0f, 3.0f};
             Vector2 targetPoint = {3.0f, 4.0f};
             t_List* pathList = AStar(startPoint, targetPoint);
             
             LoadMapFromFile("mapa1.txt");
 
-            // Colision enemigo con prop
             for (auto enemy : enemies) {
                 if (CheckCollisionRecs(prop.getCollisionRec(knight.getWorldPos()), enemy->getCollisionRec())) {
                     float currentTime = GetTime(); // Obtén el tiempo actual
@@ -271,7 +274,7 @@ void drawScene1(const int& windowWidth, const int& windowHeight){
                     }
                 }
             }
-        }        
+        }    
         
         //debug collisionrec jugador
         // Rectangle rec = knight.getCollisionRec();
@@ -281,22 +284,26 @@ void drawScene1(const int& windowWidth, const int& windowHeight){
         for (auto enemy : enemies)
         {
             enemy->tick(GetFrameTime());
-            ////debug vision range
-            //enemy->drawVisionRange();
+        
 
             ////debug collisionrec enemigos
             // Rectangle enemyRec = enemy->getCollisionRec();
             // DrawRectangleLinesEx(enemyRec, 2, RED); // Dibuja el rectángulo con un grosor de 2 y en color rojos
         }
 
+        //puntaje
+        DrawText("Puntaje: ", windowWidth-250-100, 50, 40, RED);
+        DrawText(std::to_string(pts).c_str(), windowWidth -80-100, 50, 40, RED);
+        
 
         if (IsKeyDown(KEY_SPACE))
         {
             for (auto enemy : enemies)
             {
-                if (CheckCollisionRecs(enemy->getCollisionRec(), knight.getWeaponCollisionRec()))
+                if (CheckCollisionRecs(enemy->getCollisionRec(), knight.getWeaponCollisionRec()) && !CheckCollisionRecs(enemy->getVisionRectangle(), knight.getWeaponCollisionRec()))
                 {
                     enemy->setAlive(false);
+                    pts += 10;
                 }
             }
         }
@@ -423,11 +430,6 @@ void drawScene2 (const int& windowWidth, const int& windowHeight){
         enemy->SetTarget(&knight);
     }
 
-//debug vision range
-    for (Enemy* enemy : enemies) 
-    {
-        enemy->drawVisionRange();
-    }
 
     bool collisionLLadder= false; // Para controlar la detección de choques con la bandera
 

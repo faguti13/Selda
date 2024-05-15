@@ -1,6 +1,7 @@
 #include "Enemy.h"
 #include "raymath.h"
 
+
 Enemy::Enemy(Vector2 pos, Texture2D idle_texture, Texture2D run_texture, float _visionRange)
     : visionRange(_visionRange) {
     worldPos = pos;
@@ -9,7 +10,7 @@ Enemy::Enemy(Vector2 pos, Texture2D idle_texture, Texture2D run_texture, float _
     idle = idle_texture;
     width = texture.width / maxFrames;
     height = texture.height;
-    speed = 3.f;
+    speed = 3.5f;
     patrol_speed= 100.f;
     
 }
@@ -67,10 +68,24 @@ void Enemy::tick(float deltaTime)
     Stack breadcrumbs;
 
     // Calcular la distancia al jugador
-    float distanceToPlayer = Vector2Length(Vector2Subtract(target->getScreenPos(), getScreenPos()));
+    //float distanceToPlayer = Vector2Length(Vector2Subtract(target->getScreenPos(), getScreenPos()));
+    
+    Vector2 screenPos = getScreenPos();
+
+    if (rightLeft >= 0) {
+        // Si el enemigo está mirando a la derecha, el rectángulo de visión está a la derecha del enemigo
+        visionRectangle = { screenPos.x + (width*scale/2), screenPos.y - visionRange / 2, visionRange, visionRange };
+    } else {
+        // Si el enemigo está mirando a la izquierda, el rectángulo de visión está a la izquierda del enemigo
+        visionRectangle = { screenPos.x - visionRange + (width*scale/2), screenPos.y - visionRange / 2, visionRange, visionRange };
+    }
+
+    //debug collision rectangle
+    Color visionColor = {255, 0, 0, 50}; // Color rojo completamente opaco
+    DrawRectangleRec(visionRectangle, visionColor);
 
     // Si el jugador está dentro del rango de visión del enemigo
-    if (distanceToPlayer < visionRange) {
+    if (CheckCollisionRecs(visionRectangle, target->getCollisionRec())) {
         // Actualizar la velocidad para seguir al jugador
         velocity = Vector2Subtract(target->getScreenPos(), getScreenPos());
 
@@ -104,6 +119,8 @@ void Enemy::tick(float deltaTime)
             // Calcular la dirección hacia el próximo punto de la ruta de patrullaje
             Vector2 direction = Vector2Subtract(patrolPoints[currentPatrolPoint], worldPos);
 
+            rightLeft = direction.x >= 0 ? 1 : -1;
+
             // Si el enemigo está cerca del punto de la ruta, moverse al siguiente punto
             if (Vector2Length(direction) < patrol_speed * deltaTime) {
                 currentPatrolPoint = (currentPatrolPoint + 1) % patrolPoints.size();
@@ -118,11 +135,9 @@ void Enemy::tick(float deltaTime)
 
     BaseCharacter::tick(deltaTime);
 
-    if(CheckCollisionRecs(getCollisionRec(), target->getCollisionRec()) ){
-        target->takeDamage(damagePerSec * deltaTime);
+    if(CheckCollisionRecs(getCollisionRec(), target->getCollisionRec()) && CheckCollisionRecs(visionRectangle, target->getCollisionRec())  && !CheckCollisionRecs(getCollisionRec(),target->getVisionRectangle()) ){
+        target->takeDamage(damagePerSec);
     }
-
-    if (CheckCollisionCircleRec(worldPos, visionRange, target->getCollisionRec())) {}
     
     if (patrolPoints.empty()) {
         // Si patrolPoints está vacío, no accede a sus elementos
@@ -151,11 +166,4 @@ void Enemy::SetTarget(Character *character)
 Vector2 Enemy::getScreenPos() {
     // Devuelve la posición del enemigo con respecto al jugador
     return Vector2Subtract(worldPos, target->getWorldPos());
-}
-
-void Enemy::drawVisionRange() 
-{
-    Color visionColor = {255, 0, 0, 50}; // Color transparente
-    Vector2 screenPos = getScreenPos();
-    DrawCircleV(screenPos, visionRange, visionColor);
 }

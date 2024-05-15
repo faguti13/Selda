@@ -61,7 +61,11 @@ void Character::tick(float deltaTime)
 
     Vector2 origin{};
     Vector2 offset{};
+    Vector2 shieldOrigin{};
+    Vector2 shieldOffset{};
     float rotate{};
+    float visionRange = 200.f;
+
     if (rightLeft > 0.f)
     {
         origin = {0.f, weapon.height * scale};
@@ -72,6 +76,29 @@ void Character::tick(float deltaTime)
             weapon.width * scale,
             weapon.height * scale};
         IsKeyDown(KEY_SPACE) ? rotate = 35.f : rotate = 0.f;
+
+        shieldOrigin = {0.f, shield.height * scale*3/4};
+        shieldOffset = {-15.f, 70.f};
+        shieldCollisionRec = {
+            getScreenPos().x + shieldOffset.x,
+            getScreenPos().y + shieldOffset.y - shield.height * scale*3/4,
+            shield.width * scale*3/4,
+            shield.height * scale*3/4};
+        IsKeyDown(KEY_LEFT_ALT) ? shieldOffset.x = 35.f : shieldOffset.y = 70.f;
+        if (IsKeyDown(KEY_LEFT_ALT))
+        {
+            speed = 2.f;
+            Vector2 screenPos = getScreenPos();
+            visionRectangle = { screenPos.x + (width*scale), screenPos.y , height*scale, width*scale };
+            //debug collision rectangle
+            Color visionColor = {255, 0, 0, 50}; // Color rojo completamente opaco
+            DrawRectangleRec(visionRectangle, visionColor);
+        }
+        else
+        {
+            speed = 4.f;
+            visionRectangle = {0.f, 0.f, 0.f, 0.f};
+        }
     }
     else
     {
@@ -83,12 +110,40 @@ void Character::tick(float deltaTime)
             weapon.width * scale,
             weapon.height * scale};
         IsKeyDown(KEY_SPACE) ? rotate = -35.f : rotate = 0.f;
+
+        shieldOrigin = {shield.width * scale*3/4, shield.height * scale*3/4};
+        shieldOffset = {75.f, 70.f};
+        shieldCollisionRec = {
+            getScreenPos().x + shieldOffset.x - shield.width * scale*3/4,
+            getScreenPos().y + shieldOffset.y - shield.height * scale*3/4,
+            shield.width * scale*3/4,
+            shield.height * scale*3/4};
+        IsKeyDown(KEY_LEFT_ALT) ? shieldOffset.x = 25.f : shieldOffset.y = 70.f;
+        if (IsKeyDown(KEY_LEFT_ALT))
+        {
+            speed = 2.f;
+            Vector2 screenPos = getScreenPos();
+            visionRectangle = { screenPos.x - width*scale + (width*scale/4), screenPos.y, height*scale, width*scale };
+            //debug collision rectangle
+            Color visionColor = {255, 0, 0, 50}; // Color rojo completamente opaco
+            DrawRectangleRec(visionRectangle, visionColor);
+        }
+        else
+        {
+            speed = 4.f;
+            visionRectangle = {0.f, 0.f, 0.f, 0.f};
+        }
     }
 
     // draw sword
     Rectangle source{0.f, 0.f, static_cast<float>(weapon.width) * rightLeft, static_cast<float>(weapon.height)};
     Rectangle dest{getScreenPos().x + offset.x, getScreenPos().y + offset.y, weapon.width * scale, weapon.height * scale};
     DrawTexturePro(weapon, source, dest, origin, rotate, WHITE);
+
+    // draw shield
+    Rectangle shieldSource{0.f, 0.f, static_cast<float>(shield.width), static_cast<float>(shield.height)};
+    Rectangle shieldDest{getScreenPos().x + shieldOffset.x, getScreenPos().y + shieldOffset.y, shield.width * scale*3/4, shield.height * scale*3/4};
+    DrawTexturePro(shield, shieldSource, shieldDest, shieldOrigin, 0.f, WHITE);
 
 }
 
