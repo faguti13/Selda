@@ -16,6 +16,8 @@ public:
     float getHealth() const { return health; }
     void takeDamage(float damage);
     Rectangle getVisionRectangle() { return visionRectangle; }
+    virtual Vector2 getLastPos() { return worldPosLastFrame; }
+
     
 private:
     const bool debug = false;

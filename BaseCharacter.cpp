@@ -29,6 +29,7 @@ void BaseCharacter::drawCollisionRec()
 void BaseCharacter::tick(float deltaTime)
 {
     worldPosLastFrame = worldPos;
+    screenPosLastFrame = getScreenPos();
 
     runningTime += deltaTime;
 

@@ -12,7 +12,6 @@ Enemy::Enemy(Vector2 pos, Texture2D idle_texture, Texture2D run_texture, float _
     height = texture.height;
     speed = 3.5f;
     patrol_speed= 100.f;
-    
 }
 
 Enemy::~Enemy() 
@@ -67,9 +66,6 @@ void Enemy::tick(float deltaTime)
     // Crear una pila para almacenar los breadcrumbs
     Stack breadcrumbs;
 
-    // Calcular la distancia al jugador
-    //float distanceToPlayer = Vector2Length(Vector2Subtract(target->getScreenPos(), getScreenPos()));
-    
     Vector2 screenPos = getScreenPos();
 
     if (rightLeft >= 0) {
@@ -86,6 +82,9 @@ void Enemy::tick(float deltaTime)
 
     // Si el jugador está dentro del rango de visión del enemigo
     if (CheckCollisionRecs(visionRectangle, target->getCollisionRec())) {
+
+
+
         // Actualizar la velocidad para seguir al jugador
         velocity = Vector2Subtract(target->getScreenPos(), getScreenPos());
 

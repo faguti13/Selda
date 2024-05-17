@@ -23,6 +23,7 @@ protected:
     Texture2D run{};
     Vector2 worldPos{};
     Vector2 worldPosLastFrame{};
+    Vector2 screenPosLastFrame{};
     float rightLeft{1};
     float runningTime{};
     int frame{};

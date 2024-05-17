@@ -12,7 +12,7 @@ public:
     Rectangle visionRectangle; // Nuevo miembro de datos para el rectángulo de visión
     t_List* pathList = nullptr;
     float lastPathCalculationTime;
-    Enemy(Vector2 pos, Texture2D idle_texture, Texture2D run_texture, float _visionRange); 
+    Enemy(Vector2 pos, Texture2D idle_texture, Texture2D run_texture, float _visionRange);
     ~Enemy();
     virtual void tick(float deltaTime) override;
     void SetTarget(Character* character);

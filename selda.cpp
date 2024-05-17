@@ -12,6 +12,7 @@
 
 void drawScene1(const int& windowWidth, const int& windowHeight);
 void drawScene2(const int& windowWidth, const int& windowHeight);
+
 std::string actualScene = "scene1";
 int pts = 0;
 
@@ -119,13 +120,13 @@ void drawScene1(const int& windowWidth, const int& windowHeight){
         Prop{Vector2{1024.f, 2176.f}, LoadTexture("nature_tileset/vase.png")," nature_tileset/vase.png"},
 
         // cofres 
-        Prop{Vector2{1536.f, 1024.f}, LoadTexture("nature_tileset/chest1.png"), "nature_tileset/chest1.png"},
+        Prop{Vector2{1536.f, 1024-128.f}, LoadTexture("nature_tileset/chest1.png"), "nature_tileset/chest1.png"},
         Prop{Vector2{384.f, 1280.f}, LoadTexture("nature_tileset/chest1.png"), "nature_tileset/chest1.png"},
         Prop{Vector2{2560.f, 1664.f}, LoadTexture("nature_tileset/chest1.png"), "nature_tileset/chest1.png"},
 
         // bloques arriba der
-        Prop{Vector2{896.f, 768.f}, LoadTexture("nature_tileset/6bricks.png"), "nature_tileset/6bricks.png"},
-        Prop{Vector2{1664.f, 768.f}, LoadTexture("nature_tileset/5upCorR.png"), "nature_tileset/5upCorR.png"},
+        Prop{Vector2{896.f, 768.f-128}, LoadTexture("nature_tileset/6bricks.png"), "nature_tileset/6bricks.png"},
+        Prop{Vector2{1664.f, 768.f-128}, LoadTexture("nature_tileset/5upCorR.png"), "nature_tileset/5upCorR.png"},
 
         // bloques abajo izq
         Prop{Vector2{384.f, 1664.f}, LoadTexture("nature_tileset/6bricks.png"), "nature_tileset/6bricks.png"},
@@ -136,29 +137,37 @@ void drawScene1(const int& windowWidth, const int& windowHeight){
         Prop{Vector2{2688.f, 768.f}, LoadTexture("nature_tileset/8up.png"), "nature_tileset/8up.png"},
         Prop{Vector2{2688.f, 1792.f}, LoadTexture("nature_tileset/brickFrontDownR.png"), "nature_tileset/brickFrontDownR.png"}};
 
-    Texture2D goblin_idle = LoadTexture("characters/goblin_idle_spritesheet.png");
-    Texture2D goblin_run = LoadTexture("characters/goblin_run_spritesheet.png");
+        Color red = {255, 0, 0, 255}; // Define el color del tinte aquí
 
-    Texture2D slime_idle = LoadTexture("characters/slime_idle_spritesheet.png");
-    Texture2D slime_run = LoadTexture("characters/slime_run_spritesheet.png");
+        // Carga las imágenes
+        Image goblin_idle_image = LoadImage("characters/goblin_idle_spritesheet.png");
+        Image goblin_run_image = LoadImage("characters/goblin_run_spritesheet.png");
+        Image red_goblin_idle_image = LoadImage("characters/goblin_idle_spritesheet.png");
+        Image red_goblin_run_image = LoadImage("characters/goblin_run_spritesheet.png");
+        
+        // // Aplica el tinte a las imágenes
+        ImageColorTint(&red_goblin_idle_image, red);
+        ImageColorTint(&red_goblin_run_image, red);
 
-    Enemy* goblin1 = new Enemy(Vector2{400.f, 800.f}, goblin_idle, goblin_run, 500.f);
-    goblin1->patrolPoints = {Vector2{400.f, 800.f}, Vector2{600.f, 800.f}, Vector2{600.f, 600.f}, Vector2{400.f, 600.f}};
+        // Convierte las imágenes a texturas
+        Texture2D goblin_idle = LoadTextureFromImage(goblin_idle_image);
+        Texture2D goblin_run = LoadTextureFromImage(goblin_run_image);
+        Texture2D red_goblin_idle = LoadTextureFromImage(goblin_idle_image);
+        Texture2D red_goblin_run = LoadTextureFromImage(goblin_run_image);
 
-    Enemy* goblin2 = new Enemy(Vector2{500.f, 800.f}, goblin_idle, goblin_run, 500.f);
-    goblin2->patrolPoints = {Vector2{500.f, 800.f}, Vector2{700.f, 800.f}, Vector2{700.f, 600.f}, Vector2{500.f, 600.f}};
+    Enemy* goblin1 = new Enemy(Vector2{600.f, 400.f}, goblin_idle, goblin_run, 1000.f);
+    goblin1->patrolPoints = {Vector2{600.f, 400.f}, Vector2{3000.f, 400.f}, Vector2{3000.f, 2200.f}, Vector2{1700.f, 2200.f},Vector2{400.f, 400.f}};
 
-    Enemy* slime1 = new Enemy(Vector2{400.f, 700.f}, slime_idle, slime_run, 500.f);
-    slime1->patrolPoints = {Vector2{400.f, 700.f}, Vector2{600.f, 700.f}, Vector2{600.f, 500.f}, Vector2{400.f, 500.f}};
+    Enemy* goblin2 = new Enemy(Vector2{1200.f, 400.f}, goblin_idle, goblin_run, 1000.f);
+    goblin2->patrolPoints = {Vector2{1200.f, 400.f}, Vector2{3000.f, 400.f}, Vector2{3000.f, 2200.f}, Vector2{1700.f, 2200.f},Vector2{400.f, 400.f}};
 
-    Enemy* slime2 = new Enemy(Vector2{500.f, 700.f}, slime_idle, slime_run, 500.f);
-    slime2->patrolPoints = {Vector2{500.f, 700.f}, Vector2{700.f, 700.f}, Vector2{700.f, 500.f}, Vector2{500.f, 500.f}};
+    Enemy* goblin3 = new Enemy(Vector2{1800.f, 400.f}, goblin_idle, goblin_run, 1000.f);
+    goblin3->patrolPoints = {Vector2{1800.f, 400.f}, Vector2{3000.f, 400.f}, Vector2{3000.f, 2200.f}, Vector2{1700.f, 2200.f},Vector2{400.f, 400.f}};
 
     Enemy* enemies[]{
         goblin1,
         goblin2,
-        slime1,
-        slime2,
+        goblin3,
     };
 
     for (auto enemy : enemies)
@@ -179,18 +188,18 @@ void drawScene1(const int& windowWidth, const int& windowHeight){
         mapPos = Vector2Scale(knight.getWorldPos(), -1.f);
         DrawTextureEx(map, mapPos, 0.0, mapScale, WHITE);
 
-    ////debug matriz de colision
+        // //debug matriz de colision
 
-        // std::vector<std::vector<int>> mapmat = LoadMatFromFile("mapa1.txt");
-        // for (int x = 0; x < mapmat.size(); ++x) {
-        //     for (int y = 0; y < mapmat[x].size(); ++y) {
-        //         // Dibujar la celda en la posición (x, y) ajustada por la posición del jugador
-        //         Vector2 rectPos = Vector2Add(Vector2Scale({(float)y, (float)x}, 8.f), mapPos);
-        //         DrawRectangle(rectPos.y, rectPos.x, 8, 8, mapmat[x][y] == 1 ? BLACK : WHITE);
+        //     std::vector<std::vector<int>> mapmat = LoadMatFromFile("mapa1.txt");
+        //     for (int x = 0; x < mapmat.size(); ++x) {
+        //         for (int y = 0; y < mapmat[x].size(); ++y) {
+        //             // Dibujar la celda en la posición (x, y) ajustada por la posición del jugador
+        //             Vector2 rectPos = Vector2Add(Vector2Scale({(float)y, (float)x}, 8.f), mapPos);
+        //             DrawRectangle(rectPos.y, rectPos.x, 8, 8, mapmat[x][y] == 1 ? BLACK : WHITE);
+        //         }
         //     }
-        // }
-        
-    ////debug matriz de colision
+            
+        // //debug matriz de colision
 
         // dibuja los props
         for (auto& prop : props)
@@ -346,6 +355,123 @@ void drawScene1(const int& windowWidth, const int& windowHeight){
                 DrawEmptyHeart(windowWidth / 5 + i * 50, 50);
             }
         }
+
+
+        std::vector<std::vector<int>> matrix = mapmat;
+        std::ifstream file("mapa1.txt");
+        std::string line;
+
+        std::vector<std::vector<int>> transposeMatrix(matrix[0].size(), std::vector<int>(matrix.size()));
+
+        for (int i = 0; i < matrix.size(); i++) {
+            for (int j = 0; j < matrix[i].size(); j++) {
+                transposeMatrix[j][i] = matrix[i][j];
+            }
+        }
+
+        matrix = transposeMatrix;
+
+
+        std::vector<std::vector<int>> adjacencyMatrix(matrix.size() * matrix[0].size(), std::vector<int>(matrix.size() * matrix[0].size(), 0));
+
+        for (int i = 0; i < matrix.size(); i++) {
+            for (int j = 0; j < matrix[i].size(); j++) {
+                if (matrix[i][j] == 0) {
+                    if (i > 0 && matrix[i - 1][j] == 0) adjacencyMatrix[i * matrix[0].size() + j][(i - 1) * matrix[0].size() + j] = 1;
+                    if (i < matrix.size() - 1 && matrix[i + 1][j] == 0) adjacencyMatrix[i * matrix[0].size() + j][(i + 1) * matrix[0].size() + j] = 1;
+                    if (j > 0 && matrix[i][j - 1] == 0) adjacencyMatrix[i * matrix[0].size() + j][i * matrix[0].size() + j - 1] = 1;
+                    if (j < matrix[i].size() - 1 && matrix[i][j + 1] == 0) adjacencyMatrix[i * matrix[0].size() + j][i * matrix[0].size() + j + 1] = 1;
+                    if (i > 0 && j > 0 && matrix[i - 1][j - 1] == 0) adjacencyMatrix[i * matrix[0].size() + j][(i - 1) * matrix[0].size() + j - 1] = 1;
+                    if (i > 0 && j < matrix[i].size() - 1 && matrix[i - 1][j + 1] == 0) adjacencyMatrix[i * matrix[0].size() + j][(i - 1) * matrix[0].size() + j + 1] = 1;
+                    if (i < matrix.size() - 1 && j > 0 && matrix[i + 1][j - 1] == 0) adjacencyMatrix[i * matrix[0].size() + j][(i + 1) * matrix[0].size() + j - 1] = 1;
+                    if (i < matrix.size() - 1 && j < matrix[i].size() - 1 && matrix[i + 1][j + 1] == 0) adjacencyMatrix[i * matrix[0].size() + j][(i + 1) * matrix[0].size() + j + 1] = 1;
+
+                }
+            }
+        }
+
+//xd
+        // for (int i = 0; i < matrix.size(); i++) {
+        //     for (int j = 0; j < matrix[i].size(); j++) {
+        //         if (matrix[i][j] == 0) {
+        //             DrawCircle(j * 25 + 12.5, i * 25 + 12.5, 10, BLUE);
+        //             if (i > 0 && matrix[i - 1][j] == 0) DrawLine(j * 25 + 12.5, i * 25 + 12.5, j * 25 + 12.5, (i - 1) * 25 + 12.5, RED);
+        //             if (i < matrix.size() - 1 && matrix[i + 1][j] == 0) DrawLine(j * 25 + 12.5, i * 25 + 12.5, j * 25 + 12.5, (i + 1) * 25 + 12.5, RED);
+        //             if (j > 0 && matrix[i][j - 1] == 0) DrawLine(j * 25 + 12.5, i * 25 + 12.5, (j - 1) * 25 + 12.5, i * 25 + 12.5, RED);
+        //             if (j < matrix[i].size() - 1 && matrix[i][j + 1] == 0) DrawLine(j * 25 + 12.5, i * 25 + 12.5, (j + 1) * 25 + 12.5, i * 25 + 12.5, RED);
+        //             if (i > 0 && j > 0 && matrix[i - 1][j - 1] == 0) DrawLine(j * 25 + 12.5, i * 25 + 12.5, (j - 1) * 25 + 12.5, (i - 1) * 25 + 12.5, RED);
+        //             if (i > 0 && j < matrix[i].size() - 1 && matrix[i - 1][j + 1] == 0) DrawLine(j * 25 + 12.5, i * 25 + 12.5, (j + 1) * 25 + 12.5, (i - 1) * 25 + 12.5, RED);
+        //             if (i < matrix.size() - 1 && j > 0 && matrix[i + 1][j - 1] == 0) DrawLine(j * 25 + 12.5, i * 25 + 12.5, (j - 1) * 25 + 12.5, (i + 1) * 25 + 12.5, RED);
+        //             if (i < matrix.size() - 1 && j < matrix[i].size() - 1 && matrix[i + 1][j + 1] == 0) DrawLine(j * 25 + 12.5, i * 25 + 12.5, (j + 1) * 25 + 12.5, (i + 1) * 25 + 12.5, RED);
+        //         }
+        //     }
+        // }
+
+
+
+for (int i = 0; i < matrix.size(); i++) {
+    for (int j = 0; j < matrix[i].size(); j++) {
+        if (matrix[i][j] == 0) {
+            // Calcula las coordenadas de la celda en el espacio del mundo y ajusta por la posición del jugador
+            Vector2 circlePos = Vector2Add(Vector2Scale({(float)j, (float)i}, 128.f), mapPos);
+
+            // Ajusta las coordenadas para que el círculo se dibuje en el centro del tile
+            circlePos.x += 64;
+            circlePos.y += 64;
+
+            // Dibuja la celda y las conexiones
+            DrawCircle(circlePos.x, circlePos.y, 32, BLUE);
+            if (i > 0 && matrix[i - 1][j] == 0) {
+                Vector2 prevCirclePos = Vector2Add(Vector2Scale({(float)j, (float)(i - 1)}, 128.f), mapPos);
+                prevCirclePos.x += 64;
+                prevCirclePos.y += 64;
+                DrawLine(circlePos.x, circlePos.y, prevCirclePos.x, prevCirclePos.y, RED);
+            }
+            if (i < matrix.size() - 1 && matrix[i + 1][j] == 0) {
+                Vector2 nextCirclePos = Vector2Add(Vector2Scale({(float)j, (float)(i + 1)}, 128.f), mapPos);
+                nextCirclePos.x += 64;
+                nextCirclePos.y += 64;
+                DrawLine(circlePos.x, circlePos.y, nextCirclePos.x, nextCirclePos.y, RED);
+            }
+            if (j > 0 && matrix[i][j - 1] == 0) {
+                Vector2 leftCirclePos = Vector2Add(Vector2Scale({(float)(j - 1), (float)i}, 128.f), mapPos);
+                leftCirclePos.x += 64;
+                leftCirclePos.y += 64;
+                DrawLine(circlePos.x, circlePos.y, leftCirclePos.x, leftCirclePos.y, RED);
+            }
+            if (j < matrix[i].size() - 1 && matrix[i][j + 1] == 0) {
+                Vector2 rightCirclePos = Vector2Add(Vector2Scale({(float)(j + 1), (float)i}, 128.f), mapPos);
+                rightCirclePos.x += 64;
+                rightCirclePos.y += 64;
+                DrawLine(circlePos.x, circlePos.y, rightCirclePos.x, rightCirclePos.y, RED);
+            }
+            if (i > 0 && j > 0 && matrix[i - 1][j - 1] == 0) {
+                Vector2 diagCirclePos = Vector2Add(Vector2Scale({(float)(j - 1), (float)(i - 1)}, 128.f), mapPos);
+                diagCirclePos.x += 64;
+                diagCirclePos.y += 64;
+                DrawLine(circlePos.x, circlePos.y, diagCirclePos.x, diagCirclePos.y, RED);
+            }
+            if (i > 0 && j < matrix[i].size() - 1 && matrix[i - 1][j + 1] == 0) {
+                Vector2 diagCirclePos = Vector2Add(Vector2Scale({(float)(j + 1), (float)(i - 1)}, 128.f), mapPos);
+                diagCirclePos.x += 64;
+                diagCirclePos.y += 64;
+                DrawLine(circlePos.x, circlePos.y, diagCirclePos.x, diagCirclePos.y, RED);
+            }
+            if (i < matrix.size() - 1 && j > 0 && matrix[i + 1][j - 1] == 0) {
+                Vector2 diagCirclePos = Vector2Add(Vector2Scale({(float)(j - 1), (float)(i + 1)}, 128.f), mapPos);
+                diagCirclePos.x += 64;
+                diagCirclePos.y += 64;
+                DrawLine(circlePos.x, circlePos.y, diagCirclePos.x, diagCirclePos.y, RED);
+            }
+            if (i < matrix.size() - 1 && j < matrix[i].size() - 1 && matrix[i + 1][j + 1] == 0) {
+                Vector2 diagCirclePos = Vector2Add(Vector2Scale({(float)(j + 1), (float)(i + 1)}, 128.f), mapPos);
+                diagCirclePos.x += 64;
+                diagCirclePos.y += 64;
+                DrawLine(circlePos.x, circlePos.y, diagCirclePos.x, diagCirclePos.y, RED);
+            }
+        }
+    }
+}
 
         EndDrawing();
     }
