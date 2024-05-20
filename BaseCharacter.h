@@ -17,6 +17,8 @@ public:
     bool getAlive(){return alive;}
     void setAlive(bool isAlive){ alive = isAlive;}
     float speed{4.f};
+    float width{};
+    float height{};
 protected:
     Texture2D texture{};
     Texture2D idle{};
@@ -29,12 +31,10 @@ protected:
     int frame{};
     int maxFrames{6};
     float updateTime{1.f / 12.f};
-    
     float patrol_speed{2.f};
-    float width{};
-    float height{};
     float scale{4.0f};
     Vector2 velocity{};
+    int tipo{};
 private:
     bool alive{true};
 };

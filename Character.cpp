@@ -26,6 +26,12 @@ Vector2 Character::getScreenPos()
         static_cast<float>(windowHeight) / 2.0f - scale * (0.5f * height)};
 }
 
+
+
+Vector2 Character::getLastScreenPos() {
+    return lastScreenPos;
+}
+
 void Character::tick(float deltaTime)
 {
 

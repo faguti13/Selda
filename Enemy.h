@@ -6,13 +6,15 @@
 #include "Character.h"
 #include <vector> 
 #include "list.h"
+#include "raymath.h"
+
 class Enemy : public BaseCharacter
 {
 public:
     Rectangle visionRectangle; // Nuevo miembro de datos para el rectángulo de visión
     t_List* pathList = nullptr;
     float lastPathCalculationTime;
-    Enemy(Vector2 pos, Texture2D idle_texture, Texture2D run_texture, float _visionRange);
+    Enemy(Vector2 pos, Texture2D idle_texture, Texture2D run_texture, float _visionRange, int type);
     ~Enemy();
     virtual void tick(float deltaTime) override;
     void SetTarget(Character* character);
@@ -42,6 +44,8 @@ private:
     float damagePerSec{100.f};
     float radius{25.f};
     float visionRange;
+    float scale{4.0f};
+    bool callAllEnemies{false};
 };
 
 #endif
