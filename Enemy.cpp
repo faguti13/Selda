@@ -61,12 +61,11 @@ public:
     }
 };
 
-
-
-
 void Enemy::tick(float deltaTime)
 {   
     if(!getAlive()) return;
+
+    // Gris
     if (tipo == 0) {
     // Crear una pila para almacenar los breadcrumbs
 
@@ -179,6 +178,8 @@ void Enemy::tick(float deltaTime)
         DrawTexturePro(weapon, source, dest, origin, rotate, WHITE);
 
         }
+        
+        //Rojo
         else if (tipo == 1){
     // Crear una pila para almacenar los breadcrumbs
 
@@ -291,14 +292,14 @@ void Enemy::tick(float deltaTime)
         Rectangle dest{getScreenPos().x + offset.x, getScreenPos().y + offset.y, fireweapon.width * scale, fireweapon.height * scale};
         DrawTexturePro(fireweapon, source, dest, origin, rotate, WHITE);        
         }
-        else if (tipo == 2){
         
         //azul
+        else if (tipo == 2){
         
         }
+        //Ojo espectral
         else if (tipo == 3){
             
-            //ojo espectral
         Vector2 screenPos = getScreenPos();
 
 
@@ -345,12 +346,17 @@ void Enemy::tick(float deltaTime)
                 
             }
         }
-        else if (tipo == 4){
-               
-        }
         
+        //Raton
+        else if (tipo == 4){
 
-    
+        }
+
+        //Chocobo
+        else if (tipo == 5){
+
+        }
+
     BaseCharacter::tick(deltaTime);
 }
 

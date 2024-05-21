@@ -1,14 +1,16 @@
-#include "raylib.h"
-#include "raymath.h"
-#include "Character.h"
-#include "Prop.h"
-#include "Enemy.h"
 #include <string>
 #include <iostream> 
 #include <fstream>
 #include <vector>
 #include <sstream>
+#include <ctime>
+#include "raylib.h"
+#include "raymath.h"
+#include "Character.h"
+#include "Prop.h"
+#include "Enemy.h"
 #include "astar.h"
+#include "genalg.h"
 
 void drawScene1(const int& windowWidth, const int& windowHeight);
 void drawScene2(const int& windowWidth, const int& windowHeight);
@@ -75,7 +77,7 @@ int main()
     const int windowWidth{900};
     const int windowHeight{550};
 
-    InitWindow(windowWidth, windowHeight, "RPG! Top-Down");
+    InitWindow(windowWidth, windowHeight, "Selda");
     SetTargetFPS(60);
 
     while (!WindowShouldClose())
@@ -105,7 +107,6 @@ int main()
 
 void drawScene1(const int& windowWidth, const int& windowHeight){
 
-    
     Texture2D map = LoadTexture("nature_tileset/piso1.png");
     Vector2 mapPos{0.0, 0.0};
     const float mapScale{4.0f}; // escala del mapa
@@ -151,37 +152,60 @@ void drawScene1(const int& windowWidth, const int& windowHeight){
 
 
     // Carga las imágenes
-    Image goblin_idle_image = LoadImage("characters/goblin_idle_spritesheet.png");
-    Image goblin_run_image = LoadImage("characters/goblin_run_spritesheet.png");
-    Image red_goblin_idle_image = LoadImage("characters/goblin_idle_spritesheet.png");
-    Image red_goblin_run_image = LoadImage("characters/goblin_run_spritesheet.png");
-    Image spectral_eye = LoadImage("characters/spectral_eye.png");
+    Image graySpectreIdleIM = LoadImage("characters/goblin_idle_spritesheet.png");
+    Image graySpectreRunIM = LoadImage("characters/goblin_run_spritesheet.png");
 
-
-    // Aplica el tinte a las imágenes
-    ImageColorTint(&red_goblin_idle_image, RED);
-    ImageColorTint(&red_goblin_run_image, RED);
+    Image spectralEyeIM = LoadImage("characters/spectralEyeIM.png");
 
     // Convierte las imágenes a texturas
-    Texture2D goblin_idle = LoadTextureFromImage(goblin_idle_image);
-    Texture2D goblin_run = LoadTextureFromImage(goblin_run_image);
-    Texture2D red_goblin_idle = LoadTextureFromImage(red_goblin_idle_image);
-    Texture2D red_goblin_run = LoadTextureFromImage(red_goblin_run_image);
-    Texture2D eye = LoadTextureFromImage(spectral_eye);
+    Texture2D graySpectreIdle = LoadTextureFromImage(graySpectreIdleIM);
+    Texture2D graySpectreRun = LoadTextureFromImage(graySpectreRunIM);
 
-    Enemy* goblin1 = new Enemy(Vector2{600.f, 400.f}, goblin_idle, goblin_run, 1000.f,0);
-    goblin1->patrolPoints = {Vector2{600.f, 400.f}, Vector2{3000.f, 400.f}, Vector2{3000.f, 2200.f}, Vector2{1700.f, 2200.f},Vector2{400.f, 400.f}};
+    Texture2D spectralEye = LoadTextureFromImage(spectralEyeIM);
 
-    Enemy* goblin2 = new Enemy(Vector2{1200.f, 400.f}, goblin_idle, goblin_run, 1000.f,0);
-    goblin2->patrolPoints = {Vector2{1200.f, 400.f}, Vector2{3000.f, 400.f}, Vector2{3000.f, 2200.f}, Vector2{1700.f, 2200.f},Vector2{400.f, 400.f}};
+    //Espectros
+    Enemy* greySpectre1 = new Enemy(Vector2{600.f, 400.f}, graySpectreIdle, graySpectreRun, 0.f, 0);
+    greySpectre1->patrolPoints = {Vector2{600.f, 400.f}, Vector2{3000.f, 400.f}, Vector2{3000.f, 2200.f}, Vector2{1700.f, 2200.f}, Vector2{400.f, 400.f}};
 
-    Enemy* goblin3 = new Enemy(Vector2{1800.f, 400.f}, goblin_idle, goblin_run, 1000.f,0);
-    goblin3->patrolPoints = {Vector2{1800.f, 400.f}, Vector2{3000.f, 400.f}, Vector2{3000.f, 2200.f}, Vector2{1700.f, 2200.f},Vector2{400.f, 400.f}};
+    Enemy* greySpectre2 = new Enemy(Vector2{1000.f, 400.f}, graySpectreIdle, graySpectreRun, 0.f, 0);
+    greySpectre2->patrolPoints = {Vector2{1000.f, 400.f}, Vector2{3000.f, 400.f}, Vector2{3000.f, 2200.f}, Vector2{1700.f, 2200.f}, Vector2{400.f, 400.f}};
+
+    Enemy* greySpectre3 = new Enemy(Vector2{1400.f, 400.f}, graySpectreIdle, graySpectreRun, 0.f, 0);
+    greySpectre3->patrolPoints = {Vector2{1400.f, 400.f}, Vector2{3000.f, 400.f}, Vector2{3000.f, 2200.f}, Vector2{1700.f, 2200.f}, Vector2{400.f, 400.f}};
+    
+    // Enemigos simples
+    // Se crean numeros random para el tipo de enemigo simple utilizando algoritmo genetico
+    genAlg randNum(2147483648LL, 1103515245LL, 12345LL, time(0));
+    int randNum1 = randNum.nextInRange(3, 5);
+    int randNum2 = randNum.nextInRange(3, 5);
+    int randNum3 = randNum.nextInRange(3, 5);
+    int randNum4 = randNum.nextInRange(3, 5);
+
+    // std::cout<<randNum1<<std::endl;     
+    // std::cout<<randNum2<<std::endl;     
+    // std::cout<<randNum3<<std::endl;     
+    // std::cout<<randNum4<<std::endl;
+
+    Enemy* simpleEnemy1 = new Enemy(Vector2{1800.f, 400.f}, graySpectreIdle, graySpectreRun, 0.f, randNum1);
+    simpleEnemy1->patrolPoints = {Vector2{1800.f, 400.f}, Vector2{3000.f, 400.f}, Vector2{3000.f, 2200.f}, Vector2{1700.f, 2200.f}, Vector2{400.f, 400.f}};
+
+    Enemy* simpleEnemy2 = new Enemy(Vector2{2200.f, 400.f}, graySpectreIdle, graySpectreRun, 0.f, randNum2);
+    simpleEnemy2->patrolPoints = {Vector2{2200.f, 400.f}, Vector2{3000.f, 400.f}, Vector2{3000.f, 2200.f}, Vector2{1700.f, 2200.f}, Vector2{400.f, 400.f}};
+
+    Enemy* simpleEnemy3 = new Enemy(Vector2{2600.f, 400.f}, graySpectreIdle, graySpectreRun, 0.f, randNum3);
+    simpleEnemy3->patrolPoints = {Vector2{2600.f, 400.f}, Vector2{3000.f, 400.f}, Vector2{3000.f, 2200.f}, Vector2{1700.f, 2200.f}, Vector2{400.f, 400.f}};
+
+    Enemy* simpleEnemy4 = new Enemy(Vector2{3000.f, 400.f}, graySpectreIdle, graySpectreRun, 0.f, randNum4);
+    simpleEnemy4->patrolPoints = {Vector2{3000.f, 400.f}, Vector2{3000.f, 400.f}, Vector2{3000.f, 2200.f}, Vector2{1700.f, 2200.f}, Vector2{400.f, 400.f}};
 
     Enemy* enemies[]{
-        goblin1,
-        goblin2,
-        goblin3,
+            greySpectre1,
+            greySpectre2,
+            greySpectre3,
+            simpleEnemy1,
+            simpleEnemy2,
+            simpleEnemy3,
+            simpleEnemy4
     };
 
     for (auto enemy : enemies)
@@ -338,8 +362,10 @@ void drawScene1(const int& windowWidth, const int& windowHeight){
             {
                 if (CheckCollisionRecs(enemy->getCollisionRec(), knight.getWeaponCollisionRec()) && !CheckCollisionRecs(enemy->getVisionRectangle(), knight.getWeaponCollisionRec()))
                 {
+                    if(enemy->getAlive()){
+                        pts += 10;
+                    }
                     enemy->setAlive(false);
-                    pts += 10;
                 }
             }
         }
@@ -430,25 +456,29 @@ void drawScene2 (const int& windowWidth, const int& windowHeight){
         Prop{Vector2{1792.f, 768.f}, LoadTexture("nature_tileset/spikes2.png"), "nature_tileset/spikes2.png"},
         Prop{Vector2{2048.f, 1536.f}, LoadTexture("nature_tileset/spikes.png"),"nature_tileset/spikes.png"}};
 
-    Texture2D goblin_idle = LoadTexture("characters/goblin_idle_spritesheet.png");
-    Texture2D goblin_run = LoadTexture("characters/goblin_run_spritesheet.png");
+    Image redSpectreIdleIM = LoadImage("characters/goblin_idle_spritesheet.png");
+    Image redSpectreRunIM = LoadImage("characters/goblin_run_spritesheet.png");
 
-    Texture2D slime_idle = LoadTexture("characters/slime_idle_spritesheet.png");
-    Texture2D slime_run = LoadTexture("characters/slime_run_spritesheet.png");
+    // Aplica el tinte a las imágenes
+    ImageColorTint(&redSpectreIdleIM, RED);
+    ImageColorTint(&redSpectreRunIM, RED);
 
-    Enemy* goblin1 = new Enemy(Vector2{600.f, 400.f}, goblin_idle, goblin_run, 1000.f,0);
-    goblin1->patrolPoints = {Vector2{600.f, 400.f}, Vector2{3000.f, 400.f}, Vector2{3000.f, 2200.f}, Vector2{1700.f, 2200.f},Vector2{400.f, 400.f}};
+    Texture2D redSpectreIdle = LoadTextureFromImage(redSpectreIdleIM);
+    Texture2D redSpectreRun = LoadTextureFromImage(redSpectreRunIM);
 
-    Enemy* goblin2 = new Enemy(Vector2{1200.f, 400.f}, goblin_idle, goblin_run, 1000.f,0);
-    goblin2->patrolPoints = {Vector2{1200.f, 400.f}, Vector2{3000.f, 400.f}, Vector2{3000.f, 2200.f}, Vector2{1700.f, 2200.f},Vector2{400.f, 400.f}};
+    Enemy* redSpectre1 = new Enemy(Vector2{600.f, 400.f}, redSpectreIdle, redSpectreRun, 1000.f, 1);
+    redSpectre1->patrolPoints = {Vector2{600.f, 400.f}, Vector2{3000.f, 400.f}, Vector2{3000.f, 2200.f}, Vector2{1700.f, 2200.f}, Vector2{400.f, 400.f}};
 
-    Enemy* goblin3 = new Enemy(Vector2{1800.f, 400.f}, goblin_idle, goblin_run, 1000.f,0);
-    goblin3->patrolPoints = {Vector2{1800.f, 400.f}, Vector2{3000.f, 400.f}, Vector2{3000.f, 2200.f}, Vector2{1700.f, 2200.f},Vector2{400.f, 400.f}};
+    Enemy* redSpectre2 = new Enemy(Vector2{1200.f, 400.f}, redSpectreIdle, redSpectreRun, 1000.f, 1);
+    redSpectre2->patrolPoints = {Vector2{1200.f, 400.f}, Vector2{3000.f, 400.f}, Vector2{3000.f, 2200.f}, Vector2{1700.f, 2200.f}, Vector2{400.f, 400.f}};
+
+    Enemy* redSpectre3 = new Enemy(Vector2{1800.f, 400.f}, redSpectreIdle, redSpectreRun, 1000.f, 1);
+    redSpectre3->patrolPoints = {Vector2{1800.f, 400.f}, Vector2{3000.f, 400.f}, Vector2{3000.f, 2200.f}, Vector2{1700.f, 2200.f}, Vector2{400.f, 400.f}};
 
     Enemy* enemies[]{
-        goblin1,
-        goblin2,
-        goblin3,
+            redSpectre1,
+            redSpectre2,
+            redSpectre3,
     };
 
     for (auto enemy : enemies)
@@ -538,13 +568,11 @@ void drawScene2 (const int& windowWidth, const int& windowHeight){
             enemy->tick(GetFrameTime());
         }
 
-
         if (IsKeyDown(KEY_SPACE))
         {
-
             for (auto enemy : enemies)
             {
-                if (CheckCollisionRecs(enemy->getCollisionRec(), knight.getWeaponCollisionRec()))
+                if (CheckCollisionRecs(enemy->getCollisionRec(), knight.getWeaponCollisionRec()) && !CheckCollisionRecs(enemy->getVisionRectangle(), knight.getWeaponCollisionRec()))
                 {
                     if(enemy->getAlive()){
                         pts += 10;
@@ -565,6 +593,26 @@ void drawScene2 (const int& windowWidth, const int& windowHeight){
         if (actualScene == "scene3") {
             return;
         }
+
+        std::vector<std::vector<int>> mapmat = LoadMatFromFile("mapa2.txt");
+
+        // Define la posición del minimapa en la pantalla
+        Vector2 minimapPos = {windowHeight-160, windowWidth-240};
+
+        for (int x = 0; x < mapmat.size(); ++x) {
+            for (int y = 0; y < mapmat[x].size(); ++y) {
+                // Dibujar la celda en la posición (x, y) ajustada por la posición del minimapa
+                Vector2 rectPos = Vector2Add(Vector2Scale({(float)y, (float)x}, 8.f), minimapPos);
+                DrawRectangle(rectPos.y, rectPos.x, 8, 8, mapmat[x][y] == 1 ? Color{ 0, 0, 0, 128 } : Color{ 255, 255, 255, 128 });
+            }
+        }
+
+        //Zona segura
+        Vector2 szworldpos = {128*1,128*14};
+        Vector2 szScreenPos{Vector2Subtract(szworldpos, knight.getWorldPos())};
+        Rectangle safeZone = {szScreenPos.x, szScreenPos.y, 128*4, 128*4};
+        DrawRectangleRec(safeZone, Color{0, 255, 0, 55});
+        knight.setSafeZone(safeZone);
 
         EndDrawing();
     }
@@ -741,13 +789,11 @@ void drawScene3(const int& windowWidth, const int& windowHeight){
             enemy->tick(GetFrameTime());
         }
 
-
         if (IsKeyDown(KEY_SPACE))
         {
-
             for (auto enemy : enemies)
             {
-                if (CheckCollisionRecs(enemy->getCollisionRec(), knight.getWeaponCollisionRec()))
+                if (CheckCollisionRecs(enemy->getCollisionRec(), knight.getWeaponCollisionRec()) && !CheckCollisionRecs(enemy->getVisionRectangle(), knight.getWeaponCollisionRec()))
                 {
                     if(enemy->getAlive()){
                         pts += 10;
@@ -768,6 +814,26 @@ void drawScene3(const int& windowWidth, const int& windowHeight){
         if (actualScene == "scene4") {
             return;
         }
+
+        std::vector<std::vector<int>> mapmat = LoadMatFromFile("mapa3.txt");
+
+        // Define la posición del minimapa en la pantalla
+        Vector2 minimapPos = {windowHeight-160, windowWidth-240};
+
+        for (int x = 0; x < mapmat.size(); ++x) {
+            for (int y = 0; y < mapmat[x].size(); ++y) {
+                // Dibujar la celda en la posición (x, y) ajustada por la posición del minimapa
+                Vector2 rectPos = Vector2Add(Vector2Scale({(float)y, (float)x}, 8.f), minimapPos);
+                DrawRectangle(rectPos.y, rectPos.x, 8, 8, mapmat[x][y] == 1 ? Color{ 0, 0, 0, 128 } : Color{ 255, 255, 255, 128 });
+            }
+        }
+
+        //Zona segura
+        Vector2 szworldpos = {128*4,128*7};
+        Vector2 szScreenPos{Vector2Subtract(szworldpos, knight.getWorldPos())};
+        Rectangle safeZone = {szScreenPos.x, szScreenPos.y, 128*3, 128*3};
+        DrawRectangleRec(safeZone, Color{0, 255, 0, 55});
+        knight.setSafeZone(safeZone);
 
         EndDrawing();
     }
@@ -943,15 +1009,12 @@ void drawScene4(const int& windowWidth, const int& windowHeight){
             enemy->tick(GetFrameTime());
         }
 
-
         if (IsKeyDown(KEY_SPACE))
         {
-
             for (auto enemy : enemies)
             {
-                if (CheckCollisionRecs(enemy->getCollisionRec(), knight.getWeaponCollisionRec()))
+                if (CheckCollisionRecs(enemy->getCollisionRec(), knight.getWeaponCollisionRec()) && !CheckCollisionRecs(enemy->getVisionRectangle(), knight.getWeaponCollisionRec()))
                 {
-
                     if(enemy->getAlive()){
                         pts += 10;
                     }
@@ -972,6 +1035,26 @@ void drawScene4(const int& windowWidth, const int& windowHeight){
         if (actualScene == "scene5") {
             return;
         }
+
+        std::vector<std::vector<int>> mapmat = LoadMatFromFile("mapa4.txt");
+
+        // Define la posición del minimapa en la pantalla
+        Vector2 minimapPos = {windowHeight-160, windowWidth-240};
+
+        for (int x = 0; x < mapmat.size(); ++x) {
+            for (int y = 0; y < mapmat[x].size(); ++y) {
+                // Dibujar la celda en la posición (x, y) ajustada por la posición del minimapa
+                Vector2 rectPos = Vector2Add(Vector2Scale({(float)y, (float)x}, 8.f), minimapPos);
+                DrawRectangle(rectPos.y, rectPos.x, 8, 8, mapmat[x][y] == 1 ? Color{ 0, 0, 0, 128 } : Color{ 255, 255, 255, 128 });
+            }
+        }
+
+        //Zona segura
+        Vector2 szworldpos = {128*10,128*2};
+        Vector2 szScreenPos{Vector2Subtract(szworldpos, knight.getWorldPos())};
+        Rectangle safeZone = {szScreenPos.x, szScreenPos.y, 128*3, 128*3};
+        DrawRectangleRec(safeZone, Color{0, 255, 0, 55});
+        knight.setSafeZone(safeZone);
 
         EndDrawing();
     }
@@ -1152,15 +1235,12 @@ void drawScene5(const int& windowWidth, const int& windowHeight){
             enemy->tick(GetFrameTime());
         }
 
-
         if (IsKeyDown(KEY_SPACE))
         {
-
             for (auto enemy : enemies)
             {
-                if (CheckCollisionRecs(enemy->getCollisionRec(), knight.getWeaponCollisionRec()))
+                if (CheckCollisionRecs(enemy->getCollisionRec(), knight.getWeaponCollisionRec()) && !CheckCollisionRecs(enemy->getVisionRectangle(), knight.getWeaponCollisionRec()))
                 {
-
                     if(enemy->getAlive()){
                         pts += 10;
                     }
@@ -1181,6 +1261,26 @@ void drawScene5(const int& windowWidth, const int& windowHeight){
         if (actualScene == "win") {
             return;
         }
+
+        std::vector<std::vector<int>> mapmat = LoadMatFromFile("mapa4.txt");
+
+        // Define la posición del minimapa en la pantalla
+        Vector2 minimapPos = {windowHeight-160, windowWidth-240};
+
+        for (int x = 0; x < mapmat.size(); ++x) {
+            for (int y = 0; y < mapmat[x].size(); ++y) {
+                // Dibujar la celda en la posición (x, y) ajustada por la posición del minimapa
+                Vector2 rectPos = Vector2Add(Vector2Scale({(float)y, (float)x}, 8.f), minimapPos);
+                DrawRectangle(rectPos.y, rectPos.x, 8, 8, mapmat[x][y] == 1 ? Color{ 0, 0, 0, 128 } : Color{ 255, 255, 255, 128 });
+            }
+        }
+
+        //Zona segura
+        Vector2 szworldpos = {128*18,128*2};
+        Vector2 szScreenPos{Vector2Subtract(szworldpos, knight.getWorldPos())};
+        Rectangle safeZone = {szScreenPos.x, szScreenPos.y, 128*3, 128*2};
+        DrawRectangleRec(safeZone, Color{0, 255, 0, 55});
+        knight.setSafeZone(safeZone);
 
         EndDrawing();
     }
