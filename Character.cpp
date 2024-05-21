@@ -161,3 +161,21 @@ void Character::takeDamage(float damage)
         setAlive(false);
     }
 }
+
+void Character::receiveLife(float life)
+{
+    if (health > 5.f)
+    {
+        health += life;
+    }
+}
+
+void Character::updateLife(float life)
+{
+    health = life;
+    if (health <= 0.9f)
+    {
+        setAlive(false);
+    }
+    
+}

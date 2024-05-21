@@ -46,6 +46,8 @@ private:
     float visionRange;
     float scale{4.0f};
     bool callAllEnemies{false};
+    Texture2D weapon{LoadTexture("characters/weapon_sword.png")};
+    Texture2D fireweapon{LoadTexture("characters/firesword.png")};
 };
 
 #endif

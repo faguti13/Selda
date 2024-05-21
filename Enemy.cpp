@@ -158,7 +158,6 @@ void Enemy::tick(float deltaTime)
             direction = Vector2Normalize(direction);
             worldPos = Vector2Add(worldPos, Vector2Scale(direction, speed * deltaTime));
         }
-        Texture2D weapon{LoadTexture("characters/weapon_sword.png")};
         Vector2 origin{};
         Vector2 offset{};
         float rotate{};
@@ -272,26 +271,25 @@ void Enemy::tick(float deltaTime)
             direction = Vector2Normalize(direction);
             worldPos = Vector2Add(worldPos, Vector2Scale(direction, speed * deltaTime));
         }
-        Texture2D weapon{LoadTexture("characters/firesword.png")};
         Vector2 origin{};
         Vector2 offset{};
         float rotate{};
 
         if (rightLeft > 0.f)
         {
-            origin = {0.f, weapon.height * scale};
+            origin = {0.f, fireweapon.height * scale};
             offset = {35.f, 55.f};
         }
         else
         {
-            origin = {weapon.width * scale, weapon.height * scale};
+            origin = {fireweapon.width * scale, fireweapon.height * scale};
             offset = {25.f, 55.f};
         }
 
         // draw sword
-        Rectangle source{0.f, 0.f, static_cast<float>(weapon.width) * rightLeft, static_cast<float>(weapon.height)};
-        Rectangle dest{getScreenPos().x + offset.x, getScreenPos().y + offset.y, weapon.width * scale, weapon.height * scale};
-        DrawTexturePro(weapon, source, dest, origin, rotate, WHITE);        
+        Rectangle source{0.f, 0.f, static_cast<float>(fireweapon.width) * rightLeft, static_cast<float>(fireweapon.height)};
+        Rectangle dest{getScreenPos().x + offset.x, getScreenPos().y + offset.y, fireweapon.width * scale, fireweapon.height * scale};
+        DrawTexturePro(fireweapon, source, dest, origin, rotate, WHITE);        
         }
         else if (tipo == 2){
         
@@ -347,7 +345,9 @@ void Enemy::tick(float deltaTime)
                 
             }
         }
-
+        else if (tipo == 4){
+               
+        }
         
 
     
