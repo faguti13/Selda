@@ -164,13 +164,13 @@ void drawScene1(const int& windowWidth, const int& windowHeight){
     Texture2D spectralEye = LoadTextureFromImage(spectralEyeIM);
 
     //Espectros
-    Enemy* greySpectre1 = new Enemy(Vector2{600.f, 400.f}, graySpectreIdle, graySpectreRun, 0.f, 0);
+    Enemy* greySpectre1 = new Enemy(Vector2{600.f, 400.f}, graySpectreIdle, graySpectreRun, 1000.f, 0);
     greySpectre1->patrolPoints = {Vector2{600.f, 400.f}, Vector2{3000.f, 400.f}, Vector2{3000.f, 2200.f}, Vector2{1700.f, 2200.f}, Vector2{400.f, 400.f}};
 
-    Enemy* greySpectre2 = new Enemy(Vector2{1000.f, 400.f}, graySpectreIdle, graySpectreRun, 0.f, 0);
+    Enemy* greySpectre2 = new Enemy(Vector2{1000.f, 400.f}, graySpectreIdle, graySpectreRun, 1000.f, 0);
     greySpectre2->patrolPoints = {Vector2{1000.f, 400.f}, Vector2{3000.f, 400.f}, Vector2{3000.f, 2200.f}, Vector2{1700.f, 2200.f}, Vector2{400.f, 400.f}};
 
-    Enemy* greySpectre3 = new Enemy(Vector2{1400.f, 400.f}, graySpectreIdle, graySpectreRun, 0.f, 0);
+    Enemy* greySpectre3 = new Enemy(Vector2{1400.f, 400.f}, graySpectreIdle, graySpectreRun, 1000.f, 0);
     greySpectre3->patrolPoints = {Vector2{1400.f, 400.f}, Vector2{3000.f, 400.f}, Vector2{3000.f, 2200.f}, Vector2{1700.f, 2200.f}, Vector2{400.f, 400.f}};
     
     // Enemigos simples

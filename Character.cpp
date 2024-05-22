@@ -39,7 +39,7 @@ void Character::tick(float deltaTime)
         return;
 
     if (IsKeyDown(KEY_A))
-        velocity.x -= 1.0;
+        velocity.x -= 1.0;  
     if (IsKeyDown(KEY_D))
         velocity.x += 1.0;
     if (IsKeyDown(KEY_W))
