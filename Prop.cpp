@@ -92,3 +92,22 @@ bool Prop::getState(float deltaTime){
     } 
 }
 
+
+bool Prop::isBreakable() const {
+    return !broken && (name.find("vase") != std::string::npos || name.find("chest") != std::string::npos);
+}
+
+//Vase
+void Prop::breakVase() {
+    if (!broken) {
+        broken = true;
+        texture = LoadTexture("nature_tileset/vaseBroke.png"); 
+    }
+}
+//Chest
+void Prop::breakChest() {
+    if (!broken) {
+        broken = true;
+        texture = LoadTexture("nature_tileset/chest2.png"); 
+    }
+}

@@ -12,6 +12,9 @@ public:
     Rectangle getCollisionRec(Vector2 knightPos);
     std::string getName() const;
     bool getState(float deltaTime);
+    bool isBreakable() const;
+    void breakVase(); 
+    void breakChest();
 private:
     Vector2 worldPos{};
     Texture2D texture{};
@@ -28,8 +31,14 @@ private:
     float collisionTime = 0.0f;
     float updateCollsionTime =  0.9f;
     bool state = true; 
-
     void animateAndDraw(Vector2 screenPos, float deltaTime);
+    int frameWidth ; // Ancho de cada fotograma de la animación
+    int frameHeight; // Alto de cada fotograma de la animación
+    int totalFrames; // Cantidad total de fotogramas en la animación
+    float frameTime; // Tiempo entre cada fotograma (ajusta esto según la velocidad deseada)
+    int currentFrame; // Fotograma actual
+    float frameCounter;
+    bool broken{false}; // Estado del jarrón
 };
 
 

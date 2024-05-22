@@ -29,6 +29,10 @@ public:
     void takeDamage(float damage);
     void receiveLife(float life);
     void updateLife(float life);
+    void restoreHealth();
+    void addScore(int points);
+    int getMaxHealth() const;
+
 private:
     const bool debug = false;
     int windowWidth{};
@@ -38,6 +42,7 @@ private:
     Texture2D shield{LoadTexture("characters/shield.png")};
     Rectangle shieldCollisionRec{};
     float health{5.f};
+    int maxHealth{5};
 };
 
 #endif

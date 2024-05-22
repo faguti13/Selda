@@ -179,3 +179,13 @@ void Character::updateLife(float life)
     }
     
 }
+
+void Character::restoreHealth() {
+    if (health < maxHealth) {
+        health += 1;
+    }
+}
+
+int Character::getMaxHealth() const {
+    return maxHealth;
+}

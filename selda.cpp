@@ -358,6 +358,30 @@ void drawScene1(const int& windowWidth, const int& windowHeight){
 
         if (IsKeyDown(KEY_SPACE))
         {
+
+            for (auto& prop : props)
+            {
+                if (prop.isBreakable() && CheckCollisionRecs(prop.getCollisionRec(knight.getWorldPos()), knight.getWeaponCollisionRec()))
+                { //Vase
+                    std::string name = prop.getName();
+                    if (name.find("vase") != std::string::npos)
+                    {
+                        prop.breakVase();
+                        if (knight.getHealth() < knight.getMaxHealth()) {
+                            knight.restoreHealth(); //Se suma un corazón si el contador no está lleno
+                        } else {
+                            pts += 20; //Si el contador está lleno, se suman 20 puntos al contador
+                        }
+                    }
+                    //Chest
+                    else if (name.find("chest") != std::string::npos)
+                    {
+                        prop.breakChest();
+                        foundChests++; 
+                        pts += 100; //Cada cofre da 100 pts al contador
+                    }
+                }
+            }
             for (auto enemy : enemies)
             {
                 if (CheckCollisionRecs(enemy->getCollisionRec(), knight.getWeaponCollisionRec()) && !CheckCollisionRecs(enemy->getVisionRectangle(), knight.getWeaponCollisionRec()))
@@ -570,6 +594,30 @@ void drawScene2 (const int& windowWidth, const int& windowHeight){
 
         if (IsKeyDown(KEY_SPACE))
         {
+
+            for (auto& prop : props)
+            {
+                if (prop.isBreakable() && CheckCollisionRecs(prop.getCollisionRec(knight.getWorldPos()), knight.getWeaponCollisionRec()))
+                { //Vase
+                    std::string name = prop.getName();
+                    if (name.find("vase") != std::string::npos)
+                    {
+                        prop.breakVase();
+                        if (knight.getHealth() < knight.getMaxHealth()) {
+                            knight.restoreHealth(); //Se suma un corazón si el contador no está lleno
+                        } else {
+                            pts += 20; //Si el contador está lleno, se suman 20 puntos al contador
+                        }
+                    }
+                    //Chest
+                    else if (name.find("chest") != std::string::npos)
+                    {
+                        prop.breakChest();
+                        foundChests++; 
+                        pts += 100; //Cada cofre da 100 pts al contador
+                    }
+                }
+            }
             for (auto enemy : enemies)
             {
                 if (CheckCollisionRecs(enemy->getCollisionRec(), knight.getWeaponCollisionRec()) && !CheckCollisionRecs(enemy->getVisionRectangle(), knight.getWeaponCollisionRec()))
@@ -791,6 +839,30 @@ void drawScene3(const int& windowWidth, const int& windowHeight){
 
         if (IsKeyDown(KEY_SPACE))
         {
+
+            for (auto& prop : props)
+            {
+                if (prop.isBreakable() && CheckCollisionRecs(prop.getCollisionRec(knight.getWorldPos()), knight.getWeaponCollisionRec()))
+                { //Vase
+                    std::string name = prop.getName();
+                    if (name.find("vase") != std::string::npos)
+                    {
+                        prop.breakVase();
+                        if (knight.getHealth() < knight.getMaxHealth()) {
+                            knight.restoreHealth(); //Se suma un corazón si el contador no está lleno
+                        } else {
+                            pts += 20; //Si el contador está lleno, se suman 20 puntos al contador
+                        }
+                    }
+                    //Chest
+                    else if (name.find("chest") != std::string::npos)
+                    {
+                        prop.breakChest();
+                        foundChests++; 
+                        pts += 100; //Cada cofre da 100 pts al contador
+                    }
+                }
+            }
             for (auto enemy : enemies)
             {
                 if (CheckCollisionRecs(enemy->getCollisionRec(), knight.getWeaponCollisionRec()) && !CheckCollisionRecs(enemy->getVisionRectangle(), knight.getWeaponCollisionRec()))
@@ -1011,6 +1083,30 @@ void drawScene4(const int& windowWidth, const int& windowHeight){
 
         if (IsKeyDown(KEY_SPACE))
         {
+
+            for (auto& prop : props)
+            {
+                if (prop.isBreakable() && CheckCollisionRecs(prop.getCollisionRec(knight.getWorldPos()), knight.getWeaponCollisionRec()))
+                { //Vase
+                    std::string name = prop.getName();
+                    if (name.find("vase") != std::string::npos)
+                    {
+                        prop.breakVase();
+                        if (knight.getHealth() < knight.getMaxHealth()) {
+                            knight.restoreHealth(); //Se suma un corazón si el contador no está lleno
+                        } else {
+                            pts += 20; //Si el contador está lleno, se suman 20 puntos al contador
+                        }
+                    }
+                    //Chest
+                    else if (name.find("chest") != std::string::npos)
+                    {
+                        prop.breakChest();
+                        foundChests++; 
+                        pts += 100; //Cada cofre da 100 pts al contador
+                    }
+                }
+            }
             for (auto enemy : enemies)
             {
                 if (CheckCollisionRecs(enemy->getCollisionRec(), knight.getWeaponCollisionRec()) && !CheckCollisionRecs(enemy->getVisionRectangle(), knight.getWeaponCollisionRec()))
@@ -1237,6 +1333,30 @@ void drawScene5(const int& windowWidth, const int& windowHeight){
 
         if (IsKeyDown(KEY_SPACE))
         {
+
+            for (auto& prop : props)
+            {
+                if (prop.isBreakable() && CheckCollisionRecs(prop.getCollisionRec(knight.getWorldPos()), knight.getWeaponCollisionRec()))
+                { //Vase
+                    std::string name = prop.getName();
+                    if (name.find("vase") != std::string::npos)
+                    {
+                        prop.breakVase();
+                        if (knight.getHealth() < knight.getMaxHealth()) {
+                            knight.restoreHealth(); //Se suma un corazón si el contador no está lleno
+                        } else {
+                            pts += 20; //Si el contador está lleno, se suman 20 puntos al contador
+                        }
+                    }
+                    //Chest
+                    else if (name.find("chest") != std::string::npos)
+                    {
+                        prop.breakChest();
+                        foundChests++; 
+                        pts += 100; //Cada cofre da 100 pts al contador
+                    }
+                }
+            }
             for (auto enemy : enemies)
             {
                 if (CheckCollisionRecs(enemy->getCollisionRec(), knight.getWeaponCollisionRec()) && !CheckCollisionRecs(enemy->getVisionRectangle(), knight.getWeaponCollisionRec()))
