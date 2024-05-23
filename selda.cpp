@@ -18,7 +18,7 @@ void drawScene3(const int& windowWidth, const int& windowHeight);
 void drawScene4(const int& windowWidth, const int& windowHeight);
 void drawScene5(const int& windowWidth, const int& windowHeight);
 
-std::string actualScene = "scene1";
+std::string actualScene = "scene2";
 int pts = 0;
 int remainignLife = 5;
 int foundChests = 0;
@@ -522,7 +522,7 @@ void drawScene2 (const int& windowWidth, const int& windowHeight){
     Texture2D redSpectreIdle = LoadTextureFromImage(redSpectreIdleIM);
     Texture2D redSpectreRun = LoadTextureFromImage(redSpectreRunIM);
 
-    Enemy* redSpectre1 = new Enemy(Vector2{600.f, 400.f}, redSpectreIdle, redSpectreRun, 1000.f, 1);
+    Enemy* redSpectre1 = new Enemy(Vector2{600.f, 400.f}, redSpectreIdle, redSpectreRun, 1000.f, 3);
     redSpectre1->patrolPoints = {Vector2{600.f, 400.f}, Vector2{3000.f, 400.f}, Vector2{3000.f, 2200.f}, Vector2{1700.f, 2200.f}, Vector2{400.f, 400.f}};
 
     Enemy* redSpectre2 = new Enemy(Vector2{1200.f, 400.f}, redSpectreIdle, redSpectreRun, 1000.f, 1);
@@ -545,6 +545,14 @@ void drawScene2 (const int& windowWidth, const int& windowHeight){
     bool collisionLLadder= false; // Para controlar la detección de choques con la bandera
 
     knight.updateLife(remainignLife);
+
+    Vector2 startPoint = {2.0f, 3.0f};
+    Vector2 targetPoint = {3.0f, 4.0f};
+    t_List* pathList = AStar(startPoint, targetPoint);
+    #define TILE_SIZE (16)
+    bool pathCalculated = false; // Añade esta línea antes del bucle
+    int count = 0;
+
 
     while (!WindowShouldClose())
     {
@@ -615,6 +623,65 @@ void drawScene2 (const int& windowWidth, const int& windowHeight){
                 }
                 else{
                     knight.undoMovement();
+                }
+            }
+        }
+
+        //sacar camino de astar para cada enemigo si un ojo espectral lo ve (con debug)
+        for (auto enemy3 : enemies) {
+            if (enemy3->getType() == 3){
+                if (CheckCollisionRecs(knight.getCollisionRec(), enemy3->getVisionRectangle())  && !CheckCollisionRecs(knight.getCollisionRec(),knight.safeZone)  ) {
+                    if (!pathCalculated && count != 1) { // Sólo calcula el camino si no se ha calculado antes
+                        float currentTime = GetTime(); // Obtén el tiempo actual
+                        if (currentTime - enemy3->lastPathCalculationTime > 1.0f) { // Si ha pasado más de 1 segundo
+                            
+                            for (auto enemy : enemies){
+
+                                float ex = round((enemy->getWorldPos().x/128));
+                                float ey = round((enemy->getWorldPos().y/128));
+                                float kx = round((knight.getWorldPos().x/128)+3);
+                                float ky = round((knight.getWorldPos().y/128)+1.6f);
+
+                                Vector2 startPoint = {ex, ey};
+                                Vector2 targetPoint = {kx, ky};
+                                pathList = AStar(startPoint, targetPoint);
+
+                                //Debug camino
+                                DrawRectangle(startPoint.x * TILE_SIZE, startPoint.y * TILE_SIZE, TILE_SIZE, TILE_SIZE, BLUE);
+                                DrawRectangle(targetPoint.x * TILE_SIZE, targetPoint.y * TILE_SIZE, TILE_SIZE, TILE_SIZE, RED);
+
+                                std::vector<Vector2> pathPoints;
+                                if (pathList != nullptr) {
+                                    for (int i = 0; i < pathList->size; i++) {
+                                        AStarNode* node = static_cast<AStarNode*>(list_get(pathList, i));
+                                        std::cout<<node->x*128<<" "<<node->y*128<<std::endl;
+                                        if (node != nullptr) {
+                                            Vector2 point = {node->x*128, node->y*128};
+                                            pathPoints.push_back(point);
+                                        }
+                                        DrawRectangle(node->x * TILE_SIZE, node->y * TILE_SIZE, TILE_SIZE, TILE_SIZE, YELLOW);
+                                        for (auto enemy : enemies)
+                                        {   
+                                            enemy->pathPoints = pathPoints;
+                                            enemy->callEnemies();
+                                            if (enemy->getType() == 2){
+                                                enemy->teleport(Vector2{enemy3->getWorldPos().x, enemy3->getWorldPos().y});
+                                            }
+                                        }
+                                    }
+                                }
+
+                                pathCalculated = true; // Establece pathCalculated en true después de calcular el camino
+                                count = 1;
+                                enemy->uncallEnemies();
+
+                            }
+                        }
+                    }
+                } else {
+                    pathCalculated = false; // Si no hay colisión, establece pathCalculated en false
+                    count = 0;
+                    enemy3->uncallEnemies();
                 }
             }
         }
@@ -693,6 +760,19 @@ void drawScene2 (const int& windowWidth, const int& windowHeight){
         Rectangle safeZone = {szScreenPos.x, szScreenPos.y, 128*4, 128*4};
         DrawRectangleRec(safeZone, Color{0, 255, 0, 55});
         knight.setSafeZone(safeZone);
+
+        for (int i = 0; i < 30; i++) {
+            for (int j = 0; j < 20; j++) {
+                switch (mapmat[i][j]) {
+                    case 0:
+                        // DrawRectangle(i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE, GRAY);
+                        break;
+                    case 1:
+                        DrawRectangle(i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE, BLACK);
+                        break;
+                }
+            }
+        }
 
         EndDrawing();
     }
@@ -791,6 +871,14 @@ void drawScene3(const int& windowWidth, const int& windowHeight){
 
     knight.updateLife(remainignLife);
 
+    Vector2 startPoint = {2.0f, 3.0f};
+    Vector2 targetPoint = {3.0f, 4.0f};
+    t_List* pathList = AStar(startPoint, targetPoint);
+    #define TILE_SIZE (16)
+    bool pathCalculated = false; // Añade esta línea antes del bucle
+    int count = 0;
+
+
     while (!WindowShouldClose())
     {
 
@@ -860,6 +948,65 @@ void drawScene3(const int& windowWidth, const int& windowHeight){
                 }
                 else{
                     knight.undoMovement();
+                }
+            }
+        }
+
+        //sacar camino de astar para cada enemigo si un ojo espectral lo ve (con debug)
+        for (auto enemy3 : enemies) {
+            if (enemy3->getType() == 3){
+                if (CheckCollisionRecs(knight.getCollisionRec(), enemy3->getVisionRectangle())  && !CheckCollisionRecs(knight.getCollisionRec(),knight.safeZone)  ) {
+                    if (!pathCalculated && count != 1) { // Sólo calcula el camino si no se ha calculado antes
+                        float currentTime = GetTime(); // Obtén el tiempo actual
+                        if (currentTime - enemy3->lastPathCalculationTime > 1.0f) { // Si ha pasado más de 1 segundo
+                            
+                            for (auto enemy : enemies){
+
+                                float ex = round((enemy->getWorldPos().x/128));
+                                float ey = round((enemy->getWorldPos().y/128));
+                                float kx = round((knight.getWorldPos().x/128)+3);
+                                float ky = round((knight.getWorldPos().y/128)+1.6f);
+
+                                Vector2 startPoint = {ex, ey};
+                                Vector2 targetPoint = {kx, ky};
+                                pathList = AStar(startPoint, targetPoint);
+
+                                //Debug camino
+                                DrawRectangle(startPoint.x * TILE_SIZE, startPoint.y * TILE_SIZE, TILE_SIZE, TILE_SIZE, BLUE);
+                                DrawRectangle(targetPoint.x * TILE_SIZE, targetPoint.y * TILE_SIZE, TILE_SIZE, TILE_SIZE, RED);
+
+                                std::vector<Vector2> pathPoints;
+                                if (pathList != nullptr) {
+                                    for (int i = 0; i < pathList->size; i++) {
+                                        AStarNode* node = static_cast<AStarNode*>(list_get(pathList, i));
+                                        std::cout<<node->x*128<<" "<<node->y*128<<std::endl;
+                                        if (node != nullptr) {
+                                            Vector2 point = {node->x*128, node->y*128};
+                                            pathPoints.push_back(point);
+                                        }
+                                        DrawRectangle(node->x * TILE_SIZE, node->y * TILE_SIZE, TILE_SIZE, TILE_SIZE, YELLOW);
+                                        for (auto enemy : enemies)
+                                        {   
+                                            enemy->pathPoints = pathPoints;
+                                            enemy->callEnemies();
+                                            if (enemy->getType() == 2){
+                                                enemy->teleport(Vector2{enemy3->getWorldPos().x, enemy3->getWorldPos().y});
+                                            }
+                                        }
+                                    }
+                                }
+
+                                pathCalculated = true; // Establece pathCalculated en true después de calcular el camino
+                                count = 1;
+                                enemy->uncallEnemies();
+
+                            }
+                        }
+                    }
+                } else {
+                    pathCalculated = false; // Si no hay colisión, establece pathCalculated en false
+                    count = 0;
+                    enemy3->uncallEnemies();
                 }
             }
         }
@@ -938,6 +1085,19 @@ void drawScene3(const int& windowWidth, const int& windowHeight){
         Rectangle safeZone = {szScreenPos.x, szScreenPos.y, 128*3, 128*3};
         DrawRectangleRec(safeZone, Color{0, 255, 0, 55});
         knight.setSafeZone(safeZone);
+
+        for (int i = 0; i < 30; i++) {
+            for (int j = 0; j < 20; j++) {
+                switch (mapmat[i][j]) {
+                    case 0:
+                        // DrawRectangle(i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE, GRAY);
+                        break;
+                    case 1:
+                        DrawRectangle(i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE, BLACK);
+                        break;
+                }
+            }
+        }
 
         EndDrawing();
     }
@@ -1035,6 +1195,15 @@ void drawScene4(const int& windowWidth, const int& windowHeight){
 
     knight.updateLife(remainignLife);
 
+    Vector2 startPoint = {2.0f, 3.0f};
+    Vector2 targetPoint = {3.0f, 4.0f};
+    t_List* pathList = AStar(startPoint, targetPoint);
+    #define TILE_SIZE (16)
+    bool pathCalculated = false; // Añade esta línea antes del bucle
+    int count = 0;
+
+    
+
     while (!WindowShouldClose())
     {
 
@@ -1104,6 +1273,65 @@ void drawScene4(const int& windowWidth, const int& windowHeight){
                 }
                 else{
                     knight.undoMovement();
+                }
+            }
+        }
+
+        //sacar camino de astar para cada enemigo si un ojo espectral lo ve (con debug)
+        for (auto enemy3 : enemies) {
+            if (enemy3->getType() == 3){
+                if (CheckCollisionRecs(knight.getCollisionRec(), enemy3->getVisionRectangle())  && !CheckCollisionRecs(knight.getCollisionRec(),knight.safeZone)  ) {
+                    if (!pathCalculated && count != 1) { // Sólo calcula el camino si no se ha calculado antes
+                        float currentTime = GetTime(); // Obtén el tiempo actual
+                        if (currentTime - enemy3->lastPathCalculationTime > 1.0f) { // Si ha pasado más de 1 segundo
+                            
+                            for (auto enemy : enemies){
+
+                                float ex = round((enemy->getWorldPos().x/128));
+                                float ey = round((enemy->getWorldPos().y/128));
+                                float kx = round((knight.getWorldPos().x/128)+3);
+                                float ky = round((knight.getWorldPos().y/128)+1.6f);
+
+                                Vector2 startPoint = {ex, ey};
+                                Vector2 targetPoint = {kx, ky};
+                                pathList = AStar(startPoint, targetPoint);
+
+                                //Debug camino
+                                DrawRectangle(startPoint.x * TILE_SIZE, startPoint.y * TILE_SIZE, TILE_SIZE, TILE_SIZE, BLUE);
+                                DrawRectangle(targetPoint.x * TILE_SIZE, targetPoint.y * TILE_SIZE, TILE_SIZE, TILE_SIZE, RED);
+
+                                std::vector<Vector2> pathPoints;
+                                if (pathList != nullptr) {
+                                    for (int i = 0; i < pathList->size; i++) {
+                                        AStarNode* node = static_cast<AStarNode*>(list_get(pathList, i));
+                                        std::cout<<node->x*128<<" "<<node->y*128<<std::endl;
+                                        if (node != nullptr) {
+                                            Vector2 point = {node->x*128, node->y*128};
+                                            pathPoints.push_back(point);
+                                        }
+                                        DrawRectangle(node->x * TILE_SIZE, node->y * TILE_SIZE, TILE_SIZE, TILE_SIZE, YELLOW);
+                                        for (auto enemy : enemies)
+                                        {   
+                                            enemy->pathPoints = pathPoints;
+                                            enemy->callEnemies();
+                                            if (enemy->getType() == 2){
+                                                enemy->teleport(Vector2{enemy3->getWorldPos().x, enemy3->getWorldPos().y});
+                                            }
+                                        }
+                                    }
+                                }
+
+                                pathCalculated = true; // Establece pathCalculated en true después de calcular el camino
+                                count = 1;
+                                enemy->uncallEnemies();
+
+                            }
+                        }
+                    }
+                } else {
+                    pathCalculated = false; // Si no hay colisión, establece pathCalculated en false
+                    count = 0;
+                    enemy3->uncallEnemies();
                 }
             }
         }
@@ -1183,6 +1411,19 @@ void drawScene4(const int& windowWidth, const int& windowHeight){
         Rectangle safeZone = {szScreenPos.x, szScreenPos.y, 128*3, 128*3};
         DrawRectangleRec(safeZone, Color{0, 255, 0, 55});
         knight.setSafeZone(safeZone);
+
+        for (int i = 0; i < 30; i++) {
+            for (int j = 0; j < 20; j++) {
+                switch (mapmat[i][j]) {
+                    case 0:
+                        // DrawRectangle(i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE, GRAY);
+                        break;
+                    case 1:
+                        DrawRectangle(i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE, BLACK);
+                        break;
+                }
+            }
+        }
 
         EndDrawing();
     }
@@ -1285,6 +1526,13 @@ void drawScene5(const int& windowWidth, const int& windowHeight){
 
     knight.updateLife(remainignLife);
 
+    Vector2 startPoint = {2.0f, 3.0f};
+    Vector2 targetPoint = {3.0f, 4.0f};
+    t_List* pathList = AStar(startPoint, targetPoint);
+    #define TILE_SIZE (16)
+    bool pathCalculated = false; // Añade esta línea antes del bucle
+    int count = 0;
+
     while (!WindowShouldClose())
     {
 
@@ -1354,6 +1602,65 @@ void drawScene5(const int& windowWidth, const int& windowHeight){
                 }
                 else{
                     knight.undoMovement();
+                }
+            }
+        }
+
+        //sacar camino de astar para cada enemigo si un ojo espectral lo ve (con debug)
+        for (auto enemy3 : enemies) {
+            if (enemy3->getType() == 3){
+                if (CheckCollisionRecs(knight.getCollisionRec(), enemy3->getVisionRectangle())  && !CheckCollisionRecs(knight.getCollisionRec(),knight.safeZone)  ) {
+                    if (!pathCalculated && count != 1) { // Sólo calcula el camino si no se ha calculado antes
+                        float currentTime = GetTime(); // Obtén el tiempo actual
+                        if (currentTime - enemy3->lastPathCalculationTime > 1.0f) { // Si ha pasado más de 1 segundo
+                            
+                            for (auto enemy : enemies){
+
+                                float ex = round((enemy->getWorldPos().x/128));
+                                float ey = round((enemy->getWorldPos().y/128));
+                                float kx = round((knight.getWorldPos().x/128)+3);
+                                float ky = round((knight.getWorldPos().y/128)+1.6f);
+
+                                Vector2 startPoint = {ex, ey};
+                                Vector2 targetPoint = {kx, ky};
+                                pathList = AStar(startPoint, targetPoint);
+
+                                //Debug camino
+                                DrawRectangle(startPoint.x * TILE_SIZE, startPoint.y * TILE_SIZE, TILE_SIZE, TILE_SIZE, BLUE);
+                                DrawRectangle(targetPoint.x * TILE_SIZE, targetPoint.y * TILE_SIZE, TILE_SIZE, TILE_SIZE, RED);
+
+                                std::vector<Vector2> pathPoints;
+                                if (pathList != nullptr) {
+                                    for (int i = 0; i < pathList->size; i++) {
+                                        AStarNode* node = static_cast<AStarNode*>(list_get(pathList, i));
+                                        std::cout<<node->x*128<<" "<<node->y*128<<std::endl;
+                                        if (node != nullptr) {
+                                            Vector2 point = {node->x*128, node->y*128};
+                                            pathPoints.push_back(point);
+                                        }
+                                        DrawRectangle(node->x * TILE_SIZE, node->y * TILE_SIZE, TILE_SIZE, TILE_SIZE, YELLOW);
+                                        for (auto enemy : enemies)
+                                        {   
+                                            enemy->pathPoints = pathPoints;
+                                            enemy->callEnemies();
+                                            if (enemy->getType() == 2){
+                                                enemy->teleport(Vector2{enemy3->getWorldPos().x, enemy3->getWorldPos().y});
+                                            }
+                                        }
+                                    }
+                                }
+
+                                pathCalculated = true; // Establece pathCalculated en true después de calcular el camino
+                                count = 1;
+                                enemy->uncallEnemies();
+
+                            }
+                        }
+                    }
+                } else {
+                    pathCalculated = false; // Si no hay colisión, establece pathCalculated en false
+                    count = 0;
+                    enemy3->uncallEnemies();
                 }
             }
         }
@@ -1433,6 +1740,19 @@ void drawScene5(const int& windowWidth, const int& windowHeight){
         Rectangle safeZone = {szScreenPos.x, szScreenPos.y, 128*3, 128*2};
         DrawRectangleRec(safeZone, Color{0, 255, 0, 55});
         knight.setSafeZone(safeZone);
+
+        for (int i = 0; i < 30; i++) {
+            for (int j = 0; j < 20; j++) {
+                switch (mapmat[i][j]) {
+                    case 0:
+                        // DrawRectangle(i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE, GRAY);
+                        break;
+                    case 1:
+                        DrawRectangle(i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE, BLACK);
+                        break;
+                }
+            }
+        }
 
         EndDrawing();
     }
