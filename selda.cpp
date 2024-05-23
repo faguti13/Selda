@@ -110,6 +110,7 @@ void drawScene1(const int& windowWidth, const int& windowHeight){
     Texture2D map = LoadTexture("nature_tileset/piso1.png");
     Vector2 mapPos{0.0, 0.0};
     const float mapScale{4.0f}; // escala del mapa
+    int mapmat[30][20] = {0};
     LoadMapFromFile("mapa1.txt");
 
     // Carga las texturas
@@ -138,8 +139,8 @@ void drawScene1(const int& windowWidth, const int& windowHeight){
         Prop{Vector2{2560.f, 1664.f}, LoadTexture("nature_tileset/chest1.png"), "nature_tileset/chest1.png"},
 
         // bloques arriba der
-        Prop{Vector2{896.f, 768.f}, LoadTexture("nature_tileset/6bricks.png"), "nature_tileset/6bricks.png"},
-        Prop{Vector2{1664.f, 768.f}, LoadTexture("nature_tileset/5upCorR.png"), "nature_tileset/5upCorR.png"},
+        Prop{Vector2{896.f, 640.f}, LoadTexture("nature_tileset/6bricks.png"), "nature_tileset/6bricks.png"},
+        Prop{Vector2{1664.f, 640.f}, LoadTexture("nature_tileset/5upCorR.png"), "nature_tileset/5upCorR.png"},
 
         // bloques abajo izq
         Prop{Vector2{384.f, 1664.f}, LoadTexture("nature_tileset/6bricks.png"), "nature_tileset/6bricks.png"},
@@ -155,7 +156,7 @@ void drawScene1(const int& windowWidth, const int& windowHeight){
     Image graySpectreIdleIM = LoadImage("characters/goblin_idle_spritesheet.png");
     Image graySpectreRunIM = LoadImage("characters/goblin_run_spritesheet.png");
 
-    Image spectralEyeIM = LoadImage("characters/spectralEyeIM.png");
+    Image spectralEyeIM = LoadImage("characters/spectral_eye.png");
 
     // Convierte las imágenes a texturas
     Texture2D graySpectreIdle = LoadTextureFromImage(graySpectreIdleIM);
@@ -164,7 +165,7 @@ void drawScene1(const int& windowWidth, const int& windowHeight){
     Texture2D spectralEye = LoadTextureFromImage(spectralEyeIM);
 
     //Espectros
-    Enemy* greySpectre1 = new Enemy(Vector2{600.f, 400.f}, graySpectreIdle, graySpectreRun, 1000.f, 0);
+    Enemy* greySpectre1 = new Enemy(Vector2{600.f, 400.f}, graySpectreIdle, graySpectreIdle, 1000.f, 3);
     greySpectre1->patrolPoints = {Vector2{600.f, 400.f}, Vector2{3000.f, 400.f}, Vector2{3000.f, 2200.f}, Vector2{1700.f, 2200.f}, Vector2{400.f, 400.f}};
 
     Enemy* greySpectre2 = new Enemy(Vector2{1000.f, 400.f}, graySpectreIdle, graySpectreRun, 1000.f, 0);
@@ -181,21 +182,16 @@ void drawScene1(const int& windowWidth, const int& windowHeight){
     int randNum3 = randNum.nextInRange(3, 5);
     int randNum4 = randNum.nextInRange(3, 5);
 
-    // std::cout<<randNum1<<std::endl;     
-    // std::cout<<randNum2<<std::endl;     
-    // std::cout<<randNum3<<std::endl;     
-    // std::cout<<randNum4<<std::endl;
-
-    Enemy* simpleEnemy1 = new Enemy(Vector2{1800.f, 400.f}, graySpectreIdle, graySpectreRun, 0.f, randNum1);
+    Enemy* simpleEnemy1 = new Enemy(Vector2{1800.f, 400.f}, spectralEye, spectralEye, 1000.f, randNum1);
     simpleEnemy1->patrolPoints = {Vector2{1800.f, 400.f}, Vector2{3000.f, 400.f}, Vector2{3000.f, 2200.f}, Vector2{1700.f, 2200.f}, Vector2{400.f, 400.f}};
 
-    Enemy* simpleEnemy2 = new Enemy(Vector2{2200.f, 400.f}, graySpectreIdle, graySpectreRun, 0.f, randNum2);
+    Enemy* simpleEnemy2 = new Enemy(Vector2{2200.f, 400.f}, graySpectreIdle, graySpectreRun, 1000.f, randNum2);
     simpleEnemy2->patrolPoints = {Vector2{2200.f, 400.f}, Vector2{3000.f, 400.f}, Vector2{3000.f, 2200.f}, Vector2{1700.f, 2200.f}, Vector2{400.f, 400.f}};
 
-    Enemy* simpleEnemy3 = new Enemy(Vector2{2600.f, 400.f}, graySpectreIdle, graySpectreRun, 0.f, randNum3);
+    Enemy* simpleEnemy3 = new Enemy(Vector2{2600.f, 400.f}, graySpectreIdle, graySpectreRun, 1000.f, randNum3);
     simpleEnemy3->patrolPoints = {Vector2{2600.f, 400.f}, Vector2{3000.f, 400.f}, Vector2{3000.f, 2200.f}, Vector2{1700.f, 2200.f}, Vector2{400.f, 400.f}};
 
-    Enemy* simpleEnemy4 = new Enemy(Vector2{3000.f, 400.f}, graySpectreIdle, graySpectreRun, 0.f, randNum4);
+    Enemy* simpleEnemy4 = new Enemy(Vector2{3000.f, 400.f}, graySpectreIdle, graySpectreRun, 1000.f, randNum4);
     simpleEnemy4->patrolPoints = {Vector2{3000.f, 400.f}, Vector2{3000.f, 400.f}, Vector2{3000.f, 2200.f}, Vector2{1700.f, 2200.f}, Vector2{400.f, 400.f}};
 
     Enemy* enemies[]{
@@ -217,7 +213,12 @@ void drawScene1(const int& windowWidth, const int& windowHeight){
     Vector2 startPoint = {2.0f, 3.0f};
     Vector2 targetPoint = {3.0f, 4.0f};
     t_List* pathList = AStar(startPoint, targetPoint);
-    
+    #define TILE_SIZE (16)
+    std::vector<Vector2> pathPoints; 
+    bool pathCalculated = false; // Añade esta línea antes del bucle
+    int count = 0;
+
+
     while (!WindowShouldClose())
     {   
         BeginDrawing();
@@ -282,66 +283,70 @@ void drawScene1(const int& windowWidth, const int& windowHeight){
             }
         }    
 
-
-        // Colision enemigo con prop
-        for (auto& prop : props)
-        {
-            LoadMapFromFile("mapa1.txt");
-
             for (auto enemy : enemies) {
-                if (CheckCollisionRecs(prop.getCollisionRec(knight.getWorldPos()), enemy->getCollisionRec())) {
-                    float currentTime = GetTime(); // Obtén el tiempo actual
-                    if (currentTime - enemy->lastPathCalculationTime > 1.0f) { // Si ha pasado más de 1 segundo
-                        float ex = round((enemy->getWorldPos().x/128));
-                        float ey = round((enemy->getWorldPos().y/128));
-                        float kx = round((knight.getWorldPos().x/128));
-                        float ky = round((knight.getWorldPos().y/128));
+                if (enemy->getType() == 3){
+                    if (CheckCollisionRecs(knight.getCollisionRec(), enemy->getVisionRectangle())) {
+                        if (!pathCalculated && count != 1) { // Sólo calcula el camino si no se ha calculado antes
+                            float currentTime = GetTime(); // Obtén el tiempo actual
+                            if (currentTime - enemy->lastPathCalculationTime > 1.0f) { // Si ha pasado más de 1 segundo
+                                
+                                for (auto enemy : enemies){
 
-                        Vector2 startPoint = {ex, ey};
-                        Vector2 targetPoint = {kx, ky};
-                        pathList = AStar(startPoint, targetPoint);
+                                    float ex = round((enemy->getWorldPos().x/128));
+                                    float ey = round((enemy->getWorldPos().y/128));
+                                    float kx = round((knight.getWorldPos().x/128)+3);
+                                    float ky = round((knight.getWorldPos().y/128)+1.6f);
 
-                        std::vector<Vector2> pathPoints;
-                        if (pathList != nullptr) {
-                            for (int i = 0; i < pathList->size; i++) {
-                                AStarNode* node = static_cast<AStarNode*>(list_get(pathList, i));
-                                if (node != nullptr) {
-                                    Vector2 point = {node->x, node->y};
-                                    pathPoints.push_back(point);
+                                    Vector2 startPoint = {ex, ey};
+                                    Vector2 targetPoint = {kx, ky};
+                                    pathList = AStar(startPoint, targetPoint);
+
+                                    DrawRectangle(startPoint.x * TILE_SIZE, startPoint.y * TILE_SIZE, TILE_SIZE, TILE_SIZE, BLUE);
+                                    DrawRectangle(targetPoint.x * TILE_SIZE, targetPoint.y * TILE_SIZE, TILE_SIZE, TILE_SIZE, RED);
+
+                                    std::vector<Vector2> pathPoints;
+                                    if (pathList != nullptr) {
+                                        for (int i = 0; i < pathList->size; i++) {
+                                            AStarNode* node = static_cast<AStarNode*>(list_get(pathList, i));
+                                            if (node != nullptr) {
+                                                Vector2 point = {node->x, node->y};
+                                                pathPoints.push_back(point);
+                                            }
+                                        }
+                                    }
+
+                                    pathCalculated = true; // Establece pathCalculated en true después de calcular el camino
+                                    count = 1;
+
+                                    for (int i = 0; i < pathList->size ; i++) {
+                                        AStarNode* node = static_cast<AStarNode*>(list_get(pathList, i));
+                                        //std::cout<<node->x*128<<" "<<node->y*128<<std::endl;
+
+                                        // Guarda las coordenadas del nodo en la matriz
+                                        pathPoints.push_back(Vector2{node->x*128, node->y*128});
+
+                                        for (auto enemy : enemies)
+                                        {   
+                                            enemy->pathPoints = pathPoints;
+                                            // enemy->callEnemies();
+                                        }
+
+                                        DrawRectangle(node->x * TILE_SIZE, node->y * TILE_SIZE, TILE_SIZE, TILE_SIZE, YELLOW);
+                                    }
+                                    
                                 }
                             }
                         }
-
-                        enemy->pathPoints = pathPoints; // Almacena la ruta en el enemigo
-                        enemy->currentPathPoint = 0; // Reinicia el punto de ruta actual
-                        enemy->lastPathCalculationTime = currentTime; // Actualiza la hora de la última calculación
-                    }
-
-                    // Mueve al enemigo a lo largo de la ruta
-                    if (!enemy->pathPoints.empty()) {
-                        Vector2 direction = Vector2Subtract(enemy->pathPoints[enemy->currentPathPoint], enemy->getWorldPos());
-                        if (Vector2Length(direction) < enemy->speed * GetFrameTime()) {
-                            enemy->currentPathPoint = (enemy->currentPathPoint + 1) % enemy->pathPoints.size();
-                        } else {
-                            direction = Vector2Normalize(direction);
-                            enemy->setWorldPos(Vector2Add(enemy->getWorldPos(), Vector2Scale(direction, enemy->speed * GetFrameTime())));
-                        }
+                    } else {
+                        pathCalculated = false; // Si no hay colisión, establece pathCalculated en false
+                        count = 0;
                     }
                 }
-            }
-        }    
+            }        
         
-
-        //debug collisionrec jugador
-        // Rectangle rec = knight.getCollisionRec();
-        // DrawRectangleLinesEx(rec, 2, RED); // Dibuja el rectángulo con un grosor de 2 y en color rojo
-
         for (auto enemy : enemies)
         {
             enemy->tick(GetFrameTime());
-            ////debug collisionrec enemigos
-            // Rectangle enemyRec = enemy->getCollisionRec();
-            // DrawRectangleLinesEx(enemyRec, 2, RED); // Dibuja el rectángulo con un grosor de 2 y en color rojos
         }
 
         //datos pantalla
@@ -413,6 +418,36 @@ void drawScene1(const int& windowWidth, const int& windowHeight){
         Rectangle safeZone = {szScreenPos.x, szScreenPos.y, 128*5, 128*3};
         DrawRectangleRec(safeZone, Color{0, 255, 0, 55});
         knight.setSafeZone(safeZone);
+
+        for (int i = 0; i < 30; i++) {
+            for (int j = 0; j < 20; j++) {
+                switch (mapmat[i][j]) {
+                    case 0:
+                        // DrawRectangle(i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE, GRAY);
+                        break;
+                    case 1:
+                        DrawRectangle(i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE, BLACK);
+                        break;
+                }
+            }
+        }
+
+
+    
+        // for (int i = 0; i < pathList->size ; i++) {
+        //     AStarNode* node = static_cast<AStarNode*>(list_get(pathList, i));
+        //     //std::cout<<node->x*128<<" "<<node->y*128<<std::endl;
+
+        //     // Guarda las coordenadas del nodo en la matriz
+        //     pathPoints.push_back(Vector2{node->x*128, node->y*128});
+
+        //     // for (auto enemy : enemies)
+        //     // {   
+        //     //     enemy->pathPoints = pathPoints;
+        //     // }
+
+        //     DrawRectangle(node->x * TILE_SIZE, node->y * TILE_SIZE, TILE_SIZE, TILE_SIZE, YELLOW);
+        // }
 
         EndDrawing();
     }

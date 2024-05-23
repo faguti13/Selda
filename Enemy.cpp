@@ -86,9 +86,9 @@ void Enemy::tick(float deltaTime)
         DrawRectangleRec(visionRectangle, visionColor);
 
         // Si el jugador está dentro del rango de visión del enemigo
-        if (CheckCollisionRecs(visionRectangle, target->getCollisionRec())    && !CheckCollisionRecs(getCollisionRec(),target->safeZone)  ) {
+        if (CheckCollisionRecs(visionRectangle, target->getCollisionRec())    && !CheckCollisionRecs(getCollisionRec(),target->safeZone) && !callAllEnemies ) {
 
-
+            // callAllEnemies = true;
 
             // Actualizar la velocidad para seguir al jugador
             velocity = Vector2Subtract(target->getScreenPos(), getScreenPos());
@@ -102,6 +102,23 @@ void Enemy::tick(float deltaTime)
             // Esto hace que el enemigo pueda volver a la ruta de patrullaje cuando pierda al jugador de vista
             breadcrumbs.push(getScreenPos());
         } 
+        else if (callAllEnemies)
+        {
+            // Calcular la dirección hacia el próximo punto de la ruta de patrullaje
+            Vector2 direction = Vector2Subtract(pathPoints[currentPathPoint], worldPos);
+
+            rightLeft = direction.x >= 0 ? 1 : -1;
+
+        // Si el enemigo está cerca del punto de la ruta, moverse al siguiente punto
+            if (Vector2Length(direction) < patrol_speed * deltaTime) {
+                currentPathPoint = (currentPathPoint + 1) % pathPoints.size();
+            } 
+            // Si el enemigo está lejos del punto de patrulla, moverse hacia el punto
+            else {
+                direction = Vector2Normalize(direction);
+                worldPos = Vector2Add(worldPos, Vector2Scale(direction, patrol_speed * deltaTime));
+            }
+        }
         // Si el jugador está fuera del rango de visión del enemigo
         else {
             // Si hay breadcrumbs en la pila
@@ -337,7 +354,7 @@ void Enemy::tick(float deltaTime)
 
             // Si el jugador está dentro del rango de visión del enemigo
             if (CheckCollisionRecs(visionRectangle, target->getCollisionRec())    && !CheckCollisionRecs(getCollisionRec(),target->safeZone)  ) {
-
+                undoMovement();
 
             } 
             else 
@@ -368,4 +385,9 @@ void Enemy::SetTarget(Character *character)
 Vector2 Enemy::getScreenPos() {
     // Devuelve la posición del enemigo con respecto al jugador
     return Vector2Subtract(worldPos, target->getWorldPos());
+}
+
+int Enemy::getType()
+{
+    return tipo;
 }
