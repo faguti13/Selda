@@ -165,13 +165,13 @@ void drawScene1(const int& windowWidth, const int& windowHeight){
     Texture2D spectralEye = LoadTextureFromImage(spectralEyeIM);
 
     //Espectros
-    Enemy* greySpectre1 = new Enemy(Vector2{600.f, 400.f}, graySpectreIdle, graySpectreIdle, 1000.f, 3);
+    Enemy* greySpectre1 = new Enemy(Vector2{600.f, 400.f}, graySpectreIdle, graySpectreIdle, 1000.f, 2);
     greySpectre1->patrolPoints = {Vector2{600.f, 400.f}, Vector2{3000.f, 400.f}, Vector2{3000.f, 2200.f}, Vector2{1700.f, 2200.f}, Vector2{400.f, 400.f}};
 
-    Enemy* greySpectre2 = new Enemy(Vector2{1000.f, 400.f}, graySpectreIdle, graySpectreRun, 1000.f, 0);
+    Enemy* greySpectre2 = new Enemy(Vector2{1000.f, 400.f}, graySpectreIdle, graySpectreRun, 1000.f, 2);
     greySpectre2->patrolPoints = {Vector2{1000.f, 400.f}, Vector2{3000.f, 400.f}, Vector2{3000.f, 2200.f}, Vector2{1700.f, 2200.f}, Vector2{400.f, 400.f}};
 
-    Enemy* greySpectre3 = new Enemy(Vector2{1400.f, 400.f}, graySpectreIdle, graySpectreRun, 1000.f, 0);
+    Enemy* greySpectre3 = new Enemy(Vector2{1400.f, 400.f}, graySpectreIdle, graySpectreRun, 1000.f, 2);
     greySpectre3->patrolPoints = {Vector2{1400.f, 400.f}, Vector2{3000.f, 400.f}, Vector2{3000.f, 2200.f}, Vector2{1700.f, 2200.f}, Vector2{400.f, 400.f}};
     
     // Enemigos simples
@@ -214,7 +214,6 @@ void drawScene1(const int& windowWidth, const int& windowHeight){
     Vector2 targetPoint = {3.0f, 4.0f};
     t_List* pathList = AStar(startPoint, targetPoint);
     #define TILE_SIZE (16)
-    std::vector<Vector2> pathPoints; 
     bool pathCalculated = false; // Añade esta línea antes del bucle
     int count = 0;
 
@@ -283,66 +282,64 @@ void drawScene1(const int& windowWidth, const int& windowHeight){
             }
         }    
 
-            for (auto enemy : enemies) {
-                if (enemy->getType() == 3){
-                    if (CheckCollisionRecs(knight.getCollisionRec(), enemy->getVisionRectangle())) {
-                        if (!pathCalculated && count != 1) { // Sólo calcula el camino si no se ha calculado antes
-                            float currentTime = GetTime(); // Obtén el tiempo actual
-                            if (currentTime - enemy->lastPathCalculationTime > 1.0f) { // Si ha pasado más de 1 segundo
-                                
-                                for (auto enemy : enemies){
+        //sacar camino de astar para cada enemigo si un ojo espectral lo ve (con debug)
+        for (auto enemy3 : enemies) {
+            if (enemy3->getType() == 3){
+                if (CheckCollisionRecs(knight.getCollisionRec(), enemy3->getVisionRectangle())  && !CheckCollisionRecs(knight.getCollisionRec(),knight.safeZone)  ) {
+                    if (!pathCalculated && count != 1) { // Sólo calcula el camino si no se ha calculado antes
+                        float currentTime = GetTime(); // Obtén el tiempo actual
+                        if (currentTime - enemy3->lastPathCalculationTime > 1.0f) { // Si ha pasado más de 1 segundo
+                            
+                            for (auto enemy : enemies){
 
-                                    float ex = round((enemy->getWorldPos().x/128));
-                                    float ey = round((enemy->getWorldPos().y/128));
-                                    float kx = round((knight.getWorldPos().x/128)+3);
-                                    float ky = round((knight.getWorldPos().y/128)+1.6f);
+                                float ex = round((enemy->getWorldPos().x/128));
+                                float ey = round((enemy->getWorldPos().y/128));
+                                float kx = round((knight.getWorldPos().x/128)+3);
+                                float ky = round((knight.getWorldPos().y/128)+1.6f);
 
-                                    Vector2 startPoint = {ex, ey};
-                                    Vector2 targetPoint = {kx, ky};
-                                    pathList = AStar(startPoint, targetPoint);
+                                Vector2 startPoint = {ex, ey};
+                                Vector2 targetPoint = {kx, ky};
+                                pathList = AStar(startPoint, targetPoint);
 
-                                    DrawRectangle(startPoint.x * TILE_SIZE, startPoint.y * TILE_SIZE, TILE_SIZE, TILE_SIZE, BLUE);
-                                    DrawRectangle(targetPoint.x * TILE_SIZE, targetPoint.y * TILE_SIZE, TILE_SIZE, TILE_SIZE, RED);
+                                //Debug camino
+                                // DrawRectangle(startPoint.x * TILE_SIZE, startPoint.y * TILE_SIZE, TILE_SIZE, TILE_SIZE, BLUE);
+                                // DrawRectangle(targetPoint.x * TILE_SIZE, targetPoint.y * TILE_SIZE, TILE_SIZE, TILE_SIZE, RED);
 
-                                    std::vector<Vector2> pathPoints;
-                                    if (pathList != nullptr) {
-                                        for (int i = 0; i < pathList->size; i++) {
-                                            AStarNode* node = static_cast<AStarNode*>(list_get(pathList, i));
-                                            if (node != nullptr) {
-                                                Vector2 point = {node->x, node->y};
-                                                pathPoints.push_back(point);
-                                            }
-                                        }
-                                    }
-
-                                    pathCalculated = true; // Establece pathCalculated en true después de calcular el camino
-                                    count = 1;
-
-                                    for (int i = 0; i < pathList->size ; i++) {
+                                std::vector<Vector2> pathPoints;
+                                if (pathList != nullptr) {
+                                    for (int i = 0; i < pathList->size; i++) {
                                         AStarNode* node = static_cast<AStarNode*>(list_get(pathList, i));
-                                        //std::cout<<node->x*128<<" "<<node->y*128<<std::endl;
-
-                                        // Guarda las coordenadas del nodo en la matriz
-                                        pathPoints.push_back(Vector2{node->x*128, node->y*128});
-
+                                        std::cout<<node->x*128<<" "<<node->y*128<<std::endl;
+                                        if (node != nullptr) {
+                                            Vector2 point = {node->x*128, node->y*128};
+                                            pathPoints.push_back(point);
+                                        }
+                                        DrawRectangle(node->x * TILE_SIZE, node->y * TILE_SIZE, TILE_SIZE, TILE_SIZE, YELLOW);
                                         for (auto enemy : enemies)
                                         {   
                                             enemy->pathPoints = pathPoints;
-                                            // enemy->callEnemies();
+                                            enemy->callEnemies();
+                                            if (enemy->getType() == 2){
+                                                enemy->teleport(Vector2{enemy3->getWorldPos().x, enemy3->getWorldPos().y});
+                                            }
                                         }
-
-                                        DrawRectangle(node->x * TILE_SIZE, node->y * TILE_SIZE, TILE_SIZE, TILE_SIZE, YELLOW);
                                     }
-                                    
                                 }
+
+                                pathCalculated = true; // Establece pathCalculated en true después de calcular el camino
+                                count = 1;
+                                enemy->uncallEnemies();
+
                             }
                         }
-                    } else {
-                        pathCalculated = false; // Si no hay colisión, establece pathCalculated en false
-                        count = 0;
                     }
+                } else {
+                    pathCalculated = false; // Si no hay colisión, establece pathCalculated en false
+                    count = 0;
+                    enemy3->uncallEnemies();
                 }
-            }        
+            }
+        }        
         
         for (auto enemy : enemies)
         {

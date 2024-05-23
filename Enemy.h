@@ -43,6 +43,14 @@ public:
     void callEnemies() {
         callAllEnemies = true;
     }
+
+    void uncallEnemies() {
+        callAllEnemies = false;
+    }
+
+    void teleport(Vector2 newPosition) {
+        worldPos = newPosition;
+    }
 private:
     Character* target;
     float damagePerSec{100.f};
