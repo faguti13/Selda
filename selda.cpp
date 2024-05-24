@@ -111,6 +111,18 @@ int main()
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+void playGameOverSound() {
+    static bool soundPlayed = false;
+    if (!soundPlayed) {
+        InitAudioDevice(); 
+        Sound sound = LoadSound("Music/YouLost.wav");
+        PlaySound(sound);
+        soundPlayed = true;
+
+    }
+}
+
+
 void nextLevelTransition(const int& windowWidth, const int& windowHeight){
 
     float time = 0.f;
@@ -129,9 +141,14 @@ void nextLevelTransition(const int& windowWidth, const int& windowHeight){
 
     int currentFrame = 0;
     float frameTimer = 0.0f;
+    InitAudioDevice(); 
+
+    Sound sound = LoadSound("Music/Victory.wav");
+    PlaySound(sound);
 
     while (!WindowShouldClose())
     {
+        
         frameTimer += GetFrameTime();
         if (frameTimer >= 0.1f) 
         {
@@ -152,6 +169,9 @@ void nextLevelTransition(const int& windowWidth, const int& windowHeight){
         float timePast = GetFrameTime();
         time += timePast;
         if (time >= timeMax){
+            StopSound(sound);
+            UnloadSound(sound);
+            CloseAudioDevice();
             return;
         }
     }
@@ -161,6 +181,9 @@ void nextLevelTransition(const int& windowWidth, const int& windowHeight){
         UnloadTexture(frames[i]);
     }
 
+    StopSound(sound);
+    UnloadSound(sound);
+    CloseAudioDevice();
     return ;
 }
 
@@ -173,6 +196,8 @@ void drawScene1(const int& windowWidth, const int& windowHeight){
     const float mapScale{4.0f}; // escala del mapa
     //int mapmat[30][20] = {0};
     LoadMapFromFile("mapa1.txt");
+    bool gameOverSoundPlayed = false;
+    //Sound sound = LoadSound("Music/YouLost.wav");
 
     // Carga las texturas
     heartTexture = LoadTexture("nature_tileset/heart.png");
@@ -380,6 +405,10 @@ void drawScene1(const int& windowWidth, const int& windowHeight){
 
         if (!knight.getAlive())
         {
+            if (!gameOverSoundPlayed) {
+                playGameOverSound();
+            }
+            
             DrawText("Game Over!", windowWidth / 4, windowHeight / 3, 40, RED);
             EndDrawing();
             continue;
@@ -400,7 +429,7 @@ void drawScene1(const int& windowWidth, const int& windowHeight){
             }
         }
         
-
+    
         knight.tick(GetFrameTime());
 
         // barreras del mapa
@@ -457,7 +486,7 @@ void drawScene1(const int& windowWidth, const int& windowHeight){
                         if (pathList != nullptr) {
                             for (int i = 0; i < pathList->size; i++) {
                                 AStarNode* node = static_cast<AStarNode*>(list_get(pathList, i));
-                                std::cout<<node->x*128<<" "<<node->y*128<<std::endl;
+                                //std::cout<<node->x*128<<" "<<node->y*128<<std::endl;
                                 if (node != nullptr) {
                                     Vector2 point = {node->x*128, node->y*128};
                                     colpathPoints.push_back(point);
@@ -511,7 +540,7 @@ void drawScene1(const int& windowWidth, const int& windowHeight){
                                         if (pathList != nullptr) {
                                             for (int i = 0; i < pathList->size; i++) {
                                                 AStarNode* node = static_cast<AStarNode*>(list_get(pathList, i));
-                                                std::cout<<node->x*128<<" "<<node->y*128<<std::endl;
+                                                //std::cout<<node->x*128<<" "<<node->y*128<<std::endl;
                                                 if (node != nullptr) {
                                                     Vector2 point = {node->x*128, node->y*128};
                                                     pathPoints.push_back(point);
@@ -675,6 +704,7 @@ void drawScene2 (const int& windowWidth, const int& windowHeight){
     Texture2D map = LoadTexture("nature_tileset/piso2.png");
     Vector2 mapPos{0.0, 0.0};
     const float mapScale{4.0f};
+    bool gameOverSoundPlayed2 = false;
 
     heartTexture = LoadTexture("nature_tileset/heart.png");
     emptyHeartTexture = LoadTexture("nature_tileset/eheart.png");
@@ -895,6 +925,9 @@ void drawScene2 (const int& windowWidth, const int& windowHeight){
 
         if (!knight.getAlive())
         {
+            if (!gameOverSoundPlayed2) {
+                playGameOverSound();
+            }
             DrawText("Game Over!", windowWidth / 4, windowHeight / 3, 40, RED);
             EndDrawing();
             continue;
@@ -970,7 +1003,7 @@ void drawScene2 (const int& windowWidth, const int& windowHeight){
                         if (pathList != nullptr) {
                             for (int i = 0; i < pathList->size; i++) {
                                 AStarNode* node = static_cast<AStarNode*>(list_get(pathList, i));
-                                std::cout<<node->x*128<<" "<<node->y*128<<std::endl;
+                                //std::cout<<node->x*128<<" "<<node->y*128<<std::endl;
                                 if (node != nullptr) {
                                     Vector2 point = {node->x*128, node->y*128};
                                     colpathPoints.push_back(point);
@@ -1024,7 +1057,7 @@ void drawScene2 (const int& windowWidth, const int& windowHeight){
                                         if (pathList != nullptr) {
                                             for (int i = 0; i < pathList->size; i++) {
                                                 AStarNode* node = static_cast<AStarNode*>(list_get(pathList, i));
-                                                std::cout<<node->x*128<<" "<<node->y*128<<std::endl;
+                                                //std::cout<<node->x*128<<" "<<node->y*128<<std::endl;
                                                 if (node != nullptr) {
                                                     Vector2 point = {node->x*128, node->y*128};
                                                     pathPoints.push_back(point);
@@ -1193,6 +1226,7 @@ void drawScene3(const int& windowWidth, const int& windowHeight){
     Texture2D map = LoadTexture("nature_tileset/piso3.png");
     Vector2 mapPos{0.0, 0.0};
     const float mapScale{4.0f}; // escala del mapa
+    bool gameOverSoundPlayed = false;
 
     heartTexture = LoadTexture("nature_tileset/heart.png");
     emptyHeartTexture = LoadTexture("nature_tileset/eheart.png");
@@ -1410,6 +1444,9 @@ void drawScene3(const int& windowWidth, const int& windowHeight){
 
         if (!knight.getAlive())
         {
+            if (!gameOverSoundPlayed) {
+                playGameOverSound();
+            }
             DrawText("Game Over!", windowWidth / 4, windowHeight / 3, 40, RED);
             EndDrawing();
             continue;
@@ -1482,7 +1519,7 @@ void drawScene3(const int& windowWidth, const int& windowHeight){
                         if (pathList != nullptr) {
                             for (int i = 0; i < pathList->size; i++) {
                                 AStarNode* node = static_cast<AStarNode*>(list_get(pathList, i));
-                                std::cout<<node->x*128<<" "<<node->y*128<<std::endl;
+                                //std::cout<<node->x*128<<" "<<node->y*128<<std::endl;
                                 if (node != nullptr) {
                                     Vector2 point = {node->x*128, node->y*128};
                                     colpathPoints.push_back(point);
@@ -1536,7 +1573,7 @@ void drawScene3(const int& windowWidth, const int& windowHeight){
                                         if (pathList != nullptr) {
                                             for (int i = 0; i < pathList->size; i++) {
                                                 AStarNode* node = static_cast<AStarNode*>(list_get(pathList, i));
-                                                std::cout<<node->x*128<<" "<<node->y*128<<std::endl;
+                                                //std::cout<<node->x*128<<" "<<node->y*128<<std::endl;
                                                 if (node != nullptr) {
                                                     Vector2 point = {node->x*128, node->y*128};
                                                     pathPoints.push_back(point);
@@ -1687,6 +1724,7 @@ void drawScene4(const int& windowWidth, const int& windowHeight){
     Texture2D map = LoadTexture("nature_tileset/piso4.png");
     Vector2 mapPos{0.0, 0.0};
     const float mapScale{4.0f}; // escala del mapa
+    bool gameOverSoundPlayed = false;
 
     heartTexture = LoadTexture("nature_tileset/heart.png");
     emptyHeartTexture = LoadTexture("nature_tileset/eheart.png");
@@ -1928,6 +1966,9 @@ void drawScene4(const int& windowWidth, const int& windowHeight){
 
         if (!knight.getAlive())
         {
+            if (!gameOverSoundPlayed) {
+                playGameOverSound();
+            }
             DrawText("Game Over!", windowWidth / 4, windowHeight / 3, 40, RED);
             EndDrawing();
             continue;
@@ -2001,7 +2042,7 @@ void drawScene4(const int& windowWidth, const int& windowHeight){
                         if (pathList != nullptr) {
                             for (int i = 0; i < pathList->size; i++) {
                                 AStarNode* node = static_cast<AStarNode*>(list_get(pathList, i));
-                                std::cout<<node->x*128<<" "<<node->y*128<<std::endl;
+                                //std::cout<<node->x*128<<" "<<node->y*128<<std::endl;
                                 if (node != nullptr) {
                                     Vector2 point = {node->x*128, node->y*128};
                                     colpathPoints.push_back(point);
@@ -2055,7 +2096,7 @@ void drawScene4(const int& windowWidth, const int& windowHeight){
                                         if (pathList != nullptr) {
                                             for (int i = 0; i < pathList->size; i++) {
                                                 AStarNode* node = static_cast<AStarNode*>(list_get(pathList, i));
-                                                std::cout<<node->x*128<<" "<<node->y*128<<std::endl;
+                                                //std::cout<<node->x*128<<" "<<node->y*128<<std::endl;
                                                 if (node != nullptr) {
                                                     Vector2 point = {node->x*128, node->y*128};
                                                     pathPoints.push_back(point);
@@ -2207,6 +2248,7 @@ void drawScene5(const int& windowWidth, const int& windowHeight){
     Texture2D map = LoadTexture("nature_tileset/piso5.png");
     Vector2 mapPos{0.0, 0.0};
     const float mapScale{4.0f}; // escala del mapa
+    bool gameOverSoundPlayed = false;
 
     heartTexture = LoadTexture("nature_tileset/heart.png");
     emptyHeartTexture = LoadTexture("nature_tileset/eheart.png");
@@ -2425,6 +2467,9 @@ void drawScene5(const int& windowWidth, const int& windowHeight){
 
         if (!knight.getAlive())
         {
+            if (!gameOverSoundPlayed) {
+                playGameOverSound();
+            }
             DrawText("Game Over!", windowWidth / 4, windowHeight / 3, 40, RED);
             EndDrawing();
             continue;
@@ -2498,7 +2543,7 @@ void drawScene5(const int& windowWidth, const int& windowHeight){
                         if (pathList != nullptr) {
                             for (int i = 0; i < pathList->size; i++) {
                                 AStarNode* node = static_cast<AStarNode*>(list_get(pathList, i));
-                                std::cout<<node->x*128<<" "<<node->y*128<<std::endl;
+                                //std::cout<<node->x*128<<" "<<node->y*128<<std::endl;
                                 if (node != nullptr) {
                                     Vector2 point = {node->x*128, node->y*128};
                                     colpathPoints.push_back(point);
@@ -2552,7 +2597,7 @@ void drawScene5(const int& windowWidth, const int& windowHeight){
                                         if (pathList != nullptr) {
                                             for (int i = 0; i < pathList->size; i++) {
                                                 AStarNode* node = static_cast<AStarNode*>(list_get(pathList, i));
-                                                std::cout<<node->x*128<<" "<<node->y*128<<std::endl;
+                                                //std::cout<<node->x*128<<" "<<node->y*128<<std::endl;
                                                 if (node != nullptr) {
                                                     Vector2 point = {node->x*128, node->y*128};
                                                     pathPoints.push_back(point);
