@@ -28,6 +28,8 @@ public:
     int currentPatrolPoint = 0; 
     bool colPath{false};
     bool isARat{false};
+    int health = 2000;
+    
 
     void moveTo(Vector2 newWorldPos) {
         worldPos = newWorldPos;
@@ -73,6 +75,8 @@ public:
     bool getIsARat(){
         return isARat;
     }
+
+    bool isResting;
 private:
     Character* target;
     float damagePerSec{100.f};
@@ -83,6 +87,9 @@ private:
     Texture2D weapon{LoadTexture("characters/weapon_sword.png")};
     Texture2D fireweapon{LoadTexture("characters/firesword.png")};
     bool checkLineOfSight(Vector2 start, Vector2 end);
+    float collisionTime;
+    bool isStriking;
+    
 };
 
 #endif

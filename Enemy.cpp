@@ -14,6 +14,7 @@ Enemy::Enemy(Vector2 pos, Texture2D idle_texture, Texture2D run_texture, float _
     speed = 3.5f;
     patrol_speed= 100.f;
     tipo = type;
+    
 }
 
 
@@ -225,88 +226,121 @@ void Enemy::tick(float deltaTime)
 
         }
         
-        //Rojo
-        else if (tipo == 1){
-        // Crear una pila para almacenar los breadcrumbs
+    //Rojo
+    else if (tipo == 1){
+    // Crear una pila para almacenar los breadcrumbs
 
-        Stack breadcrumbs;
+    Stack breadcrumbs;
 
-        Vector2 screenPos = getScreenPos();
+    Vector2 screenPos = getScreenPos();
 
-        if (rightLeft >= 0) {
-            // Si el enemigo está mirando a la derecha, el rectángulo de visión está a la derecha del enemigo
-            visionRectangle = { screenPos.x + (width*scale/2), screenPos.y - visionRange / 2, visionRange, visionRange };
-        } else {
-            // Si el enemigo está mirando a la izquierda, el rectángulo de visión está a la izquierda del enemigo
-            visionRectangle = { screenPos.x - visionRange + (width*scale/2), screenPos.y - visionRange / 2, visionRange, visionRange };
+    if (rightLeft >= 0) {
+        // Si el enemigo está mirando a la derecha, el rectángulo de visión está a la derecha del enemigo
+        visionRectangle = { screenPos.x + (width*scale/2), screenPos.y - visionRange / 2, visionRange, visionRange };
+    } else {
+        // Si el enemigo está mirando a la izquierda, el rectángulo de visión está a la izquierda del enemigo
+        visionRectangle = { screenPos.x - visionRange + (width*scale/2), screenPos.y - visionRange / 2, visionRange, visionRange };
+    }
+
+    //debug collision rectangle
+    // Color visionColor = {255, 0, 0, 50}; // Color rojo completamente opaco
+    // DrawRectangleRec(visionRectangle, visionColor);
+
+    // Define el centro y el radio del círculo
+    Vector2 center = { screenPos.x + 32, screenPos.y + 32 };
+    float radius = 300.0f;
+
+    // Define el color del círculo con transparencia
+    Color color = { 255, 255/2, 0, 100 }; // Blanco semi-transparente
+
+    // Dibuja el círculo
+    DrawCircleV(center, radius, color);
+
+    // Si el jugador está dentro del rango de visión del enemigo
+    if (CheckCollisionRecs(visionRectangle, target->getCollisionRec())    && !CheckCollisionRecs(target->getCollisionRec(),target->safeZone)  ) {
+
+        // callAllEnemies = true;
+
+        // Actualizar la velocidad para seguir al jugador
+        velocity = Vector2Subtract(target->getScreenPos(), getScreenPos());
+
+        // Si el enemigo está demasiado cerca del jugador, se detiene
+        if (Vector2Length(velocity) < radius) {
+            velocity = {};
         }
 
-        //debug collision rectangle
-        // Color visionColor = {255, 0, 0, 50}; // Color rojo completamente opaco
-        // DrawRectangleRec(visionRectangle, visionColor);
+        // Añade la posición actual del enemigo a la pila de breadcrumbs
+        // Esto hace que el enemigo pueda volver a la ruta de patrullaje cuando pierda al jugador de vista
+        breadcrumbs.push(getScreenPos());
+    } 
 
-        // Define el centro y el radio del círculo
-        Vector2 center = { screenPos.x + 32, screenPos.y + 32 };
-        float radius = 300.0f;
 
-        // Define el color del círculo con transparencia
-        Color color = { 255, 255/2, 0, 100 }; // Blanco semi-transparente
+    else if (colPath && !CheckCollisionRecs(target->getCollisionRec(),target->safeZone)){
+        // Calcular la dirección hacia el próximo punto de la ruta de patrullaje
+        Vector2 direction = Vector2Subtract(colPathPoints[currentColPathPoint], worldPos);
 
-        // Dibuja el círculo
-        DrawCircleV(center, radius, color);
+        rightLeft = direction.x >= 0 ? 1 : -1;
 
-        // Si el jugador está dentro del rango de visión del enemigo
-        if (CheckCollisionRecs(visionRectangle, target->getCollisionRec())    && !CheckCollisionRecs(target->getCollisionRec(),target->safeZone)  ) {
+        // Si el enemigo está cerca del punto de la ruta, moverse al siguiente punto
+        if (Vector2Length(direction) < (patrol_speed*10)  * deltaTime) {
+            int nextPathPoint = currentColPathPoint + 1;
+            if (nextPathPoint >= colPathPoints.size() / 5) {
+                colPath = false;
+            }
+            currentColPathPoint = nextPathPoint % colPathPoints.size();
+        } 
+        // Si el enemigo está lejos del punto de patrulla, moverse hacia el punto
+        else {
+            direction = Vector2Normalize(direction);
+            worldPos = Vector2Add(worldPos, Vector2Scale(direction, (patrol_speed*2) * deltaTime));
+        }
+    }
 
-            // callAllEnemies = true;
 
-            // Actualizar la velocidad para seguir al jugador
-            velocity = Vector2Subtract(target->getScreenPos(), getScreenPos());
 
-            // Si el enemigo está demasiado cerca del jugador, se detiene
-            if (Vector2Length(velocity) < radius) {
-                velocity = {};
+    else if (callAllEnemies)
+    {
+        // Calcular la dirección hacia el próximo punto de la ruta de patrullaje
+        Vector2 direction = Vector2Subtract(pathPoints[currentPathPoint], worldPos);
+
+        rightLeft = direction.x >= 0 ? 1 : -1;
+
+    // Si el enemigo está cerca del punto de la ruta, moverse al siguiente punto
+        if (Vector2Length(direction) < patrol_speed * deltaTime) {
+            currentPathPoint = (currentPathPoint + 1) % pathPoints.size();
+        } 
+        // Si el enemigo está lejos del punto de patrulla, moverse hacia el punto
+        else {
+            direction = Vector2Normalize(direction);
+            worldPos = Vector2Add(worldPos, Vector2Scale(direction, patrol_speed * deltaTime));
+        }
+    }
+    // Si el jugador está fuera del rango de visión del enemigo
+    else {
+        // Si hay breadcrumbs en la pila
+        if (!breadcrumbs.empty()&& !pathPoints.empty()) {
+            // Sacar el breadcrumb superior de la pila
+            // Backtracking: el enemigo está volviendo sobre sus pasos
+            Vector2 nextPos = breadcrumbs.pop();//xd
+
+            // Actualizar la velocidad para moverse hacia el breadcrumb
+            velocity = Vector2Subtract(nextPos, getScreenPos());
+        } 
+        // Si no hay breadcrumbs en la pila
+        else {
+            // Si no hay puntos de patrulla, no hacer nada
+            if (patrolPoints.empty()) {
+                return;
             }
 
-            // Añade la posición actual del enemigo a la pila de breadcrumbs
-            // Esto hace que el enemigo pueda volver a la ruta de patrullaje cuando pierda al jugador de vista
-            breadcrumbs.push(getScreenPos());
-        } 
-
-
-        else if (colPath && !CheckCollisionRecs(target->getCollisionRec(),target->safeZone)){
             // Calcular la dirección hacia el próximo punto de la ruta de patrullaje
-            Vector2 direction = Vector2Subtract(colPathPoints[currentColPathPoint], worldPos);
+            Vector2 direction = Vector2Subtract(patrolPoints[currentPatrolPoint], worldPos);
 
             rightLeft = direction.x >= 0 ? 1 : -1;
 
             // Si el enemigo está cerca del punto de la ruta, moverse al siguiente punto
-            if (Vector2Length(direction) < (patrol_speed*10)  * deltaTime) {
-                int nextPathPoint = currentColPathPoint + 1;
-                if (nextPathPoint >= colPathPoints.size() / 5) {
-                    colPath = false;
-                }
-                currentColPathPoint = nextPathPoint % colPathPoints.size();
-            } 
-            // Si el enemigo está lejos del punto de patrulla, moverse hacia el punto
-            else {
-                direction = Vector2Normalize(direction);
-                worldPos = Vector2Add(worldPos, Vector2Scale(direction, (patrol_speed*2) * deltaTime));
-            }
-        }
-
-
-
-        else if (callAllEnemies)
-        {
-            // Calcular la dirección hacia el próximo punto de la ruta de patrullaje
-            Vector2 direction = Vector2Subtract(pathPoints[currentPathPoint], worldPos);
-
-            rightLeft = direction.x >= 0 ? 1 : -1;
-
-        // Si el enemigo está cerca del punto de la ruta, moverse al siguiente punto
             if (Vector2Length(direction) < patrol_speed * deltaTime) {
-                currentPathPoint = (currentPathPoint + 1) % pathPoints.size();
+                currentPatrolPoint = (currentPatrolPoint + 1) % patrolPoints.size();
             } 
             // Si el enemigo está lejos del punto de patrulla, moverse hacia el punto
             else {
@@ -314,231 +348,271 @@ void Enemy::tick(float deltaTime)
                 worldPos = Vector2Add(worldPos, Vector2Scale(direction, patrol_speed * deltaTime));
             }
         }
-        // Si el jugador está fuera del rango de visión del enemigo
-        else {
-            // Si hay breadcrumbs en la pila
-            if (!breadcrumbs.empty()&& !pathPoints.empty()) {
-                // Sacar el breadcrumb superior de la pila
-                // Backtracking: el enemigo está volviendo sobre sus pasos
-                Vector2 nextPos = breadcrumbs.pop();//xd
+    }
+            
+    if(CheckCollisionRecs(getCollisionRec(), target->getCollisionRec()) && CheckCollisionRecs(visionRectangle, target->getCollisionRec())  && !CheckCollisionRecs(getCollisionRec(),target->getVisionRectangle()) ){
+    
+    target->takeDamage(damagePerSec);
+    
+    }
+    
+    if (patrolPoints.empty()) {
+        // Si patrolPoints está vacío, no accede a sus elementos
+        return;
+    }
 
-                // Actualizar la velocidad para moverse hacia el breadcrumb
-                velocity = Vector2Subtract(nextPos, getScreenPos());
-            } 
-            // Si no hay breadcrumbs en la pila
-            else {
-                // Si no hay puntos de patrulla, no hacer nada
-                if (patrolPoints.empty()) {
-                    return;
-                }
+    Vector2 direction = Vector2Subtract(patrolPoints[currentPatrolPoint], worldPos);
+    if (Vector2Length(direction) < speed * deltaTime) {
+        // Si el enemigo está lo suficientemente cerca del punto de patrulla, pasa al siguiente
+        currentPatrolPoint = (currentPatrolPoint + 1) % patrolPoints.size();
+    } else {
+        // Si no, mueve al enemigo hacia el punto de patrulla
+        direction = Vector2Normalize(direction);
+        worldPos = Vector2Add(worldPos, Vector2Scale(direction, speed * deltaTime));
+    }
+    Vector2 origin{};
+    Vector2 offset{};
+    float rotate{};
 
-                // Calcular la dirección hacia el próximo punto de la ruta de patrullaje
-                Vector2 direction = Vector2Subtract(patrolPoints[currentPatrolPoint], worldPos);
+    if (rightLeft > 0.f)
+    {
+        origin = {0.f, fireweapon.height * scale};
+        offset = {35.f, 55.f};
+    }
+    else
+    {
+        origin = {fireweapon.width * scale, fireweapon.height * scale};
+        offset = {25.f, 55.f};
+    }
 
-                rightLeft = direction.x >= 0 ? 1 : -1;
+    // draw sword
+    Rectangle source{0.f, 0.f, static_cast<float>(fireweapon.width) * rightLeft, static_cast<float>(fireweapon.height)};
+    Rectangle dest{getScreenPos().x + offset.x, getScreenPos().y + offset.y, fireweapon.width * scale, fireweapon.height * scale};
+    DrawTexturePro(fireweapon, source, dest, origin, rotate, WHITE);        
+    }
+    
+    //azul
+    else if (tipo == 2){
+                // Crear una pila para almacenar los breadcrumbs
 
-                // Si el enemigo está cerca del punto de la ruta, moverse al siguiente punto
-                if (Vector2Length(direction) < patrol_speed * deltaTime) {
-                    currentPatrolPoint = (currentPatrolPoint + 1) % patrolPoints.size();
-                } 
-                // Si el enemigo está lejos del punto de patrulla, moverse hacia el punto
-                else {
-                    direction = Vector2Normalize(direction);
-                    worldPos = Vector2Add(worldPos, Vector2Scale(direction, patrol_speed * deltaTime));
-                }
+    Stack breadcrumbs;
+
+    Vector2 screenPos = getScreenPos();
+
+    if (rightLeft >= 0) {
+        // Si el enemigo está mirando a la derecha, el rectángulo de visión está a la derecha del enemigo
+        visionRectangle = { screenPos.x + (width*scale/2), screenPos.y - visionRange / 2, visionRange, visionRange };
+    } else {
+        // Si el enemigo está mirando a la izquierda, el rectángulo de visión está a la izquierda del enemigo
+        visionRectangle = { screenPos.x - visionRange + (width*scale/2), screenPos.y - visionRange / 2, visionRange, visionRange };
+    }
+
+    //debug collision rectangle
+    // Color visionColor = {255, 0, 0, 50}; // Color rojo completamente opaco
+    // DrawRectangleRec(visionRectangle, visionColor);
+
+    // Si el jugador está dentro del rango de visión del enemigo
+    if (CheckCollisionRecs(visionRectangle, target->getCollisionRec())    && !CheckCollisionRecs(target->getCollisionRec(),target->safeZone)  ) {
+
+        // callAllEnemies = true;
+
+        // Actualizar la velocidad para seguir al jugador
+        velocity = Vector2Subtract(target->getScreenPos(), getScreenPos());
+
+        // Si el enemigo está demasiado cerca del jugador, se detiene
+        if (Vector2Length(velocity) < radius) {
+            velocity = {};
+        }
+
+        // Añade la posición actual del enemigo a la pila de breadcrumbs
+        // Esto hace que el enemigo pueda volver a la ruta de patrullaje cuando pierda al jugador de vista
+        breadcrumbs.push(getScreenPos());
+    } 
+
+
+    else if (colPath && !CheckCollisionRecs(target->getCollisionRec(),target->safeZone)){
+        // Calcular la dirección hacia el próximo punto de la ruta de patrullaje
+        Vector2 direction = Vector2Subtract(colPathPoints[currentColPathPoint], worldPos);
+
+        rightLeft = direction.x >= 0 ? 1 : -1;
+
+        // Si el enemigo está cerca del punto de la ruta, moverse al siguiente punto
+        if (Vector2Length(direction) < (patrol_speed*10)  * deltaTime) {
+            int nextPathPoint = currentColPathPoint + 1;
+            if (nextPathPoint >= colPathPoints.size() / 5) {
+                colPath = false;
             }
-        }
-                
-        if(CheckCollisionRecs(getCollisionRec(), target->getCollisionRec()) && CheckCollisionRecs(visionRectangle, target->getCollisionRec())  && !CheckCollisionRecs(getCollisionRec(),target->getVisionRectangle()) ){
-        
-        target->takeDamage(damagePerSec);
-        
-        }
-        
-        if (patrolPoints.empty()) {
-            // Si patrolPoints está vacío, no accede a sus elementos
-            return;
-        }
-
-        Vector2 direction = Vector2Subtract(patrolPoints[currentPatrolPoint], worldPos);
-        if (Vector2Length(direction) < speed * deltaTime) {
-            // Si el enemigo está lo suficientemente cerca del punto de patrulla, pasa al siguiente
-            currentPatrolPoint = (currentPatrolPoint + 1) % patrolPoints.size();
-        } else {
-            // Si no, mueve al enemigo hacia el punto de patrulla
-            direction = Vector2Normalize(direction);
-            worldPos = Vector2Add(worldPos, Vector2Scale(direction, speed * deltaTime));
-        }
-        Vector2 origin{};
-        Vector2 offset{};
-        float rotate{};
-
-        if (rightLeft > 0.f)
-        {
-            origin = {0.f, fireweapon.height * scale};
-            offset = {35.f, 55.f};
-        }
-        else
-        {
-            origin = {fireweapon.width * scale, fireweapon.height * scale};
-            offset = {25.f, 55.f};
-        }
-
-        // draw sword
-        Rectangle source{0.f, 0.f, static_cast<float>(fireweapon.width) * rightLeft, static_cast<float>(fireweapon.height)};
-        Rectangle dest{getScreenPos().x + offset.x, getScreenPos().y + offset.y, fireweapon.width * scale, fireweapon.height * scale};
-        DrawTexturePro(fireweapon, source, dest, origin, rotate, WHITE);        
-        }
-        
-        //azul
-        else if (tipo == 2){
-                    // Crear una pila para almacenar los breadcrumbs
-
-        Stack breadcrumbs;
-
-        Vector2 screenPos = getScreenPos();
-
-        if (rightLeft >= 0) {
-            // Si el enemigo está mirando a la derecha, el rectángulo de visión está a la derecha del enemigo
-            visionRectangle = { screenPos.x + (width*scale/2), screenPos.y - visionRange / 2, visionRange, visionRange };
-        } else {
-            // Si el enemigo está mirando a la izquierda, el rectángulo de visión está a la izquierda del enemigo
-            visionRectangle = { screenPos.x - visionRange + (width*scale/2), screenPos.y - visionRange / 2, visionRange, visionRange };
-        }
-
-        //debug collision rectangle
-        // Color visionColor = {255, 0, 0, 50}; // Color rojo completamente opaco
-        // DrawRectangleRec(visionRectangle, visionColor);
-
-        // Si el jugador está dentro del rango de visión del enemigo
-        if (CheckCollisionRecs(visionRectangle, target->getCollisionRec())    && !CheckCollisionRecs(target->getCollisionRec(),target->safeZone)  ) {
-
-            // callAllEnemies = true;
-
-            // Actualizar la velocidad para seguir al jugador
-            velocity = Vector2Subtract(target->getScreenPos(), getScreenPos());
-
-            // Si el enemigo está demasiado cerca del jugador, se detiene
-            if (Vector2Length(velocity) < radius) {
-                velocity = {};
-            }
-
-            // Añade la posición actual del enemigo a la pila de breadcrumbs
-            // Esto hace que el enemigo pueda volver a la ruta de patrullaje cuando pierda al jugador de vista
-            breadcrumbs.push(getScreenPos());
+            currentColPathPoint = nextPathPoint % colPathPoints.size();
         } 
+        // Si el enemigo está lejos del punto de patrulla, moverse hacia el punto
+        else {
+            direction = Vector2Normalize(direction);
+            worldPos = Vector2Add(worldPos, Vector2Scale(direction, (patrol_speed*2) * deltaTime));
+        }
+    }
 
 
-        else if (colPath && !CheckCollisionRecs(target->getCollisionRec(),target->safeZone)){
+    else if (callAllEnemies)
+    {
+        // Teletransportarse a la posicion del ojo espectral
+    }
+    // Si el jugador está fuera del rango de visión del enemigo
+    else {
+        // Si hay breadcrumbs en la pila
+        if (!breadcrumbs.empty()&& !pathPoints.empty()) {
+            // Sacar el breadcrumb superior de la pila
+            // Backtracking: el enemigo está volviendo sobre sus pasos
+            Vector2 nextPos = breadcrumbs.pop();//xd
+
+            // Actualizar la velocidad para moverse hacia el breadcrumb
+            velocity = Vector2Subtract(nextPos, getScreenPos());
+        } 
+        // Si no hay breadcrumbs en la pila
+        else {
+            // Si no hay puntos de patrulla, no hacer nada
+            if (patrolPoints.empty()) {
+                return;
+            }
+
             // Calcular la dirección hacia el próximo punto de la ruta de patrullaje
-            Vector2 direction = Vector2Subtract(colPathPoints[currentColPathPoint], worldPos);
+            Vector2 direction = Vector2Subtract(patrolPoints[currentPatrolPoint], worldPos);
 
             rightLeft = direction.x >= 0 ? 1 : -1;
 
             // Si el enemigo está cerca del punto de la ruta, moverse al siguiente punto
-            if (Vector2Length(direction) < (patrol_speed*10)  * deltaTime) {
-                int nextPathPoint = currentColPathPoint + 1;
-                if (nextPathPoint >= colPathPoints.size() / 5) {
-                    colPath = false;
-                }
-                currentColPathPoint = nextPathPoint % colPathPoints.size();
+            if (Vector2Length(direction) < patrol_speed * deltaTime) {
+                currentPatrolPoint = (currentPatrolPoint + 1) % patrolPoints.size();
             } 
             // Si el enemigo está lejos del punto de patrulla, moverse hacia el punto
             else {
                 direction = Vector2Normalize(direction);
-                worldPos = Vector2Add(worldPos, Vector2Scale(direction, (patrol_speed*2) * deltaTime));
+                worldPos = Vector2Add(worldPos, Vector2Scale(direction, patrol_speed * deltaTime));
             }
         }
+    }
+    
+    if(CheckCollisionRecs(getCollisionRec(), target->getCollisionRec()) && CheckCollisionRecs(visionRectangle, target->getCollisionRec())  && !CheckCollisionRecs(getCollisionRec(),target->getVisionRectangle()) ){
+    
+    target->takeDamage(damagePerSec);
+    
+    }
+    
+    if (patrolPoints.empty()) {
+        // Si patrolPoints está vacío, no accede a sus elementos
+        return;
+    }
+
+    Vector2 direction = Vector2Subtract(patrolPoints[currentPatrolPoint], worldPos);
+    if (Vector2Length(direction) < speed * deltaTime) {
+        // Si el enemigo está lo suficientemente cerca del punto de patrulla, pasa al siguiente
+        currentPatrolPoint = (currentPatrolPoint + 1) % patrolPoints.size();
+    } else {
+        // Si no, mueve al enemigo hacia el punto de patrulla
+        direction = Vector2Normalize(direction);
+        worldPos = Vector2Add(worldPos, Vector2Scale(direction, speed * deltaTime));
+    }
+    Vector2 origin{};
+    Vector2 offset{};
+    float rotate{};
+
+    if (rightLeft > 0.f)
+    {
+        origin = {0.f, weapon.height * scale};
+        offset = {35.f, 55.f};
+    }
+    else
+    {
+        origin = {weapon.width * scale, weapon.height * scale};
+        offset = {25.f, 55.f};
+    }
+
+    // draw sword
+    Rectangle source{0.f, 0.f, static_cast<float>(weapon.width) * rightLeft, static_cast<float>(weapon.height)};
+    Rectangle dest{getScreenPos().x + offset.x, getScreenPos().y + offset.y, weapon.width * scale, weapon.height * scale};
+    DrawTexturePro(weapon, source, dest, origin, rotate, WHITE);
 
 
-        else if (callAllEnemies)
-        {
-            // Teletransportarse a la posicion del ojo espectral
-        }
-        // Si el jugador está fuera del rango de visión del enemigo
-        else {
-            // Si hay breadcrumbs en la pila
-            if (!breadcrumbs.empty()&& !pathPoints.empty()) {
-                // Sacar el breadcrumb superior de la pila
-                // Backtracking: el enemigo está volviendo sobre sus pasos
-                Vector2 nextPos = breadcrumbs.pop();//xd
+    }
+    
+    //Ojo espectral
+    else if (tipo == 3){
+        
+    Vector2 screenPos = getScreenPos();
 
-                // Actualizar la velocidad para moverse hacia el breadcrumb
-                velocity = Vector2Subtract(nextPos, getScreenPos());
+
+    if (rightLeft >= 0) {
+        // Si el enemigo está mirando a la derecha, el rectángulo de visión está a la derecha del enemigo
+        visionRectangle = { screenPos.x + (width*scale/2), screenPos.y - visionRange / 2, visionRange, visionRange };
+    } else {
+        // Si el enemigo está mirando a la izquierda, el rectángulo de visión está a la izquierda del enemigo
+        visionRectangle = { screenPos.x - visionRange + (width*scale/2), screenPos.y - visionRange / 2, visionRange, visionRange };
+    }
+
+    //debug collision rectangle
+    // Color visionColor = {255, 0, 0, 50}; // Color rojo completamente opaco
+    // DrawRectangleRec(visionRectangle, visionColor);
+
+    // Si no hay puntos de patrulla, no hacer nada
+            if (patrolPoints.empty()) {
+                return;
+            }
+
+            // Calcular la dirección hacia el próximo punto de la ruta de patrullaje
+            Vector2 direction = Vector2Subtract(patrolPoints[currentPatrolPoint], worldPos);
+
+            rightLeft = direction.x >= 0 ? 1 : -1;
+
+            // Si el enemigo está cerca del punto de la ruta, moverse al siguiente punto
+            if (Vector2Length(direction) < patrol_speed * deltaTime) {
+                currentPatrolPoint = (currentPatrolPoint + 1) % patrolPoints.size();
             } 
-            // Si no hay breadcrumbs en la pila
+            // Si el enemigo está lejos del punto de patrulla, moverse hacia el punto
             else {
-                // Si no hay puntos de patrulla, no hacer nada
-                if (patrolPoints.empty()) {
-                    return;
-                }
-
-                // Calcular la dirección hacia el próximo punto de la ruta de patrullaje
-                Vector2 direction = Vector2Subtract(patrolPoints[currentPatrolPoint], worldPos);
-
-                rightLeft = direction.x >= 0 ? 1 : -1;
-
-                // Si el enemigo está cerca del punto de la ruta, moverse al siguiente punto
-                if (Vector2Length(direction) < patrol_speed * deltaTime) {
-                    currentPatrolPoint = (currentPatrolPoint + 1) % patrolPoints.size();
-                } 
-                // Si el enemigo está lejos del punto de patrulla, moverse hacia el punto
-                else {
-                    direction = Vector2Normalize(direction);
-                    worldPos = Vector2Add(worldPos, Vector2Scale(direction, patrol_speed * deltaTime));
-                }
+                direction = Vector2Normalize(direction);
+                worldPos = Vector2Add(worldPos, Vector2Scale(direction, patrol_speed * deltaTime));
             }
-        }
-        
-        if(CheckCollisionRecs(getCollisionRec(), target->getCollisionRec()) && CheckCollisionRecs(visionRectangle, target->getCollisionRec())  && !CheckCollisionRecs(getCollisionRec(),target->getVisionRectangle()) ){
-        
-        target->takeDamage(damagePerSec);
-        
-        }
-        
-        if (patrolPoints.empty()) {
-            // Si patrolPoints está vacío, no accede a sus elementos
-            return;
-        }
 
-        Vector2 direction = Vector2Subtract(patrolPoints[currentPatrolPoint], worldPos);
-        if (Vector2Length(direction) < speed * deltaTime) {
-            // Si el enemigo está lo suficientemente cerca del punto de patrulla, pasa al siguiente
-            currentPatrolPoint = (currentPatrolPoint + 1) % patrolPoints.size();
-        } else {
-            // Si no, mueve al enemigo hacia el punto de patrulla
-            direction = Vector2Normalize(direction);
-            worldPos = Vector2Add(worldPos, Vector2Scale(direction, speed * deltaTime));
-        }
-        Vector2 origin{};
-        Vector2 offset{};
-        float rotate{};
-
-        if (rightLeft > 0.f)
+        // Si el jugador está dentro del rango de visión del enemigo
+        if (CheckCollisionRecs(visionRectangle, target->getCollisionRec())    && !CheckCollisionRecs(target->getCollisionRec(),target->safeZone)  ) {
+            undoMovement();
+        } 
+        else 
         {
-            origin = {0.f, weapon.height * scale};
-            offset = {35.f, 55.f};
-        }
-        else
-        {
-            origin = {weapon.width * scale, weapon.height * scale};
-            offset = {25.f, 55.f};
-        }
 
-        // draw sword
-        Rectangle source{0.f, 0.f, static_cast<float>(weapon.width) * rightLeft, static_cast<float>(weapon.height)};
-        Rectangle dest{getScreenPos().x + offset.x, getScreenPos().y + offset.y, weapon.width * scale, weapon.height * scale};
-        DrawTexturePro(weapon, source, dest, origin, rotate, WHITE);
-
-
-        }
-        
-        //Ojo espectral
-        else if (tipo == 3){
             
+        }
+    }
+    
+    //Raton
+    else if (tipo == 4){
+        static double lastDirectionChangeTime = 0;
+        static Vector2 direction = {0, 0};
+        double directionChangeInterval = 1.0; // Cambia la dirección cada 2 segundos
+
+        double currentTime = GetTime();
+        if (currentTime - lastDirectionChangeTime >= directionChangeInterval) {
+            // Genera una nueva dirección aleatoria
+            float directionX = GetRandomValue(0, 1);
+            float directionY = GetRandomValue(0, 1);
+            direction = {directionX, directionY};
+
+            // Normaliza la dirección
+            direction = Vector2Normalize(direction);
+
+            lastDirectionChangeTime = currentTime;
+        }
+
+        // Mueve al enemigo en la dirección actual
+        worldPos = Vector2Add(worldPos, Vector2Scale(direction, speed * deltaTime)); 
+
+        velocity = direction;    
+
+            
+    }
+
+    //Chocobo
+    else if (tipo == 5){
         Vector2 screenPos = getScreenPos();
-
-
         if (rightLeft >= 0) {
             // Si el enemigo está mirando a la derecha, el rectángulo de visión está a la derecha del enemigo
             visionRectangle = { screenPos.x + (width*scale/2), screenPos.y - visionRange / 2, visionRange, visionRange };
@@ -546,81 +620,8 @@ void Enemy::tick(float deltaTime)
             // Si el enemigo está mirando a la izquierda, el rectángulo de visión está a la izquierda del enemigo
             visionRectangle = { screenPos.x - visionRange + (width*scale/2), screenPos.y - visionRange / 2, visionRange, visionRange };
         }
-
-        //debug collision rectangle
-        // Color visionColor = {255, 0, 0, 50}; // Color rojo completamente opaco
-        // DrawRectangleRec(visionRectangle, visionColor);
-
-        // Si no hay puntos de patrulla, no hacer nada
-                if (patrolPoints.empty()) {
-                    return;
-                }
-
-                // Calcular la dirección hacia el próximo punto de la ruta de patrullaje
-                Vector2 direction = Vector2Subtract(patrolPoints[currentPatrolPoint], worldPos);
-
-                rightLeft = direction.x >= 0 ? 1 : -1;
-
-                // Si el enemigo está cerca del punto de la ruta, moverse al siguiente punto
-                if (Vector2Length(direction) < patrol_speed * deltaTime) {
-                    currentPatrolPoint = (currentPatrolPoint + 1) % patrolPoints.size();
-                } 
-                // Si el enemigo está lejos del punto de patrulla, moverse hacia el punto
-                else {
-                    direction = Vector2Normalize(direction);
-                    worldPos = Vector2Add(worldPos, Vector2Scale(direction, patrol_speed * deltaTime));
-                }
-
-            // Si el jugador está dentro del rango de visión del enemigo
-            if (CheckCollisionRecs(visionRectangle, target->getCollisionRec())    && !CheckCollisionRecs(target->getCollisionRec(),target->safeZone)  ) {
-                undoMovement();
-            } 
-            else 
-            {
-
-                
-            }
-        }
         
-        //Raton
-        else if (tipo == 4){
-            static double lastDirectionChangeTime = 0;
-            static Vector2 direction = {0, 0};
-            double directionChangeInterval = 1.0; // Cambia la dirección cada 2 segundos
-
-            double currentTime = GetTime();
-            if (currentTime - lastDirectionChangeTime >= directionChangeInterval) {
-                // Genera una nueva dirección aleatoria
-                float directionX = GetRandomValue(0, 1);
-                float directionY = GetRandomValue(0, 1);
-                direction = {directionX, directionY};
-
-                // Normaliza la dirección
-                direction = Vector2Normalize(direction);
-
-                lastDirectionChangeTime = currentTime;
-            }
-
-            // Mueve al enemigo en la dirección actual
-            worldPos = Vector2Add(worldPos, Vector2Scale(direction, speed * deltaTime)); 
-
-            velocity = direction;    
-
-                
-        }
-
-        //Chocobo
-        else if (tipo == 5){
-            Vector2 screenPos = getScreenPos();
-            if (rightLeft >= 0) {
-                // Si el enemigo está mirando a la derecha, el rectángulo de visión está a la derecha del enemigo
-                visionRectangle = { screenPos.x + (width*scale/2), screenPos.y - visionRange / 2, visionRange, visionRange };
-            } else {
-                // Si el enemigo está mirando a la izquierda, el rectángulo de visión está a la izquierda del enemigo
-                visionRectangle = { screenPos.x - visionRange + (width*scale/2), screenPos.y - visionRange / 2, visionRange, visionRange };
-            }
-            
-                    // Si el jugador está dentro del rango de visión del enemigo
+                // Si el jugador está dentro del rango de visión del enemigo
         if (!CheckCollisionRecs(target->getCollisionRec(),target->safeZone) && !colPath) {
 
             // callAllEnemies = true;
@@ -653,41 +654,113 @@ void Enemy::tick(float deltaTime)
                 direction = Vector2Normalize(direction);
                 worldPos = Vector2Add(worldPos, Vector2Scale(direction, (patrol_speed*2) * deltaTime));
             }
+        }        
+    }
+
+
+
+    else if (tipo == 6){
+        setScale(10.0f);
+        scale = 10.0f;
+        speed = 2.0f;
+        patrol_speed = 50.0f;
+        
+
+        Vector2 screenPos = getScreenPos();
+        if (rightLeft >= 0) {
+            // Si el enemigo está mirando a la derecha, el rectángulo de visión está a la derecha del enemigo
+            visionRectangle = { screenPos.x+64 + (width*scale/2), screenPos.y+64 - visionRange / 2, visionRange, visionRange };
+        } else {
+            // Si el enemigo está mirando a la izquierda, el rectángulo de visión está a la izquierda del enemigo
+            visionRectangle = { screenPos.x-64 - visionRange + (width*scale/2), screenPos.y+64 - visionRange / 2, visionRange, visionRange };
+        }
+        
+                // Si el jugador está dentro del rango de visión del enemigo
+        if (!CheckCollisionRecs(target->getCollisionRec(),target->safeZone) && !colPath) {
+
+            // callAllEnemies = true;
+
+            // Actualizar la velocidad para seguir al jugador
+            velocity = Vector2Subtract(target->getScreenPos(), getScreenPos());
+
+            Color visionColor = {255, 0, 0, 50}; // Color rojo completamente opaco
+            // DrawRectangleRec(visionRectangle, visionColor);
+
+            // Si el enemigo está demasiado cerca del jugador, se detiene
+            if (CheckCollisionRecs(getVisionRectangle(), target->getCollisionRec())) {
+                if (!isResting) {
+                    isResting = true;
+                    collisionTime = 0.0f;
+                }
+            }
+            if (isResting) {
+                collisionTime += deltaTime; // Aumenta el tiempo de colisión
+                if (collisionTime >= 2.0f) { // Si han pasado 5 segundos
+                    isResting = false; // El enemigo puede moverse de nuevo
+                    isStriking = true; // El enemigo está en el estado de "golpeando"
+                }
+                velocity = {}; // El enemigo se queda quieto
+            } else {
+                isStriking = false; // El enemigo no está en el estado de "golpeando"
+            }
+
+            // Si el enemigo está en el estado de "golpeando"
+            if (isStriking) {
+                ;
+                if (CheckCollisionRecs(getVisionRectangle(), target->getCollisionRec())) {
+                target->takeDamage(damagePerSec);
+                }
+                // Inclina la espada para golpear al jugador
+                // Aquí puedes agregar el código para inclinar la espada
+            }
+        } 
+
+        else if (colPath && !CheckCollisionRecs(target->getCollisionRec(),target->safeZone)){
+            // Calcular la dirección hacia el próximo punto de la ruta de patrullaje
+            Vector2 direction = Vector2Subtract(colPathPoints[currentColPathPoint], worldPos);
+
+            rightLeft = direction.x >= 0 ? 1 : -1;
+
+            // Si el enemigo está cerca del punto de la ruta, moverse al siguiente punto
+            if (Vector2Length(direction) < (patrol_speed*10)  * deltaTime) {
+                int nextPathPoint = currentColPathPoint + 1;
+                if (nextPathPoint >= colPathPoints.size() / 5) {
+                    colPath = false;
+                }
+                currentColPathPoint = nextPathPoint % colPathPoints.size();
+            } 
+            // Si el enemigo está lejos del punto de patrulla, moverse hacia el punto
+            else {
+                direction = Vector2Normalize(direction);
+                worldPos = Vector2Add(worldPos, Vector2Scale(direction, (patrol_speed*2) * deltaTime));
+            }
+        }
+        Vector2 origin{};
+        Vector2 offset{};
+        float rotate{};
+
+        if (rightLeft > 0.f)
+        {
+            origin = {0.f, weapon.height * scale};
+            offset = {115.f, 150.f};
+        }
+        else
+        {
+            origin = {weapon.width * scale, weapon.height * scale};
+            offset = {50.f, 150.f};
         }
 
-            // // Obtener la posición actual del Chocobo y del jugador
-            // Vector2 chocoboPos = getScreenPos();
-            // Vector2 knightPos = target->getScreenPos();
+        // draw sword
+        Rectangle source{0.f, 0.f, static_cast<float>(weapon.width) * rightLeft, static_cast<float>(weapon.height)};
+        Rectangle dest{getScreenPos().x + offset.x, getScreenPos().y + offset.y, weapon.width * scale, weapon.height * scale};
+        DrawTexturePro(weapon, source, dest, origin, rotate, WHITE);
 
-            // // Verificar si el Chocobo tiene línea de vista al jugador
-            // if (checkLineOfSight(chocoboPos, knightPos)) {
-            //     // Mover al Chocobo hacia el jugador
-            //     velocity = Vector2Subtract(knightPos, chocoboPos);
+        // DrawRectangleRec(getCollisionRec(), RED);
 
-            //     // Si el Chocobo está demasiado cerca del jugador, se detiene
-            //     if (Vector2Length(velocity) < radius) {
-            //         velocity = {};
-            //     } else {
-            //         velocity = Vector2Normalize(velocity);
-            //         worldPos = Vector2Add(worldPos, Vector2Scale(velocity, speed * deltaTime));
-            //     }
-            // } else {
-            //     // Si no tiene línea de vista, patrullar entre los puntos de patrulla
-            //     if (!patrolPoints.empty()) {
-            //         Vector2 direction = Vector2Subtract(patrolPoints[currentPatrolPoint], worldPos);
-
-            //         if (Vector2Length(direction) < speed * deltaTime) {
-            //             currentPatrolPoint = (currentPatrolPoint + 1) % patrolPoints.size();
-            //         } else {
-            //             direction = Vector2Normalize(direction);
-            //             worldPos = Vector2Add(worldPos, Vector2Scale(direction, speed * deltaTime));
-            //         }
-            //     }
-            // }
-
-            
+        if (health <= 0){
+            setAlive(false);
         }
-
+    }
     BaseCharacter::tick(deltaTime);
 }
 

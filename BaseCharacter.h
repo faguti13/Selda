@@ -19,6 +19,8 @@ public:
     float speed{4.f};
     float width{};
     float height{};
+    float scale{4.0f};
+    void setScale(float newScale) { scale = newScale; }
 protected:
     Texture2D texture{};
     Texture2D idle{};
@@ -32,7 +34,6 @@ protected:
     int maxFrames{6};
     float updateTime{1.f / 12.f};
     float patrol_speed{2.f};
-    float scale{4.0f};
     Vector2 velocity{};
     int tipo{};
 private:

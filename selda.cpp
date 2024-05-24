@@ -362,7 +362,17 @@ void drawScene1(const int& windowWidth, const int& windowHeight){
                     actualScene = "scene2";
                     break;
                 }
-                knight.undoMovement();   
+                if ((name == "nature_tileset/spikes.png" || name == "nature_tileset/spikes2.png" || name == "nature_tileset/poison.png" )  
+                && prop.getState(GetFrameTime())){
+                    int numHearts = knight.getHealth();
+                    remainignLife = numHearts - 1;
+                    knight.updateLife(remainignLife);
+                    break;
+
+                }
+                else{
+                    knight.undoMovement();   
+                }
             }
 
             for (auto enemy : enemies) {
@@ -866,7 +876,17 @@ void drawScene2 (const int& windowWidth, const int& windowHeight){
                     actualScene = "scene3";
                     break;
                 }
-                knight.undoMovement();   
+                if ((name == "nature_tileset/spikes.png" || name == "nature_tileset/spikes2.png" || name == "nature_tileset/poison.png" )  
+                && prop.getState(GetFrameTime())){
+                    int numHearts = knight.getHealth();
+                    remainignLife = numHearts - 1;
+                    knight.updateLife(remainignLife);
+                    break;
+
+                }
+                else{
+                    knight.undoMovement();   
+                }
             }
             for (auto enemy : enemies) {
                 if (enemy->getType() == 0 || enemy->getType() == 1|| enemy->getType() == 2 || enemy->getType() == 5){
@@ -1031,7 +1051,7 @@ void drawScene2 (const int& windowWidth, const int& windowHeight){
             }
             for (auto enemy : enemies)
             {
-                if (CheckCollisionRecs(enemy->getCollisionRec(), knight.getWeaponCollisionRec()) && !CheckCollisionRecs(enemy->getVisionRectangle(), knight.getWeaponCollisionRec()))
+                if (enemy->getType()!= 6 && CheckCollisionRecs(enemy->getCollisionRec(), knight.getWeaponCollisionRec()) && !CheckCollisionRecs(enemy->getVisionRectangle(), knight.getWeaponCollisionRec()))
                 {
                     if(enemy->getAlive()){
                         pts += 10;
@@ -1368,7 +1388,17 @@ void drawScene3(const int& windowWidth, const int& windowHeight){
                     actualScene = "scene4";
                     break;
                 }
-                knight.undoMovement();   
+                if ((name == "nature_tileset/spikes.png" || name == "nature_tileset/spikes2.png" || name == "nature_tileset/poison.png" )  
+                && prop.getState(GetFrameTime())){
+                    int numHearts = knight.getHealth();
+                    remainignLife = numHearts - 1;
+                    knight.updateLife(remainignLife);
+                    break;
+
+                }
+                else{
+                    knight.undoMovement();   
+                } 
             }
             for (auto enemy : enemies) {
                 if (enemy->getType() == 0 || enemy->getType() == 1|| enemy->getType() == 2 || enemy->getType() == 5){
@@ -1876,7 +1906,17 @@ void drawScene4(const int& windowWidth, const int& windowHeight){
                     actualScene = "scene5";
                     break;
                 }
-                knight.undoMovement();   
+                if ((name == "nature_tileset/spikes.png" || name == "nature_tileset/spikes2.png" || name == "nature_tileset/poison.png" )  
+                && prop.getState(GetFrameTime())){
+                    int numHearts = knight.getHealth();
+                    remainignLife = numHearts - 1;
+                    knight.updateLife(remainignLife);
+                    break;
+
+                }
+                else{
+                    knight.undoMovement();   
+                }   
             }
 
             for (auto enemy : enemies) {
@@ -2157,25 +2197,135 @@ void drawScene5(const int& windowWidth, const int& windowHeight){
         
         };
 
-    Texture2D goblin_idle = LoadTexture("characters/goblin_idle_spritesheet.png");
-    Texture2D goblin_run = LoadTexture("characters/goblin_run_spritesheet.png");
+    // Carga las imágenes
 
-    Texture2D slime_idle = LoadTexture("characters/slime_idle_spritesheet.png");
-    Texture2D slime_run = LoadTexture("characters/slime_run_spritesheet.png");
+    // Ojo espectral
+    Image spectralEyeIM = LoadImage("characters/spectral_eye.png");
 
-    Enemy* goblin1 = new Enemy(Vector2{600.f, 400.f}, goblin_idle, goblin_run, 1000.f,0);
-    goblin1->patrolPoints = {Vector2{600.f, 400.f}, Vector2{3000.f, 400.f}, Vector2{3000.f, 2200.f}, Vector2{1700.f, 2200.f},Vector2{400.f, 400.f}};
+    // Chocobo
+    Image chocoboIdleIM = LoadImage ("characters/chocobo_idle_spritesheet.png");
+    Image chocoboRunIM = LoadImage ("characters/chocobo_run_spritesheet.png");
 
-    Enemy* goblin2 = new Enemy(Vector2{1200.f, 400.f}, goblin_idle, goblin_run, 1000.f,0);
-    goblin2->patrolPoints = {Vector2{1200.f, 400.f}, Vector2{3000.f, 400.f}, Vector2{3000.f, 2200.f}, Vector2{1700.f, 2200.f},Vector2{400.f, 400.f}};
+    // Rata
+    Image ratIM = LoadImage ("characters/rat_spritesheet.png");
 
-    Enemy* goblin3 = new Enemy(Vector2{1800.f, 400.f}, goblin_idle, goblin_run, 1000.f,0);
-    goblin3->patrolPoints = {Vector2{1800.f, 400.f}, Vector2{3000.f, 400.f}, Vector2{3000.f, 2200.f}, Vector2{1700.f, 2200.f},Vector2{400.f, 400.f}};
+    // Enemigos simples
+
+    // Ojo espectral
+    Texture2D spectralEye = LoadTextureFromImage(spectralEyeIM);
+
+    // Chocobo    
+    Texture2D chocoboIdle = LoadTextureFromImage(chocoboIdleIM);
+    Texture2D chocoboRun = LoadTextureFromImage(chocoboRunIM);
+
+    // Rata
+    Texture2D ratIdle = LoadTextureFromImage(ratIM);
+    Texture2D ratRun = LoadTextureFromImage(ratIM);
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // Enemigos simples
+    // Se crean numeros random para el tipo de enemigo simple utilizando algoritmo genetico
+    genAlg randNum(2147483648LL, 1103515245LL, 12345LL, time(0));
+    int randNum1 = randNum.nextInRange(3, 5);
+    int randNum2 = randNum.nextInRange(3, 5);
+    int randNum3 = randNum.nextInRange(3, 5);
+    int randNum4 = randNum.nextInRange(3, 5);
+
+    Texture2D simpleEnemy1IdleTexture;
+    Texture2D simpleEnemy1RunTexture;
+    Texture2D simpleEnemy2IdleTexture;
+    Texture2D simpleEnemy2RunTexture;
+    Texture2D simpleEnemy3IdleTexture;
+    Texture2D simpleEnemy3RunTexture;
+    Texture2D simpleEnemy4IdleTexture;
+    Texture2D simpleEnemy4RunTexture;
+
+    if (randNum1 == 3){
+        simpleEnemy1IdleTexture = spectralEye;
+        simpleEnemy1RunTexture = spectralEye;
+    }
+    else if (randNum1 == 4){
+        simpleEnemy1IdleTexture = ratIdle;
+        simpleEnemy1RunTexture = ratRun;
+    }
+    else if (randNum1 == 5){
+        simpleEnemy1IdleTexture = chocoboIdle;
+        simpleEnemy1RunTexture = chocoboRun;
+    }
+
+    if (randNum2 == 3){
+        simpleEnemy2IdleTexture = spectralEye;
+        simpleEnemy2RunTexture = spectralEye;
+    }
+    else if (randNum2 == 4){
+        simpleEnemy2IdleTexture = ratIdle;
+        simpleEnemy2RunTexture = ratRun;
+    }
+    else if (randNum2 == 5){
+        simpleEnemy2IdleTexture = chocoboIdle;
+        simpleEnemy2RunTexture = chocoboRun;
+    }
+
+    if (randNum3 == 3){
+        simpleEnemy3IdleTexture = spectralEye;
+        simpleEnemy3RunTexture = spectralEye;
+    }
+    else if (randNum3 == 4){
+        simpleEnemy3IdleTexture = ratIdle;
+        simpleEnemy3RunTexture = ratRun;
+    }
+    else if (randNum3 == 5){
+        simpleEnemy3IdleTexture = chocoboIdle;
+        simpleEnemy3RunTexture = chocoboRun;
+    }
+
+    if (randNum4 == 3){
+        simpleEnemy4IdleTexture = spectralEye;
+        simpleEnemy4RunTexture = spectralEye;
+    }
+    else if (randNum4 == 4){
+        simpleEnemy4IdleTexture = ratIdle;
+        simpleEnemy4RunTexture = ratRun;
+    }
+    else if (randNum4 == 5){
+        simpleEnemy4IdleTexture = chocoboIdle;
+        simpleEnemy4RunTexture = chocoboRun;
+    }
+
+    Image bossIdleIM = LoadImage("characters/goblin_idle_spritesheet.png");
+    Image bossRunIM = LoadImage("characters/goblin_run_spritesheet.png");
+
+    // Aplica el tinte a las imágenes
+    ImageColorTint(&bossIdleIM, GREEN);
+    ImageColorTint(&bossRunIM, GREEN);
+
+    // Carga las texturas
+    Texture2D bossIdleTexture = LoadTextureFromImage(bossIdleIM);
+    Texture2D bossRunTexture = LoadTextureFromImage(bossRunIM);
+
+
+    Enemy* boss = new Enemy(Vector2{128*3.f, 128*7.f}, bossIdleTexture, bossIdleTexture, 100.f, 6);
+    boss->patrolPoints = {Vector2{128*3.f, 128*7.f}};//,Vector2{128*14.f, 128*5.f}, Vector2{128*14.f, 128*4.f}, Vector2{128*28.f, 128*4.f}, Vector2{128*27.f, 128*4.f}, Vector2{128*27.f, 128*13.f}, Vector2{128*3.f, 128*13.f}, Vector2{128*27.f, 128*13.f}, Vector2{128*27.f, 128*4.f}, Vector2{128*28.f, 128*4.f}, Vector2{128*14.f, 128*4.f}, Vector2{128*14.f, 128*5.f}, Vector2{128*6.f, 128*5.f}};
+
+    Enemy* simpleEnemy1 = new Enemy(Vector2{128*5.f, 128*7.f}, simpleEnemy1IdleTexture, simpleEnemy1RunTexture, 1000.f, randNum1);
+    simpleEnemy1->patrolPoints = {Vector2{128*5.f, 128*7.f},Vector2{128*25.f, 128*7.f},Vector2{128*3.f, 128*7.f}};
+
+    Enemy* simpleEnemy2 = new Enemy(Vector2{128*7.f, 128*7.f}, simpleEnemy2IdleTexture, simpleEnemy2RunTexture, 1000.f, randNum2);
+    simpleEnemy2->patrolPoints = {Vector2{128*7.f, 128*7.f},Vector2{128*25.f, 128*7.f},Vector2{128*3.f, 128*7.f}};
+
+    Enemy* simpleEnemy3 = new Enemy(Vector2{128*9.f, 128*7.f}, simpleEnemy3IdleTexture, simpleEnemy3RunTexture, 1000.f, randNum3);
+    simpleEnemy3->patrolPoints = {Vector2{128*9.f, 128*7.f},Vector2{128*25.f, 128*7.f},Vector2{128*3.f, 128*7.f}};
+
+    Enemy* simpleEnemy4 = new Enemy(Vector2{128*11.f, 128*7.f}, simpleEnemy4IdleTexture, simpleEnemy4RunTexture, 1000.f, randNum4);
+    simpleEnemy4->patrolPoints = {{Vector2{128*11.f, 128*7.f},Vector2{128*25.f, 128*7.f},Vector2{128*3.f, 128*7.f}}};
 
     Enemy* enemies[]{
-        // goblin1,
-        // goblin2,
-        // goblin3,
+            boss,
+            simpleEnemy1,
+            simpleEnemy2,
+            simpleEnemy3,
+            simpleEnemy4
     };
 
     for (auto enemy : enemies)
@@ -2248,12 +2398,22 @@ void drawScene5(const int& windowWidth, const int& windowHeight){
             if (CheckCollisionRecs(prop.getCollisionRec(knight.getWorldPos()), knight.getCollisionRec()))
             {
                 std::string name = prop.getName();
-                if (name == "nature_tileset/ladder.png" && not collisionLLadder){
+                if (name == "nature_tileset/ladder.png" && not collisionLLadder && boss->health <= 0){
                     collisionLLadder= true;
                     actualScene = "win";
                     break;
                 }
-                knight.undoMovement();   
+                if ((name == "nature_tileset/spikes.png" || name == "nature_tileset/spikes2.png" || name == "nature_tileset/poison.png" )  
+                && prop.getState(GetFrameTime())){
+                    int numHearts = knight.getHealth();
+                    remainignLife = numHearts - 1;
+                    knight.updateLife(remainignLife);
+                    break;
+
+                }
+                else{
+                    knight.undoMovement();   
+                }   
             }
 
             for (auto enemy : enemies) {
@@ -2401,12 +2561,16 @@ void drawScene5(const int& windowWidth, const int& windowHeight){
             }
             for (auto enemy : enemies)
             {
-                if (CheckCollisionRecs(enemy->getCollisionRec(), knight.getWeaponCollisionRec()) && !CheckCollisionRecs(enemy->getVisionRectangle(), knight.getWeaponCollisionRec()))
+                if (enemy->getType()!= 6 && CheckCollisionRecs(enemy->getCollisionRec(), knight.getWeaponCollisionRec()) && !CheckCollisionRecs(enemy->getVisionRectangle(), knight.getWeaponCollisionRec()))
                 {
                     if(enemy->getAlive()){
                         pts += 10;
                     }
                     enemy->setAlive(false);
+                }else{
+                    if (!CheckCollisionRecs(enemy->getVisionRectangle(),knight.getCollisionRec())  &&  CheckCollisionRecs(enemy->getCollisionRec(),knight.getCollisionRec())){
+                        enemy->health-=1;
+                    }
                 }
             }
         }
@@ -2419,9 +2583,28 @@ void drawScene5(const int& windowWidth, const int& windowHeight){
         DrawText(" : ", windowWidth-130, 30, 32, BLACK);
         DrawText(std::to_string(foundChests).c_str(), windowWidth -105, 30, 32, RED);
 
+        float bossHealth = boss->health;
+        float bossMaxHealth = 2000;
+
+        // Calcula el porcentaje de vida que le queda al jefe
+        float healthPercentage = bossHealth / bossMaxHealth;
+
+        // Define el tamaño y la posición de la barra de vida
+        int barWidth = 200;
+        int barHeight = 20;
+        int barX = windowWidth / 2 - barWidth / 2; // Centra la barra en la pantalla
+        int barY = 70; // Posición vertical de la barra
+
+        // Dibuja la barra de vida
+        DrawRectangle(barX, barY, barWidth, barHeight, GRAY); // Barra de fondo
+        DrawRectangle(barX, barY, barWidth * healthPercentage, barHeight, RED); // Barra de vida
+
+        DrawText("Boss", (windowWidth/2)-40, barY+25, 32, BLACK);
 
         if (actualScene == "win") {
-            return;
+            DrawText("You win!", windowWidth / 4, windowHeight / 3, 40, RED);
+            EndDrawing();
+            continue;
         }
 
         std::vector<std::vector<int>> mapmat = LoadMatFromFile("mapa4.txt");

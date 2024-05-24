@@ -9,7 +9,6 @@ BaseCharacter::BaseCharacter()
 void BaseCharacter::undoMovement()
 {
     worldPos = worldPosLastFrame;
-    // velocity = {};
 }
 
 Rectangle BaseCharacter::getCollisionRec()
