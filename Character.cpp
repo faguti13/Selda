@@ -70,7 +70,7 @@ void Character::tick(float deltaTime)
     Vector2 shieldOrigin{};
     Vector2 shieldOffset{};
     float rotate{};
-    float visionRange = 200.f;
+    //float visionRange = 200.f;
 
     if (rightLeft > 0.f)
     {
@@ -156,7 +156,7 @@ void Character::tick(float deltaTime)
 void Character::takeDamage(float damage)
 {
     health -= damage;
-    if (health <= 0.f)
+    if (health <= 0.9f)
     {
         setAlive(false);
     }

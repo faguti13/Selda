@@ -79,13 +79,16 @@ public:
     bool isResting;
 private:
     Character* target;
-    float damagePerSec{100.f};
+    float damagePerSec{1.f};
     float radius{25.f};
     float visionRange;
     float scale{4.0f};
     bool callAllEnemies{false};
+    float fireballCooldown;
     Texture2D weapon{LoadTexture("characters/weapon_sword.png")};
     Texture2D fireweapon{LoadTexture("characters/firesword.png")};
+    Texture2D fireballTexture{LoadTexture("characters/fireBall.png")};
+    Texture2D fireballTextureD{LoadTexture("characters/fireBallDer.png")};
     bool checkLineOfSight(Vector2 start, Vector2 end);
     float collisionTime;
     bool isStriking;

@@ -17,8 +17,9 @@ void drawScene2(const int& windowWidth, const int& windowHeight);
 void drawScene3(const int& windowWidth, const int& windowHeight);
 void drawScene4(const int& windowWidth, const int& windowHeight);
 void drawScene5(const int& windowWidth, const int& windowHeight);
+void nextLevelTransition(const int& windowWidth, const int& windowHeight);
 
-std::string actualScene = "scene5";
+std::string actualScene = "scene1";
 int pts = 0;
 int remainignLife = 5;
 int foundChests = 0;
@@ -86,21 +87,81 @@ int main()
             drawScene1(windowWidth, windowHeight);
         }
         if (actualScene == "scene2"){
+            nextLevelTransition(windowWidth, windowHeight);
             drawScene2( windowWidth, windowHeight);
         }
         if (actualScene == "scene3"){
+            nextLevelTransition(windowWidth, windowHeight);
             drawScene3(windowWidth, windowHeight);
         }
         if (actualScene == "scene4"){
+            nextLevelTransition(windowWidth, windowHeight);
             drawScene4(windowWidth, windowHeight);
         }
         if (actualScene == "scene5"){
+            nextLevelTransition(windowWidth, windowHeight);
             drawScene5(windowWidth, windowHeight);
         }
     }
     //UnloadTexture(map);
     CloseWindow();
     return 0;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void nextLevelTransition(const int& windowWidth, const int& windowHeight){
+
+    float time = 0.f;
+    float timeMax = 5.f;
+    int MAX_FRAMES = 49;
+    Texture2D frames[MAX_FRAMES];
+
+    for (int i = 0; i < MAX_FRAMES; i++)
+    {
+        char filename[20];
+        sprintf(filename, "gifLevel/frame-%02d.gif", i + 1); 
+        frames[i] = LoadTexture(filename);
+    }
+
+    SetTargetFPS(60);
+
+    int currentFrame = 0;
+    float frameTimer = 0.0f;
+
+    while (!WindowShouldClose())
+    {
+        frameTimer += GetFrameTime();
+        if (frameTimer >= 0.1f) 
+        {
+            currentFrame++;
+            if (currentFrame >= MAX_FRAMES)
+                currentFrame = 0;
+            frameTimer = 0.0f;
+        }
+
+        BeginDrawing();
+        ClearBackground(BLACK);
+
+        // Dibuja el fotograma actual
+        DrawTexture(frames[currentFrame], windowWidth/2 - frames[currentFrame].width/2, windowHeight/2 - frames[currentFrame].height/2, WHITE);
+
+        EndDrawing();
+
+        float timePast = GetFrameTime();
+        time += timePast;
+        if (time >= timeMax){
+            return;
+        }
+    }
+
+    for (int i = 0; i < MAX_FRAMES; i++)
+    {
+        UnloadTexture(frames[i]);
+    }
+
+    return ;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -110,7 +171,7 @@ void drawScene1(const int& windowWidth, const int& windowHeight){
     Texture2D map = LoadTexture("nature_tileset/piso1.png");
     Vector2 mapPos{0.0, 0.0};
     const float mapScale{4.0f}; // escala del mapa
-    int mapmat[30][20] = {0};
+    //int mapmat[30][20] = {0};
     LoadMapFromFile("mapa1.txt");
 
     // Carga las texturas
@@ -305,7 +366,7 @@ void drawScene1(const int& windowWidth, const int& windowHeight){
     while (!WindowShouldClose())
     {   
         BeginDrawing();
-        ClearBackground({51, 1, 6, 255});
+        ClearBackground({42, 43, 48, 255}); 
 
         // dibuja el mapa
         mapPos = Vector2Scale(knight.getWorldPos(), -1.f);
