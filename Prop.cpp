@@ -2,7 +2,8 @@
 #include "raymath.h"
 #include <string>
 
-Prop::Prop(Vector2 pos, Texture2D tex, const std::string fileName) : worldPos(pos), texture(tex), name(fileName),  runningTime(0.0f), frame(0), collisionTime(0.0f), state(true) {}
+Prop::Prop(Vector2 pos, Texture2D tex, const std::string fileName, bool isTorch) 
+    : worldPos(pos), texture(tex), name(fileName), isTorch_(isTorch), runningTime(0.0f), frame(0), collisionTime(0.0f), state(true) {}
 
 void Prop::Render(Vector2 knightPos, float deltaTime)
 {
@@ -13,6 +14,9 @@ void Prop::Render(Vector2 knightPos, float deltaTime)
     }
     else {
         DrawTextureEx(texture, screenPos, 0.f, scale, WHITE);
+    }
+    if (isTorch_){
+        DrawCircleV(Vector2{screenPos.x+64, screenPos.y+64},300.f,{ 255, 255/2, 0, 100 });
     }
 }
 
@@ -46,6 +50,8 @@ Rectangle Prop::getCollisionRec(Vector2 knightPos)
         };
     }
 }
+
+
 
 std::string Prop::getName() const {
     return name;
@@ -110,4 +116,8 @@ void Prop::breakChest() {
         broken = true;
         texture = LoadTexture("nature_tileset/chest2.png"); 
     }
+}
+
+bool Prop::isTorch() const {
+    return isTorch_;
 }

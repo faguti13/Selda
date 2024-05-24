@@ -7,7 +7,8 @@
 
 class Prop {
 public:
-    Prop(Vector2 pos, Texture2D tex, const std::string fileName);
+    // Constructor con un parámetro opcional
+    Prop(Vector2 pos, Texture2D tex, const std::string fileName, bool isTorch = false);
     void Render(Vector2 knightPos, float deltaTime);
     Rectangle getCollisionRec(Vector2 knightPos);
     std::string getName() const;
@@ -15,11 +16,14 @@ public:
     bool isBreakable() const;
     void breakVase(); 
     void breakChest();
+    bool isTorch() const; // Nuevo método para verificar si es una antorcha
+
 private:
     Vector2 worldPos{};
     Texture2D texture{};
     std::string  name; 
     float scale{4.f};
+    bool isTorch_; // Nuevo miembro de datos
  
    // Variables para  la animación
     float runningTime = 0.0f;

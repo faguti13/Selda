@@ -22,8 +22,12 @@ public:
     virtual Vector2 getScreenPos() override;
     std::vector<Vector2> pathPoints; // Almacena los puntos de la ruta
     int currentPathPoint = 0; // Almacena el índice del punto de la ruta actual
+    std::vector<Vector2> colPathPoints; // Almacena los puntos de la ruta
+    int currentColPathPoint = 0; // Almacena el índice del punto de la ruta actual
     std::vector<Vector2> patrolPoints; 
     int currentPatrolPoint = 0; 
+    bool colPath{false};
+    bool isARat{false};
 
     void moveTo(Vector2 newWorldPos) {
         worldPos = newWorldPos;
@@ -51,6 +55,24 @@ public:
     void teleport(Vector2 newPosition) {
         worldPos = newPosition;
     }
+
+    void setVelocity(Vector2 newVelocity) {
+        velocity = newVelocity;
+    }
+
+    bool inAttack;
+
+    void setInAttack(bool attack) {
+        inAttack = attack;
+    }
+
+    bool getColpath() {
+        return colPath;
+    }
+
+    bool getIsARat(){
+        return isARat;
+    }
 private:
     Character* target;
     float damagePerSec{100.f};
@@ -60,6 +82,7 @@ private:
     bool callAllEnemies{false};
     Texture2D weapon{LoadTexture("characters/weapon_sword.png")};
     Texture2D fireweapon{LoadTexture("characters/firesword.png")};
+    bool checkLineOfSight(Vector2 start, Vector2 end);
 };
 
 #endif

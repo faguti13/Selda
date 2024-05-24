@@ -18,7 +18,7 @@ void drawScene3(const int& windowWidth, const int& windowHeight);
 void drawScene4(const int& windowWidth, const int& windowHeight);
 void drawScene5(const int& windowWidth, const int& windowHeight);
 
-std::string actualScene = "scene2";
+std::string actualScene = "scene5";
 int pts = 0;
 int remainignLife = 5;
 int foundChests = 0;
@@ -153,25 +153,48 @@ void drawScene1(const int& windowWidth, const int& windowHeight){
 
 
     // Carga las imágenes
+
+    // Espectros
     Image graySpectreIdleIM = LoadImage("characters/goblin_idle_spritesheet.png");
     Image graySpectreRunIM = LoadImage("characters/goblin_run_spritesheet.png");
 
+    // Ojo espectral
     Image spectralEyeIM = LoadImage("characters/spectral_eye.png");
+
+    // Chocobo
+    Image chocoboIdleIM = LoadImage ("characters/chocobo_idle_spritesheet.png");
+    Image chocoboRunIM = LoadImage ("characters/chocobo_run_spritesheet.png");
+
+    // Rata
+    Image ratIM = LoadImage ("characters/rat_spritesheet.png");
 
     // Convierte las imágenes a texturas
     Texture2D graySpectreIdle = LoadTextureFromImage(graySpectreIdleIM);
     Texture2D graySpectreRun = LoadTextureFromImage(graySpectreRunIM);
 
+    // Enemigos simples
+
+    // Ojo espectral
     Texture2D spectralEye = LoadTextureFromImage(spectralEyeIM);
 
+    // Chocobo    
+    Texture2D chocoboIdle = LoadTextureFromImage(chocoboIdleIM);
+    Texture2D chocoboRun = LoadTextureFromImage(chocoboRunIM);
+
+    // Rata
+    Texture2D ratIdle = LoadTextureFromImage(ratIM);
+    Texture2D ratRun = LoadTextureFromImage(ratIM);
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     //Espectros
-    Enemy* greySpectre1 = new Enemy(Vector2{600.f, 400.f}, graySpectreIdle, graySpectreIdle, 1000.f, 2);
+    Enemy* greySpectre1 = new Enemy(Vector2{600.f, 400.f}, graySpectreIdle, graySpectreRun, 1000.f, 0);
     greySpectre1->patrolPoints = {Vector2{600.f, 400.f}, Vector2{3000.f, 400.f}, Vector2{3000.f, 2200.f}, Vector2{1700.f, 2200.f}, Vector2{400.f, 400.f}};
 
-    Enemy* greySpectre2 = new Enemy(Vector2{1000.f, 400.f}, graySpectreIdle, graySpectreRun, 1000.f, 2);
+    Enemy* greySpectre2 = new Enemy(Vector2{1000.f, 400.f}, graySpectreIdle, graySpectreRun, 1000.f, 0);
     greySpectre2->patrolPoints = {Vector2{1000.f, 400.f}, Vector2{3000.f, 400.f}, Vector2{3000.f, 2200.f}, Vector2{1700.f, 2200.f}, Vector2{400.f, 400.f}};
 
-    Enemy* greySpectre3 = new Enemy(Vector2{1400.f, 400.f}, graySpectreIdle, graySpectreRun, 1000.f, 2);
+    Enemy* greySpectre3 = new Enemy(Vector2{1400.f, 400.f}, graySpectreIdle, graySpectreRun, 1000.f, 0);
     greySpectre3->patrolPoints = {Vector2{1400.f, 400.f}, Vector2{3000.f, 400.f}, Vector2{3000.f, 2200.f}, Vector2{1700.f, 2200.f}, Vector2{400.f, 400.f}};
     
     // Enemigos simples
@@ -182,16 +205,77 @@ void drawScene1(const int& windowWidth, const int& windowHeight){
     int randNum3 = randNum.nextInRange(3, 5);
     int randNum4 = randNum.nextInRange(3, 5);
 
-    Enemy* simpleEnemy1 = new Enemy(Vector2{1800.f, 400.f}, spectralEye, spectralEye, 1000.f, randNum1);
+    Texture2D simpleEnemy1IdleTexture;
+    Texture2D simpleEnemy1RunTexture;
+    Texture2D simpleEnemy2IdleTexture;
+    Texture2D simpleEnemy2RunTexture;
+    Texture2D simpleEnemy3IdleTexture;
+    Texture2D simpleEnemy3RunTexture;
+    Texture2D simpleEnemy4IdleTexture;
+    Texture2D simpleEnemy4RunTexture;
+
+    if (randNum1 == 3){
+        simpleEnemy1IdleTexture = spectralEye;
+        simpleEnemy1RunTexture = spectralEye;
+    }
+    else if (randNum1 == 4){
+        simpleEnemy1IdleTexture = ratIdle;
+        simpleEnemy1RunTexture = ratRun;
+    }
+    else if (randNum1 == 5){
+        simpleEnemy1IdleTexture = chocoboIdle;
+        simpleEnemy1RunTexture = chocoboRun;
+    }
+
+    if (randNum2 == 3){
+        simpleEnemy2IdleTexture = spectralEye;
+        simpleEnemy2RunTexture = spectralEye;
+    }
+    else if (randNum2 == 4){
+        simpleEnemy2IdleTexture = ratIdle;
+        simpleEnemy2RunTexture = ratRun;
+    }
+    else if (randNum2 == 5){
+        simpleEnemy2IdleTexture = chocoboIdle;
+        simpleEnemy2RunTexture = chocoboRun;
+    }
+
+    if (randNum3 == 3){
+        simpleEnemy3IdleTexture = spectralEye;
+        simpleEnemy3RunTexture = spectralEye;
+    }
+    else if (randNum3 == 4){
+        simpleEnemy3IdleTexture = ratIdle;
+        simpleEnemy3RunTexture = ratRun;
+    }
+    else if (randNum3 == 5){
+        simpleEnemy3IdleTexture = chocoboIdle;
+        simpleEnemy3RunTexture = chocoboRun;
+    }
+
+    if (randNum4 == 3){
+        simpleEnemy4IdleTexture = spectralEye;
+        simpleEnemy4RunTexture = spectralEye;
+    }
+    else if (randNum4 == 4){
+        simpleEnemy4IdleTexture = ratIdle;
+        simpleEnemy4RunTexture = ratRun;
+    }
+    else if (randNum4 == 5){
+        simpleEnemy4IdleTexture = chocoboIdle;
+        simpleEnemy4RunTexture = chocoboRun;
+    }
+
+    Enemy* simpleEnemy1 = new Enemy(Vector2{1800.f, 400.f}, simpleEnemy1IdleTexture, simpleEnemy1RunTexture, 1000.f, randNum1);
     simpleEnemy1->patrolPoints = {Vector2{1800.f, 400.f}, Vector2{3000.f, 400.f}, Vector2{3000.f, 2200.f}, Vector2{1700.f, 2200.f}, Vector2{400.f, 400.f}};
 
-    Enemy* simpleEnemy2 = new Enemy(Vector2{2200.f, 400.f}, graySpectreIdle, graySpectreRun, 1000.f, randNum2);
+    Enemy* simpleEnemy2 = new Enemy(Vector2{2200.f, 400.f}, simpleEnemy2IdleTexture, simpleEnemy2RunTexture, 1000.f, randNum2);
     simpleEnemy2->patrolPoints = {Vector2{2200.f, 400.f}, Vector2{3000.f, 400.f}, Vector2{3000.f, 2200.f}, Vector2{1700.f, 2200.f}, Vector2{400.f, 400.f}};
 
-    Enemy* simpleEnemy3 = new Enemy(Vector2{2600.f, 400.f}, graySpectreIdle, graySpectreRun, 1000.f, randNum3);
+    Enemy* simpleEnemy3 = new Enemy(Vector2{2600.f, 400.f}, simpleEnemy3IdleTexture, simpleEnemy3RunTexture, 1000.f, randNum3);
     simpleEnemy3->patrolPoints = {Vector2{2600.f, 400.f}, Vector2{3000.f, 400.f}, Vector2{3000.f, 2200.f}, Vector2{1700.f, 2200.f}, Vector2{400.f, 400.f}};
 
-    Enemy* simpleEnemy4 = new Enemy(Vector2{3000.f, 400.f}, graySpectreIdle, graySpectreRun, 1000.f, randNum4);
+    Enemy* simpleEnemy4 = new Enemy(Vector2{3000.f, 400.f}, simpleEnemy4IdleTexture, simpleEnemy4RunTexture, 1000.f, randNum4);
     simpleEnemy4->patrolPoints = {Vector2{3000.f, 400.f}, Vector2{3000.f, 400.f}, Vector2{3000.f, 2200.f}, Vector2{1700.f, 2200.f}, Vector2{400.f, 400.f}};
 
     Enemy* enemies[]{
@@ -203,7 +287,7 @@ void drawScene1(const int& windowWidth, const int& windowHeight){
             simpleEnemy3,
             simpleEnemy4
     };
-
+    
     for (auto enemy : enemies)
     {
         enemy->SetTarget(&knight);
@@ -280,52 +364,104 @@ void drawScene1(const int& windowWidth, const int& windowHeight){
                 }
                 knight.undoMovement();   
             }
+
+            for (auto enemy : enemies) {
+                if (enemy->getType() == 0 || enemy->getType() == 1|| enemy->getType() == 2 || enemy->getType() == 5){
+                    if (CheckCollisionRecs(prop.getCollisionRec(knight.getWorldPos()), enemy->getCollisionRec())){
+                        enemy -> colPath = true;
+                        float ex = round((enemy->getWorldPos().x/128));
+                        float ey = round((enemy->getWorldPos().y/128));
+                        float kx = round((knight.getWorldPos().x/128)+3);
+                        float ky = round((knight.getWorldPos().y/128)+1.6f);
+
+                        Vector2 startPoint = {ex, ey};
+                        Vector2 targetPoint = {kx, ky};
+                        pathList = AStar(startPoint, targetPoint);
+
+                        //Debug camino
+                        // DrawRectangle(startPoint.x * TILE_SIZE, startPoint.y * TILE_SIZE, TILE_SIZE, TILE_SIZE, BLUE);
+                        // DrawRectangle(targetPoint.x * TILE_SIZE, targetPoint.y * TILE_SIZE, TILE_SIZE, TILE_SIZE, RED);
+
+                        std::vector<Vector2> colpathPoints;
+                        if (pathList != nullptr) {
+                            for (int i = 0; i < pathList->size; i++) {
+                                AStarNode* node = static_cast<AStarNode*>(list_get(pathList, i));
+                                std::cout<<node->x*128<<" "<<node->y*128<<std::endl;
+                                if (node != nullptr) {
+                                    Vector2 point = {node->x*128, node->y*128};
+                                    colpathPoints.push_back(point);
+                                }
+                                // DrawRectangle(node->x * TILE_SIZE, node->y * TILE_SIZE, TILE_SIZE, TILE_SIZE, YELLOW);                            
+                            }
+                        }
+                        enemy->colPathPoints = colpathPoints;
+                        if (enemy->getType() == 4 || enemy->getType() == 5){
+                            enemy->undoMovement();
+                            enemy->colPath = true;
+                        }
+                    }
+                }
+                else if (enemy->getType() == 4){// || enemy->getType() == 5){
+                    if (CheckCollisionRecs(prop.getCollisionRec(knight.getWorldPos()), enemy->getCollisionRec())){
+                        enemy->undoMovement();
+                    }
+                }
+            }
         }    
 
         //sacar camino de astar para cada enemigo si un ojo espectral lo ve (con debug)
         for (auto enemy3 : enemies) {
             if (enemy3->getType() == 3){
-                if (CheckCollisionRecs(knight.getCollisionRec(), enemy3->getVisionRectangle())  && !CheckCollisionRecs(knight.getCollisionRec(),knight.safeZone)  ) {
+                if (CheckCollisionRecs(knight.getCollisionRec(), enemy3->getVisionRectangle())  && !CheckCollisionRecs(knight.getCollisionRec(),knight.safeZone) ) {
                     if (!pathCalculated && count != 1) { // Sólo calcula el camino si no se ha calculado antes
                         float currentTime = GetTime(); // Obtén el tiempo actual
                         if (currentTime - enemy3->lastPathCalculationTime > 1.0f) { // Si ha pasado más de 1 segundo
                             
                             for (auto enemy : enemies){
+                                if (enemy->getType() == 0 || enemy->getType() == 1 || enemy->getType() == 2){
+                                    if (!enemy->getColpath() &&  enemy->getType() != 4 ?: enemy->getType() != 5){
+                                        enemy->colPath = false;
+                                        
 
-                                float ex = round((enemy->getWorldPos().x/128));
-                                float ey = round((enemy->getWorldPos().y/128));
-                                float kx = round((knight.getWorldPos().x/128)+3);
-                                float ky = round((knight.getWorldPos().y/128)+1.6f);
+                                        float ex = round((enemy->getWorldPos().x/128));
+                                        float ey = round((enemy->getWorldPos().y/128));
+                                        float kx = round((knight.getWorldPos().x/128)+3);
+                                        float ky = round((knight.getWorldPos().y/128)+1.6f);
 
-                                Vector2 startPoint = {ex, ey};
-                                Vector2 targetPoint = {kx, ky};
-                                pathList = AStar(startPoint, targetPoint);
+                                        Vector2 startPoint = {ex, ey};
+                                        Vector2 targetPoint = {kx, ky};
+                                        pathList = AStar(startPoint, targetPoint);
 
-                                //Debug camino
-                                // DrawRectangle(startPoint.x * TILE_SIZE, startPoint.y * TILE_SIZE, TILE_SIZE, TILE_SIZE, BLUE);
-                                // DrawRectangle(targetPoint.x * TILE_SIZE, targetPoint.y * TILE_SIZE, TILE_SIZE, TILE_SIZE, RED);
+                                        //Debug camino
+                                        // DrawRectangle(startPoint.x * TILE_SIZE, startPoint.y * TILE_SIZE, TILE_SIZE, TILE_SIZE, BLUE);
+                                        // DrawRectangle(targetPoint.x * TILE_SIZE, targetPoint.y * TILE_SIZE, TILE_SIZE, TILE_SIZE, RED);
 
-                                std::vector<Vector2> pathPoints;
-                                if (pathList != nullptr) {
-                                    for (int i = 0; i < pathList->size; i++) {
-                                        AStarNode* node = static_cast<AStarNode*>(list_get(pathList, i));
-                                        std::cout<<node->x*128<<" "<<node->y*128<<std::endl;
-                                        if (node != nullptr) {
-                                            Vector2 point = {node->x*128, node->y*128};
-                                            pathPoints.push_back(point);
-                                        }
-                                        DrawRectangle(node->x * TILE_SIZE, node->y * TILE_SIZE, TILE_SIZE, TILE_SIZE, YELLOW);
-                                        for (auto enemy : enemies)
-                                        {   
-                                            enemy->pathPoints = pathPoints;
-                                            enemy->callEnemies();
-                                            if (enemy->getType() == 2){
-                                                enemy->teleport(Vector2{enemy3->getWorldPos().x, enemy3->getWorldPos().y});
+                                        std::vector<Vector2> pathPoints;
+                                        if (pathList != nullptr) {
+                                            for (int i = 0; i < pathList->size; i++) {
+                                                AStarNode* node = static_cast<AStarNode*>(list_get(pathList, i));
+                                                std::cout<<node->x*128<<" "<<node->y*128<<std::endl;
+                                                if (node != nullptr) {
+                                                    Vector2 point = {node->x*128, node->y*128};
+                                                    pathPoints.push_back(point);
+                                                }
+                                                // DrawRectangle(node->x * TILE_SIZE, node->y * TILE_SIZE, TILE_SIZE, TILE_SIZE, YELLOW);
+                                                for (auto enemy : enemies)
+                                                {   
+                                                    if (enemy->getType() == 0 || enemy->getType() == 1 || enemy->getType() == 2){
+                                                        if (!enemy->getColpath() && enemy->getType() != 4 ?: enemy->getType() != 5){
+                                                            enemy->pathPoints = pathPoints;
+                                                            enemy->callEnemies();
+                                                            if (enemy->getType() == 2){
+                                                                enemy->teleport(Vector2{enemy3->getWorldPos().x, enemy3->getWorldPos().y});
+                                                            }
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }
                                 }
-
                                 pathCalculated = true; // Establece pathCalculated en true después de calcular el camino
                                 count = 1;
                                 enemy->uncallEnemies();
@@ -413,38 +549,41 @@ void drawScene1(const int& windowWidth, const int& windowHeight){
         Vector2 szworldpos = {128*4,128*15};
         Vector2 szScreenPos{Vector2Subtract(szworldpos, knight.getWorldPos())};
         Rectangle safeZone = {szScreenPos.x, szScreenPos.y, 128*5, 128*3};
-        DrawRectangleRec(safeZone, Color{0, 255, 0, 55});
+        // DrawRectangleRec(safeZone, Color{0, 255, 0, 55});
         knight.setSafeZone(safeZone);
 
-        for (int i = 0; i < 30; i++) {
-            for (int j = 0; j < 20; j++) {
-                switch (mapmat[i][j]) {
-                    case 0:
-                        // DrawRectangle(i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE, GRAY);
-                        break;
-                    case 1:
-                        DrawRectangle(i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE, BLACK);
-                        break;
+        // for (int i = 0; i < 30; i++) {
+        //     for (int j = 0; j < 20; j++) {
+        //         switch (mapmat[i][j]) {
+        //             case 0:
+        //                 // DrawRectangle(i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE, GRAY);
+        //                 break;
+        //             case 1:
+        //                 DrawRectangle(i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE, BLACK);
+        //                 break;
+        //         }
+        //     }
+        // }
+
+        //Colision rata
+        for (auto spectreenemy : enemies){
+            if (spectreenemy->getType() == 0 ?: spectreenemy->getType() == 1 ?: spectreenemy->getType() == 2){
+                for (auto ratenemy : enemies){
+                    if(ratenemy->getType() == 4){
+                        std::vector<Vector2> oldPatrolPoints = spectreenemy->patrolPoints;
+                        if(CheckCollisionRecs(spectreenemy->getVisionRectangle(),ratenemy->getCollisionRec())){
+                            spectreenemy->isARat = true;
+                            spectreenemy->undoMovement();
+                            spectreenemy->patrolPoints = {spectreenemy->getWorldPos()}; 
+                        }
+                        else{
+                            spectreenemy->isARat = false;
+                            spectreenemy->patrolPoints = oldPatrolPoints; 
+                        }
+                    }
                 }
             }
         }
-
-
-    
-        // for (int i = 0; i < pathList->size ; i++) {
-        //     AStarNode* node = static_cast<AStarNode*>(list_get(pathList, i));
-        //     //std::cout<<node->x*128<<" "<<node->y*128<<std::endl;
-
-        //     // Guarda las coordenadas del nodo en la matriz
-        //     pathPoints.push_back(Vector2{node->x*128, node->y*128});
-
-        //     // for (auto enemy : enemies)
-        //     // {   
-        //     //     enemy->pathPoints = pathPoints;
-        //     // }
-
-        //     DrawRectangle(node->x * TILE_SIZE, node->y * TILE_SIZE, TILE_SIZE, TILE_SIZE, YELLOW);
-        // }
 
         EndDrawing();
     }
@@ -500,13 +639,13 @@ void drawScene2 (const int& windowWidth, const int& windowHeight){
         Prop{Vector2{1152.f, 1423.f}, LoadTexture("nature_tileset/ladder.png"), "nature_tileset/ladder.png"},
         
         //Antorchas
-        Prop{Vector2{2816.f, 143.f}, LoadTexture("nature_tileset/fire.png"), "nature_tileset/fire.png"},
-        Prop{Vector2{768.f, 143.f}, LoadTexture("nature_tileset/fire.png"), "nature_tileset/fire.png"},
-        Prop{Vector2{1408.f, 1536.f}, LoadTexture("nature_tileset/fire.png"), "nature_tileset/fire.png"},
-        Prop{Vector2{1792.f, 640.f}, LoadTexture("nature_tileset/fire.png"), "nature_tileset/fire.png"},
-        Prop{Vector2{2944.f, 1152.f}, LoadTexture("nature_tileset/fire.png"), "nature_tileset/fire.png"},
-        Prop{Vector2{2048.f, 1920.f}, LoadTexture("nature_tileset/fire.png"), "nature_tileset/fire.png"},
-        Prop{Vector2{0.f, 1296.f}, LoadTexture("nature_tileset/fire.png"), "nature_tileset/fire.png"},
+        Prop{Vector2{2816.f, 143.f}, LoadTexture("nature_tileset/fire.png"), "nature_tileset/fire.png",true},
+        Prop{Vector2{768.f, 143.f}, LoadTexture("nature_tileset/fire.png"), "nature_tileset/fire.png",true},
+        Prop{Vector2{1408.f, 1536.f}, LoadTexture("nature_tileset/fire.png"), "nature_tileset/fire.png",true},
+        Prop{Vector2{1792.f, 640.f}, LoadTexture("nature_tileset/fire.png"), "nature_tileset/fire.png",true},
+        Prop{Vector2{2944.f, 1152.f}, LoadTexture("nature_tileset/fire.png"), "nature_tileset/fire.png",true},
+        Prop{Vector2{2048.f, 1920.f}, LoadTexture("nature_tileset/fire.png"), "nature_tileset/fire.png",true},
+        Prop{Vector2{0.f, 1296.f}, LoadTexture("nature_tileset/fire.png"), "nature_tileset/fire.png",true},
         
         // trampas 
         Prop{Vector2{1792.f, 768.f}, LoadTexture("nature_tileset/spikes2.png"), "nature_tileset/spikes2.png"},
@@ -522,19 +661,127 @@ void drawScene2 (const int& windowWidth, const int& windowHeight){
     Texture2D redSpectreIdle = LoadTextureFromImage(redSpectreIdleIM);
     Texture2D redSpectreRun = LoadTextureFromImage(redSpectreRunIM);
 
-    Enemy* redSpectre1 = new Enemy(Vector2{600.f, 400.f}, redSpectreIdle, redSpectreRun, 1000.f, 3);
-    redSpectre1->patrolPoints = {Vector2{600.f, 400.f}, Vector2{3000.f, 400.f}, Vector2{3000.f, 2200.f}, Vector2{1700.f, 2200.f}, Vector2{400.f, 400.f}};
+    // Ojo espectral
+    Image spectralEyeIM = LoadImage("characters/spectral_eye.png");
 
-    Enemy* redSpectre2 = new Enemy(Vector2{1200.f, 400.f}, redSpectreIdle, redSpectreRun, 1000.f, 1);
-    redSpectre2->patrolPoints = {Vector2{1200.f, 400.f}, Vector2{3000.f, 400.f}, Vector2{3000.f, 2200.f}, Vector2{1700.f, 2200.f}, Vector2{400.f, 400.f}};
+    // Chocobo
+    Image chocoboIdleIM = LoadImage ("characters/chocobo_idle_spritesheet.png");
+    Image chocoboRunIM = LoadImage ("characters/chocobo_run_spritesheet.png");
 
-    Enemy* redSpectre3 = new Enemy(Vector2{1800.f, 400.f}, redSpectreIdle, redSpectreRun, 1000.f, 1);
-    redSpectre3->patrolPoints = {Vector2{1800.f, 400.f}, Vector2{3000.f, 400.f}, Vector2{3000.f, 2200.f}, Vector2{1700.f, 2200.f}, Vector2{400.f, 400.f}};
+    // Rata
+    Image ratIM = LoadImage ("characters/rat_spritesheet.png");
+
+    // Enemigos simples
+
+    // Ojo espectral
+    Texture2D spectralEye = LoadTextureFromImage(spectralEyeIM);
+
+    // Chocobo    
+    Texture2D chocoboIdle = LoadTextureFromImage(chocoboIdleIM);
+    Texture2D chocoboRun = LoadTextureFromImage(chocoboRunIM);
+
+    // Rata
+    Texture2D ratIdle = LoadTextureFromImage(ratIM);
+    Texture2D ratRun = LoadTextureFromImage(ratIM);
+
+    Enemy* redSpectre1 = new Enemy(Vector2{128*6.f, 128*4.f}, redSpectreIdle, redSpectreRun, 1000.f, 1);
+    redSpectre1->patrolPoints = {Vector2{128*6.f, 128*4.f}, Vector2{128*26.f, 128*4.f}, Vector2{128*26.f, 128*16.f}, Vector2{128*6.f, 128*16.f}, Vector2{128*6.f, 128*4.f}};
+
+    Enemy* redSpectre2 = new Enemy(Vector2{128*8.f, 128*4.f}, redSpectreIdle, redSpectreRun, 1000.f, 1);
+    redSpectre2->patrolPoints = {Vector2{128*8.f, 128*4.f}, Vector2{128*26.f, 128*4.f}, Vector2{128*26.f, 128*16.f}, Vector2{128*6.f, 128*16.f}, Vector2{128*6.f, 128*4.f}};
+
+    Enemy* redSpectre3 = new Enemy(Vector2{128*10.f, 128*4.f}, redSpectreIdle, redSpectreRun, 1000.f, 1);
+    redSpectre3->patrolPoints = {Vector2{128*10.f, 128*4.f}, Vector2{128*26.f, 128*4.f}, Vector2{128*26.f, 128*16.f}, Vector2{128*6.f, 128*16.f}, Vector2{128*6.f, 128*4.f}};
+
+    // Enemigos simples
+    // Se crean numeros random para el tipo de enemigo simple utilizando algoritmo genetico
+    genAlg randNum(2147483648LL, 1103515245LL, 12345LL, time(0));
+    int randNum1 = randNum.nextInRange(3, 5);
+    int randNum2 = randNum.nextInRange(3, 5);
+    int randNum3 = randNum.nextInRange(3, 5);
+    int randNum4 = randNum.nextInRange(3, 5);
+
+    Texture2D simpleEnemy1IdleTexture;
+    Texture2D simpleEnemy1RunTexture;
+    Texture2D simpleEnemy2IdleTexture;
+    Texture2D simpleEnemy2RunTexture;
+    Texture2D simpleEnemy3IdleTexture;
+    Texture2D simpleEnemy3RunTexture;
+    Texture2D simpleEnemy4IdleTexture;
+    Texture2D simpleEnemy4RunTexture;
+
+    if (randNum1 == 3){
+        simpleEnemy1IdleTexture = spectralEye;
+        simpleEnemy1RunTexture = spectralEye;
+    }
+    else if (randNum1 == 4){
+        simpleEnemy1IdleTexture = ratIdle;
+        simpleEnemy1RunTexture = ratRun;
+    }
+    else if (randNum1 == 5){
+        simpleEnemy1IdleTexture = chocoboIdle;
+        simpleEnemy1RunTexture = chocoboRun;
+    }
+
+    if (randNum2 == 3){
+        simpleEnemy2IdleTexture = spectralEye;
+        simpleEnemy2RunTexture = spectralEye;
+    }
+    else if (randNum2 == 4){
+        simpleEnemy2IdleTexture = ratIdle;
+        simpleEnemy2RunTexture = ratRun;
+    }
+    else if (randNum2 == 5){
+        simpleEnemy2IdleTexture = chocoboIdle;
+        simpleEnemy2RunTexture = chocoboRun;
+    }
+
+    if (randNum3 == 3){
+        simpleEnemy3IdleTexture = spectralEye;
+        simpleEnemy3RunTexture = spectralEye;
+    }
+    else if (randNum3 == 4){
+        simpleEnemy3IdleTexture = ratIdle;
+        simpleEnemy3RunTexture = ratRun;
+    }
+    else if (randNum3 == 5){
+        simpleEnemy3IdleTexture = chocoboIdle;
+        simpleEnemy3RunTexture = chocoboRun;
+    }
+
+    if (randNum4 == 3){
+        simpleEnemy4IdleTexture = spectralEye;
+        simpleEnemy4RunTexture = spectralEye;
+    }
+    else if (randNum4 == 4){
+        simpleEnemy4IdleTexture = ratIdle;
+        simpleEnemy4RunTexture = ratRun;
+    }
+    else if (randNum4 == 5){
+        simpleEnemy4IdleTexture = chocoboIdle;
+        simpleEnemy4RunTexture = chocoboRun;
+    }
+
+    Enemy* simpleEnemy1 = new Enemy(Vector2{128*12.f, 128*4.f}, simpleEnemy1IdleTexture, simpleEnemy1RunTexture, 1000.f, randNum1);
+    simpleEnemy1->patrolPoints = {Vector2{128*12.f, 128*4.f}, Vector2{128*26.f, 128*4.f}, Vector2{128*26.f, 128*16.f}, Vector2{128*6.f, 128*16.f}, Vector2{128*6.f, 128*4.f}};
+
+    Enemy* simpleEnemy2 = new Enemy(Vector2{128*14.f, 128*4.f}, simpleEnemy2IdleTexture, simpleEnemy2RunTexture, 1000.f, randNum2);
+    simpleEnemy2->patrolPoints = {Vector2{128*14.f, 128*4.f}, Vector2{128*26.f, 128*4.f}, Vector2{128*26.f, 128*16.f}, Vector2{128*6.f, 128*16.f}, Vector2{128*6.f, 128*4.f}};
+
+    Enemy* simpleEnemy3 = new Enemy(Vector2{128*16.f, 128*4.f}, simpleEnemy3IdleTexture, simpleEnemy3RunTexture, 1000.f, randNum3);
+    simpleEnemy3->patrolPoints = {Vector2{128*16.f, 128*4.f}, Vector2{128*26.f, 128*4.f}, Vector2{128*26.f, 128*16.f}, Vector2{128*6.f, 128*16.f}, Vector2{128*6.f, 128*4.f}};
+
+    Enemy* simpleEnemy4 = new Enemy(Vector2{128*18.f, 128*4.f}, simpleEnemy4IdleTexture, simpleEnemy4RunTexture, 1000.f, randNum4);
+    simpleEnemy4->patrolPoints = {Vector2{128*18.f, 128*4.f}, Vector2{128*26.f, 128*4.f}, Vector2{128*26.f, 128*16.f}, Vector2{128*6.f, 128*16.f}, Vector2{128*6.f, 128*4.f}};
 
     Enemy* enemies[]{
             redSpectre1,
             redSpectre2,
             redSpectre3,
+            simpleEnemy1,
+            simpleEnemy2,
+            simpleEnemy3,
+            simpleEnemy4
     };
 
     for (auto enemy : enemies)
@@ -552,7 +799,9 @@ void drawScene2 (const int& windowWidth, const int& windowHeight){
     #define TILE_SIZE (16)
     bool pathCalculated = false; // Añade esta línea antes del bucle
     int count = 0;
-
+    // float torchradius = 300.0f;
+    // // Define el color del círculo con transparencia
+    // Color torchColor = { 255, 255, 255, 128 }; // Blanco semi-transparente
 
     while (!WindowShouldClose())
     {
@@ -567,8 +816,10 @@ void drawScene2 (const int& windowWidth, const int& windowHeight){
         // dibuja los props
         for (auto& prop : props)
         {
+            if(!prop.isTorch())
             prop.Render(knight.getWorldPos(), GetFrameTime());
         }
+
 
 
         if (!knight.getAlive())
@@ -592,6 +843,8 @@ void drawScene2 (const int& windowWidth, const int& windowHeight){
 
         knight.tick(GetFrameTime());
 
+
+
         // barreras del mapa
         if (knight.getWorldPos().x < -256.f ||
             knight.getWorldPos().y < 0.f ||
@@ -603,74 +856,115 @@ void drawScene2 (const int& windowWidth, const int& windowHeight){
 
 
         for (auto& prop : props) // Iterar sobre props para detectar la colisión con el caballero
-        {   //CheckCollusionRecs de Raylibs compara los rectangulos 
+        {   
+            //CheckCollusionRecs de Raylibs compara los rectangulos 
             if (CheckCollisionRecs(prop.getCollisionRec(knight.getWorldPos()), knight.getCollisionRec()))
             {
                 std::string name = prop.getName();
                 if (name == "nature_tileset/ladder.png" && not collisionLLadder){
                     collisionLLadder= true;
-                    int numHearts = knight.getHealth();
-                    remainignLife = numHearts;
                     actualScene = "scene3";
                     break;
                 }
-                if ((name == "nature_tileset/spikes.png" || name == "nature_tileset/spikes2.png" || name == "nature_tileset/poison.png" )  
-                && prop.getState(GetFrameTime())){
-                    int numHearts = knight.getHealth();
-                    remainignLife = numHearts - 1;
-                    knight.updateLife(remainignLife);
-                    break;
+                knight.undoMovement();   
+            }
+            for (auto enemy : enemies) {
+                if (enemy->getType() == 0 || enemy->getType() == 1|| enemy->getType() == 2 || enemy->getType() == 5){
+                    if (CheckCollisionRecs(prop.getCollisionRec(knight.getWorldPos()), enemy->getCollisionRec())){
+                        enemy -> colPath = true;
+                        float ex = round((enemy->getWorldPos().x/128));
+                        float ey = round((enemy->getWorldPos().y/128));
+                        float kx = round((knight.getWorldPos().x/128)+3);
+                        float ky = round((knight.getWorldPos().y/128)+1.6f);
+
+                        Vector2 startPoint = {ex, ey};
+                        Vector2 targetPoint = {kx, ky};
+                        pathList = AStar(startPoint, targetPoint);
+
+                        //Debug camino
+                        // DrawRectangle(startPoint.x * TILE_SIZE, startPoint.y * TILE_SIZE, TILE_SIZE, TILE_SIZE, BLUE);
+                        // DrawRectangle(targetPoint.x * TILE_SIZE, targetPoint.y * TILE_SIZE, TILE_SIZE, TILE_SIZE, RED);
+
+                        std::vector<Vector2> colpathPoints;
+                        if (pathList != nullptr) {
+                            for (int i = 0; i < pathList->size; i++) {
+                                AStarNode* node = static_cast<AStarNode*>(list_get(pathList, i));
+                                std::cout<<node->x*128<<" "<<node->y*128<<std::endl;
+                                if (node != nullptr) {
+                                    Vector2 point = {node->x*128, node->y*128};
+                                    colpathPoints.push_back(point);
+                                }
+                                // DrawRectangle(node->x * TILE_SIZE, node->y * TILE_SIZE, TILE_SIZE, TILE_SIZE, YELLOW);                            
+                            }
+                        }
+                        enemy->colPathPoints = colpathPoints;
+                        if (enemy->getType() == 4 || enemy->getType() == 5){
+                            enemy->undoMovement();
+                            enemy->colPath = true;
+                        }
+                    }
                 }
-                else{
-                    knight.undoMovement();
+                else if (enemy->getType() == 4){// || enemy->getType() == 5){
+                    if (CheckCollisionRecs(prop.getCollisionRec(knight.getWorldPos()), enemy->getCollisionRec())){
+                        enemy->undoMovement();
+                    }
                 }
             }
-        }
+        }    
 
         //sacar camino de astar para cada enemigo si un ojo espectral lo ve (con debug)
         for (auto enemy3 : enemies) {
             if (enemy3->getType() == 3){
-                if (CheckCollisionRecs(knight.getCollisionRec(), enemy3->getVisionRectangle())  && !CheckCollisionRecs(knight.getCollisionRec(),knight.safeZone)  ) {
+                if (CheckCollisionRecs(knight.getCollisionRec(), enemy3->getVisionRectangle())  && !CheckCollisionRecs(knight.getCollisionRec(),knight.safeZone) ) {
                     if (!pathCalculated && count != 1) { // Sólo calcula el camino si no se ha calculado antes
                         float currentTime = GetTime(); // Obtén el tiempo actual
                         if (currentTime - enemy3->lastPathCalculationTime > 1.0f) { // Si ha pasado más de 1 segundo
                             
                             for (auto enemy : enemies){
+                                if (enemy->getType() == 0 || enemy->getType() == 1 || enemy->getType() == 2){
+                                    if (!enemy->getColpath() &&  enemy->getType() != 4 ?: enemy->getType() != 5){
+                                        enemy->colPath = false;
+                                        
 
-                                float ex = round((enemy->getWorldPos().x/128));
-                                float ey = round((enemy->getWorldPos().y/128));
-                                float kx = round((knight.getWorldPos().x/128)+3);
-                                float ky = round((knight.getWorldPos().y/128)+1.6f);
+                                        float ex = round((enemy->getWorldPos().x/128));
+                                        float ey = round((enemy->getWorldPos().y/128));
+                                        float kx = round((knight.getWorldPos().x/128)+3);
+                                        float ky = round((knight.getWorldPos().y/128)+1.6f);
 
-                                Vector2 startPoint = {ex, ey};
-                                Vector2 targetPoint = {kx, ky};
-                                pathList = AStar(startPoint, targetPoint);
+                                        Vector2 startPoint = {ex, ey};
+                                        Vector2 targetPoint = {kx, ky};
+                                        pathList = AStar(startPoint, targetPoint);
 
-                                //Debug camino
-                                DrawRectangle(startPoint.x * TILE_SIZE, startPoint.y * TILE_SIZE, TILE_SIZE, TILE_SIZE, BLUE);
-                                DrawRectangle(targetPoint.x * TILE_SIZE, targetPoint.y * TILE_SIZE, TILE_SIZE, TILE_SIZE, RED);
+                                        //Debug camino
+                                        // DrawRectangle(startPoint.x * TILE_SIZE, startPoint.y * TILE_SIZE, TILE_SIZE, TILE_SIZE, BLUE);
+                                        // DrawRectangle(targetPoint.x * TILE_SIZE, targetPoint.y * TILE_SIZE, TILE_SIZE, TILE_SIZE, RED);
 
-                                std::vector<Vector2> pathPoints;
-                                if (pathList != nullptr) {
-                                    for (int i = 0; i < pathList->size; i++) {
-                                        AStarNode* node = static_cast<AStarNode*>(list_get(pathList, i));
-                                        std::cout<<node->x*128<<" "<<node->y*128<<std::endl;
-                                        if (node != nullptr) {
-                                            Vector2 point = {node->x*128, node->y*128};
-                                            pathPoints.push_back(point);
-                                        }
-                                        DrawRectangle(node->x * TILE_SIZE, node->y * TILE_SIZE, TILE_SIZE, TILE_SIZE, YELLOW);
-                                        for (auto enemy : enemies)
-                                        {   
-                                            enemy->pathPoints = pathPoints;
-                                            enemy->callEnemies();
-                                            if (enemy->getType() == 2){
-                                                enemy->teleport(Vector2{enemy3->getWorldPos().x, enemy3->getWorldPos().y});
+                                        std::vector<Vector2> pathPoints;
+                                        if (pathList != nullptr) {
+                                            for (int i = 0; i < pathList->size; i++) {
+                                                AStarNode* node = static_cast<AStarNode*>(list_get(pathList, i));
+                                                std::cout<<node->x*128<<" "<<node->y*128<<std::endl;
+                                                if (node != nullptr) {
+                                                    Vector2 point = {node->x*128, node->y*128};
+                                                    pathPoints.push_back(point);
+                                                }
+                                                // DrawRectangle(node->x * TILE_SIZE, node->y * TILE_SIZE, TILE_SIZE, TILE_SIZE, YELLOW);
+                                                for (auto enemy : enemies)
+                                                {   
+                                                    if (enemy->getType() == 0 || enemy->getType() == 1 || enemy->getType() == 2){
+                                                        if (!enemy->getColpath() && enemy->getType() != 4 ?: enemy->getType() != 5){
+                                                            enemy->pathPoints = pathPoints;
+                                                            enemy->callEnemies();
+                                                            if (enemy->getType() == 2){
+                                                                enemy->teleport(Vector2{enemy3->getWorldPos().x, enemy3->getWorldPos().y});
+                                                            }
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }
                                 }
-
                                 pathCalculated = true; // Establece pathCalculated en true después de calcular el camino
                                 count = 1;
                                 enemy->uncallEnemies();
@@ -684,11 +978,29 @@ void drawScene2 (const int& windowWidth, const int& windowHeight){
                     enemy3->uncallEnemies();
                 }
             }
-        }
+        }        
+
 
         for (auto enemy : enemies)
-        {
+        {   
+            if (enemy->getType() != 1)
             enemy->tick(GetFrameTime());
+        }
+
+        // Aplica una máscara oscura a toda la pantalla
+        DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), {0, 0, 0, 128});
+
+        for (auto enemy : enemies)
+        {   
+            if (enemy->getType() == 1)
+            enemy->tick(GetFrameTime());
+        }
+
+        // dibuja los props
+        for (auto& prop : props)
+        {
+            if(prop.isTorch())
+            prop.Render(knight.getWorldPos(), GetFrameTime());
         }
 
         if (IsKeyDown(KEY_SPACE))
@@ -758,18 +1070,25 @@ void drawScene2 (const int& windowWidth, const int& windowHeight){
         Vector2 szworldpos = {128*1,128*14};
         Vector2 szScreenPos{Vector2Subtract(szworldpos, knight.getWorldPos())};
         Rectangle safeZone = {szScreenPos.x, szScreenPos.y, 128*4, 128*4};
-        DrawRectangleRec(safeZone, Color{0, 255, 0, 55});
+        // DrawRectangleRec(safeZone, Color{0, 255, 0, 55});
         knight.setSafeZone(safeZone);
 
-        for (int i = 0; i < 30; i++) {
-            for (int j = 0; j < 20; j++) {
-                switch (mapmat[i][j]) {
-                    case 0:
-                        // DrawRectangle(i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE, GRAY);
-                        break;
-                    case 1:
-                        DrawRectangle(i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE, BLACK);
-                        break;
+        //Colision rata
+        for (auto spectreenemy : enemies){
+            if (spectreenemy->getType() == 0 ?: spectreenemy->getType() == 1 ?: spectreenemy->getType() == 2){
+                for (auto ratenemy : enemies){
+                    if(ratenemy->getType() == 4){
+                        std::vector<Vector2> oldPatrolPoints = spectreenemy->patrolPoints;
+                        if(CheckCollisionRecs(spectreenemy->getVisionRectangle(),ratenemy->getCollisionRec())){
+                            spectreenemy->isARat = true;
+                            spectreenemy->undoMovement();
+                            spectreenemy->patrolPoints = {spectreenemy->getWorldPos()}; 
+                        }
+                        else{
+                            spectreenemy->isARat = false;
+                            spectreenemy->patrolPoints = oldPatrolPoints; 
+                        }
+                    }
                 }
             }
         }
@@ -841,25 +1160,137 @@ void drawScene3(const int& windowWidth, const int& windowHeight){
         Prop{Vector2{3456.f, 1280.f}, LoadTexture("nature_tileset/spikes.png"), "nature_tileset/spikes.png"}
         };
 
-    Texture2D goblin_idle = LoadTexture("characters/goblin_idle_spritesheet.png");
-    Texture2D goblin_run = LoadTexture("characters/goblin_run_spritesheet.png");
+    Image blueSpectreIdleIM = LoadImage("characters/goblin_idle_spritesheet.png");
+    Image blueSpectreRunIM = LoadImage("characters/goblin_run_spritesheet.png");
 
-    Texture2D slime_idle = LoadTexture("characters/slime_idle_spritesheet.png");
-    Texture2D slime_run = LoadTexture("characters/slime_run_spritesheet.png");
+    // Aplica el tinte a las imágenes
+    ImageColorTint(&blueSpectreIdleIM, BLUE);
+    ImageColorTint(&blueSpectreRunIM, BLUE);
 
-    Enemy* goblin1 = new Enemy(Vector2{600.f, 400.f}, goblin_idle, goblin_run, 1000.f,0);
-    goblin1->patrolPoints = {Vector2{600.f, 400.f}, Vector2{3000.f, 400.f}, Vector2{3000.f, 2200.f}, Vector2{1700.f, 2200.f},Vector2{400.f, 400.f}};
+    Texture2D blueSpectreIdle = LoadTextureFromImage(blueSpectreIdleIM);
+    Texture2D blueSpectreRun = LoadTextureFromImage(blueSpectreRunIM);
 
-    Enemy* goblin2 = new Enemy(Vector2{1200.f, 400.f}, goblin_idle, goblin_run, 1000.f,0);
-    goblin2->patrolPoints = {Vector2{1200.f, 400.f}, Vector2{3000.f, 400.f}, Vector2{3000.f, 2200.f}, Vector2{1700.f, 2200.f},Vector2{400.f, 400.f}};
+    // Ojo espectral
+    Image spectralEyeIM = LoadImage("characters/spectral_eye.png");
 
-    Enemy* goblin3 = new Enemy(Vector2{1800.f, 400.f}, goblin_idle, goblin_run, 1000.f,0);
-    goblin3->patrolPoints = {Vector2{1800.f, 400.f}, Vector2{3000.f, 400.f}, Vector2{3000.f, 2200.f}, Vector2{1700.f, 2200.f},Vector2{400.f, 400.f}};
+    // Chocobo
+    Image chocoboIdleIM = LoadImage ("characters/chocobo_idle_spritesheet.png");
+    Image chocoboRunIM = LoadImage ("characters/chocobo_run_spritesheet.png");
+
+    // Rata
+    Image ratIM = LoadImage ("characters/rat_spritesheet.png");
+
+    // Enemigos simples
+
+    // Ojo espectral
+    Texture2D spectralEye = LoadTextureFromImage(spectralEyeIM);
+
+    // Chocobo    
+    Texture2D chocoboIdle = LoadTextureFromImage(chocoboIdleIM);
+    Texture2D chocoboRun = LoadTextureFromImage(chocoboRunIM);
+
+    // Rata
+    Texture2D ratIdle = LoadTextureFromImage(ratIM);
+    Texture2D ratRun = LoadTextureFromImage(ratIM);
+
+    Enemy* blueSpectre1 = new Enemy(Vector2{128*9.f, 128*3.f}, blueSpectreIdle, blueSpectreRun, 1000.f, 2);
+    blueSpectre1->patrolPoints = {Vector2{128*9.f, 128*3.f}, Vector2{128*9.f, 128*8.f}, Vector2{128*21.f, 128*8.f}, Vector2{128*21.f, 128*4.f}, Vector2{128*27.f, 128*4.f}, Vector2{128*27.f, 128*16.f}, Vector2{128*21.f, 128*16.f}, Vector2{128*21.f, 128*11.f}, Vector2{128*8.f, 128*11.f}, Vector2{128*8.f, 128*16.f}, Vector2{128*3.f, 128*16.f}, Vector2{128*3.f, 128*3.f},Vector2{128*9.f, 128*3.f}};
+
+    Enemy* blueSpectre2 = new Enemy(Vector2{128*9.f, 128*6.f}, blueSpectreIdle, blueSpectreRun, 1000.f, 2);
+    blueSpectre2->patrolPoints = {Vector2{128*9.f, 128*6.f}, Vector2{128*9.f, 128*8.f}, Vector2{128*21.f, 128*8.f}, Vector2{128*21.f, 128*4.f}, Vector2{128*27.f, 128*4.f}, Vector2{128*27.f, 128*16.f}, Vector2{128*21.f, 128*16.f}, Vector2{128*21.f, 128*11.f}, Vector2{128*8.f, 128*11.f}, Vector2{128*8.f, 128*16.f}, Vector2{128*3.f, 128*16.f}, Vector2{128*3.f, 128*3.f},Vector2{128*9.f, 128*3.f}};
+
+    Enemy* blueSpectre3 = new Enemy(Vector2{128*9.f, 128*8.f}, blueSpectreIdle, blueSpectreRun, 1000.f, 2);
+    blueSpectre3->patrolPoints = {Vector2{128*9.f, 128*8.f}, Vector2{128*9.f, 128*8.f}, Vector2{128*21.f, 128*8.f}, Vector2{128*21.f, 128*4.f}, Vector2{128*27.f, 128*4.f}, Vector2{128*27.f, 128*16.f}, Vector2{128*21.f, 128*16.f}, Vector2{128*21.f, 128*11.f}, Vector2{128*8.f, 128*11.f}, Vector2{128*8.f, 128*16.f}, Vector2{128*3.f, 128*16.f}, Vector2{128*3.f, 128*3.f},Vector2{128*9.f, 128*3.f}};
+    
+    // Enemigos simples
+    // Se crean numeros random para el tipo de enemigo simple utilizando algoritmo genetico
+    genAlg randNum(2147483648LL, 1103515245LL, 12345LL, time(0));
+    int randNum1 = randNum.nextInRange(3, 5);
+    int randNum2 = randNum.nextInRange(3, 5);
+    int randNum3 = randNum.nextInRange(3, 5);
+    int randNum4 = randNum.nextInRange(3, 5);
+
+    Texture2D simpleEnemy1IdleTexture;
+    Texture2D simpleEnemy1RunTexture;
+    Texture2D simpleEnemy2IdleTexture;
+    Texture2D simpleEnemy2RunTexture;
+    Texture2D simpleEnemy3IdleTexture;
+    Texture2D simpleEnemy3RunTexture;
+    Texture2D simpleEnemy4IdleTexture;
+    Texture2D simpleEnemy4RunTexture;
+
+    if (randNum1 == 3){
+        simpleEnemy1IdleTexture = spectralEye;
+        simpleEnemy1RunTexture = spectralEye;
+    }
+    else if (randNum1 == 4){
+        simpleEnemy1IdleTexture = ratIdle;
+        simpleEnemy1RunTexture = ratRun;
+    }
+    else if (randNum1 == 5){
+        simpleEnemy1IdleTexture = chocoboIdle;
+        simpleEnemy1RunTexture = chocoboRun;
+    }
+
+    if (randNum2 == 3){
+        simpleEnemy2IdleTexture = spectralEye;
+        simpleEnemy2RunTexture = spectralEye;
+    }
+    else if (randNum2 == 4){
+        simpleEnemy2IdleTexture = ratIdle;
+        simpleEnemy2RunTexture = ratRun;
+    }
+    else if (randNum2 == 5){
+        simpleEnemy2IdleTexture = chocoboIdle;
+        simpleEnemy2RunTexture = chocoboRun;
+    }
+
+    if (randNum3 == 3){
+        simpleEnemy3IdleTexture = spectralEye;
+        simpleEnemy3RunTexture = spectralEye;
+    }
+    else if (randNum3 == 4){
+        simpleEnemy3IdleTexture = ratIdle;
+        simpleEnemy3RunTexture = ratRun;
+    }
+    else if (randNum3 == 5){
+        simpleEnemy3IdleTexture = chocoboIdle;
+        simpleEnemy3RunTexture = chocoboRun;
+    }
+
+    if (randNum4 == 3){
+        simpleEnemy4IdleTexture = spectralEye;
+        simpleEnemy4RunTexture = spectralEye;
+    }
+    else if (randNum4 == 4){
+        simpleEnemy4IdleTexture = ratIdle;
+        simpleEnemy4RunTexture = ratRun;
+    }
+    else if (randNum4 == 5){
+        simpleEnemy4IdleTexture = chocoboIdle;
+        simpleEnemy4RunTexture = chocoboRun;
+    }
+
+    Enemy* simpleEnemy1 = new Enemy(Vector2{128*9.f, 128*10.f}, simpleEnemy1IdleTexture, simpleEnemy1RunTexture, 1000.f, randNum1);
+    simpleEnemy1->patrolPoints = {Vector2{128*9.f, 128*10.f}, Vector2{128*9.f, 128*8.f}, Vector2{128*21.f, 128*8.f}, Vector2{128*21.f, 128*4.f}, Vector2{128*27.f, 128*4.f}, Vector2{128*27.f, 128*16.f}, Vector2{128*21.f, 128*16.f}, Vector2{128*21.f, 128*11.f}, Vector2{128*8.f, 128*11.f}, Vector2{128*8.f, 128*16.f}, Vector2{128*3.f, 128*16.f}, Vector2{128*3.f, 128*3.f},Vector2{128*9.f, 128*3.f}};
+
+    Enemy* simpleEnemy2 = new Enemy(Vector2{128*9.f, 128*11.f}, simpleEnemy2IdleTexture, simpleEnemy2RunTexture, 1000.f, randNum2);
+    simpleEnemy2->patrolPoints = {Vector2{128*9.f, 128*11.f}, Vector2{128*9.f, 128*8.f}, Vector2{128*21.f, 128*8.f}, Vector2{128*21.f, 128*4.f}, Vector2{128*27.f, 128*4.f}, Vector2{128*27.f, 128*16.f}, Vector2{128*21.f, 128*16.f}, Vector2{128*21.f, 128*11.f}, Vector2{128*8.f, 128*11.f}, Vector2{128*8.f, 128*16.f}, Vector2{128*3.f, 128*16.f}, Vector2{128*3.f, 128*3.f},Vector2{128*9.f, 128*3.f}};
+
+    Enemy* simpleEnemy3 = new Enemy(Vector2{128*9.f, 128*12.f}, simpleEnemy3IdleTexture, simpleEnemy3RunTexture, 1000.f, randNum3);
+    simpleEnemy3->patrolPoints = {Vector2{128*9.f, 128*12.f}, Vector2{128*9.f, 128*8.f}, Vector2{128*21.f, 128*8.f}, Vector2{128*21.f, 128*4.f}, Vector2{128*27.f, 128*4.f}, Vector2{128*27.f, 128*16.f}, Vector2{128*21.f, 128*16.f}, Vector2{128*21.f, 128*11.f}, Vector2{128*8.f, 128*11.f}, Vector2{128*8.f, 128*16.f}, Vector2{128*3.f, 128*16.f}, Vector2{128*3.f, 128*3.f},Vector2{128*9.f, 128*3.f}};
+
+    Enemy* simpleEnemy4 = new Enemy(Vector2{128*9.f, 128*13.f}, simpleEnemy4IdleTexture, simpleEnemy4RunTexture, 1000.f, randNum4);
+    simpleEnemy4->patrolPoints = {Vector2{128*9.f, 128*13.f}, Vector2{128*9.f, 128*8.f}, Vector2{128*21.f, 128*8.f}, Vector2{128*21.f, 128*4.f}, Vector2{128*27.f, 128*4.f}, Vector2{128*27.f, 128*16.f}, Vector2{128*21.f, 128*16.f}, Vector2{128*21.f, 128*11.f}, Vector2{128*8.f, 128*11.f}, Vector2{128*8.f, 128*16.f}, Vector2{128*3.f, 128*16.f}, Vector2{128*3.f, 128*3.f},Vector2{128*9.f, 128*3.f}};
 
     Enemy* enemies[]{
-        goblin1,
-        goblin2,
-        goblin3,
+            blueSpectre1,
+            blueSpectre2,
+            blueSpectre3,
+            simpleEnemy1,
+            simpleEnemy2,
+            simpleEnemy3,
+            simpleEnemy4
     };
 
     for (auto enemy : enemies)
@@ -927,75 +1358,115 @@ void drawScene3(const int& windowWidth, const int& windowHeight){
         }
 
         for (auto& prop : props) // Iterar sobre props para detectar la colisión con el caballero
-        {   //CheckCollusionRecs de Raylibs compara los rectangulos 
+        {   
+            //CheckCollusionRecs de Raylibs compara los rectangulos 
             if (CheckCollisionRecs(prop.getCollisionRec(knight.getWorldPos()), knight.getCollisionRec()))
             {
                 std::string name = prop.getName();
                 if (name == "nature_tileset/ladder.png" && not collisionLLadder){
                     collisionLLadder= true;
-                    int numHearts = knight.getHealth();
-                    remainignLife = numHearts;
                     actualScene = "scene4";
                     break;
                 }
+                knight.undoMovement();   
+            }
+            for (auto enemy : enemies) {
+                if (enemy->getType() == 0 || enemy->getType() == 1|| enemy->getType() == 2 || enemy->getType() == 5){
+                    if (CheckCollisionRecs(prop.getCollisionRec(knight.getWorldPos()), enemy->getCollisionRec())){
+                        enemy -> colPath = true;
+                        float ex = round((enemy->getWorldPos().x/128));
+                        float ey = round((enemy->getWorldPos().y/128));
+                        float kx = round((knight.getWorldPos().x/128)+3);
+                        float ky = round((knight.getWorldPos().y/128)+1.6f);
 
-                if ((name == "nature_tileset/spikes.png" || name == "nature_tileset/spikes2.png" || name == "nature_tileset/poison.png" )  
-                && prop.getState(GetFrameTime())){
-                    int numHearts = knight.getHealth();
-                    remainignLife = numHearts - 1;
-                    knight.updateLife(remainignLife);
-                    break;
+                        Vector2 startPoint = {ex, ey};
+                        Vector2 targetPoint = {kx, ky};
+                        pathList = AStar(startPoint, targetPoint);
+
+                        //Debug camino
+                        // DrawRectangle(startPoint.x * TILE_SIZE, startPoint.y * TILE_SIZE, TILE_SIZE, TILE_SIZE, BLUE);
+                        // DrawRectangle(targetPoint.x * TILE_SIZE, targetPoint.y * TILE_SIZE, TILE_SIZE, TILE_SIZE, RED);
+
+                        std::vector<Vector2> colpathPoints;
+                        if (pathList != nullptr) {
+                            for (int i = 0; i < pathList->size; i++) {
+                                AStarNode* node = static_cast<AStarNode*>(list_get(pathList, i));
+                                std::cout<<node->x*128<<" "<<node->y*128<<std::endl;
+                                if (node != nullptr) {
+                                    Vector2 point = {node->x*128, node->y*128};
+                                    colpathPoints.push_back(point);
+                                }
+                                // DrawRectangle(node->x * TILE_SIZE, node->y * TILE_SIZE, TILE_SIZE, TILE_SIZE, YELLOW);                            
+                            }
+                        }
+                        enemy->colPathPoints = colpathPoints;
+                        if (enemy->getType() == 4 || enemy->getType() == 5){
+                            enemy->undoMovement();
+                            enemy->colPath = true;
+                        }
+                    }
                 }
-                else{
-                    knight.undoMovement();
+                else if (enemy->getType() == 4){// || enemy->getType() == 5){
+                    if (CheckCollisionRecs(prop.getCollisionRec(knight.getWorldPos()), enemy->getCollisionRec())){
+                        enemy->undoMovement();
+                    }
                 }
             }
-        }
+        }    
 
         //sacar camino de astar para cada enemigo si un ojo espectral lo ve (con debug)
         for (auto enemy3 : enemies) {
             if (enemy3->getType() == 3){
-                if (CheckCollisionRecs(knight.getCollisionRec(), enemy3->getVisionRectangle())  && !CheckCollisionRecs(knight.getCollisionRec(),knight.safeZone)  ) {
+                if (CheckCollisionRecs(knight.getCollisionRec(), enemy3->getVisionRectangle())  && !CheckCollisionRecs(knight.getCollisionRec(),knight.safeZone) ) {
                     if (!pathCalculated && count != 1) { // Sólo calcula el camino si no se ha calculado antes
                         float currentTime = GetTime(); // Obtén el tiempo actual
                         if (currentTime - enemy3->lastPathCalculationTime > 1.0f) { // Si ha pasado más de 1 segundo
                             
                             for (auto enemy : enemies){
+                                if (enemy->getType() == 0 || enemy->getType() == 1 || enemy->getType() == 2){
+                                    if (!enemy->getColpath() &&  enemy->getType() != 4 ?: enemy->getType() != 5){
+                                        enemy->colPath = false;
+                                        
 
-                                float ex = round((enemy->getWorldPos().x/128));
-                                float ey = round((enemy->getWorldPos().y/128));
-                                float kx = round((knight.getWorldPos().x/128)+3);
-                                float ky = round((knight.getWorldPos().y/128)+1.6f);
+                                        float ex = round((enemy->getWorldPos().x/128));
+                                        float ey = round((enemy->getWorldPos().y/128));
+                                        float kx = round((knight.getWorldPos().x/128)+3);
+                                        float ky = round((knight.getWorldPos().y/128)+1.6f);
 
-                                Vector2 startPoint = {ex, ey};
-                                Vector2 targetPoint = {kx, ky};
-                                pathList = AStar(startPoint, targetPoint);
+                                        Vector2 startPoint = {ex, ey};
+                                        Vector2 targetPoint = {kx, ky};
+                                        pathList = AStar(startPoint, targetPoint);
 
-                                //Debug camino
-                                DrawRectangle(startPoint.x * TILE_SIZE, startPoint.y * TILE_SIZE, TILE_SIZE, TILE_SIZE, BLUE);
-                                DrawRectangle(targetPoint.x * TILE_SIZE, targetPoint.y * TILE_SIZE, TILE_SIZE, TILE_SIZE, RED);
+                                        //Debug camino
+                                        // DrawRectangle(startPoint.x * TILE_SIZE, startPoint.y * TILE_SIZE, TILE_SIZE, TILE_SIZE, BLUE);
+                                        // DrawRectangle(targetPoint.x * TILE_SIZE, targetPoint.y * TILE_SIZE, TILE_SIZE, TILE_SIZE, RED);
 
-                                std::vector<Vector2> pathPoints;
-                                if (pathList != nullptr) {
-                                    for (int i = 0; i < pathList->size; i++) {
-                                        AStarNode* node = static_cast<AStarNode*>(list_get(pathList, i));
-                                        std::cout<<node->x*128<<" "<<node->y*128<<std::endl;
-                                        if (node != nullptr) {
-                                            Vector2 point = {node->x*128, node->y*128};
-                                            pathPoints.push_back(point);
-                                        }
-                                        DrawRectangle(node->x * TILE_SIZE, node->y * TILE_SIZE, TILE_SIZE, TILE_SIZE, YELLOW);
-                                        for (auto enemy : enemies)
-                                        {   
-                                            enemy->pathPoints = pathPoints;
-                                            enemy->callEnemies();
-                                            if (enemy->getType() == 2){
-                                                enemy->teleport(Vector2{enemy3->getWorldPos().x, enemy3->getWorldPos().y});
+                                        std::vector<Vector2> pathPoints;
+                                        if (pathList != nullptr) {
+                                            for (int i = 0; i < pathList->size; i++) {
+                                                AStarNode* node = static_cast<AStarNode*>(list_get(pathList, i));
+                                                std::cout<<node->x*128<<" "<<node->y*128<<std::endl;
+                                                if (node != nullptr) {
+                                                    Vector2 point = {node->x*128, node->y*128};
+                                                    pathPoints.push_back(point);
+                                                }
+                                                // DrawRectangle(node->x * TILE_SIZE, node->y * TILE_SIZE, TILE_SIZE, TILE_SIZE, YELLOW);
+                                                for (auto enemy : enemies)
+                                                {   
+                                                    if (enemy->getType() == 0 || enemy->getType() == 1 || enemy->getType() == 2){
+                                                        if (!enemy->getColpath() && enemy->getType() != 4 ?: enemy->getType() != 5){
+                                                            enemy->pathPoints = pathPoints;
+                                                            enemy->callEnemies();
+                                                            if (enemy->getType() == 2){
+                                                                enemy->teleport(Vector2{enemy3->getWorldPos().x, enemy3->getWorldPos().y});
+                                                            }
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }
                                 }
-
                                 pathCalculated = true; // Establece pathCalculated en true después de calcular el camino
                                 count = 1;
                                 enemy->uncallEnemies();
@@ -1009,8 +1480,8 @@ void drawScene3(const int& windowWidth, const int& windowHeight){
                     enemy3->uncallEnemies();
                 }
             }
-        }
-
+        }         
+        
         for (auto enemy : enemies)
         {
             enemy->tick(GetFrameTime());
@@ -1083,18 +1554,25 @@ void drawScene3(const int& windowWidth, const int& windowHeight){
         Vector2 szworldpos = {128*4,128*7};
         Vector2 szScreenPos{Vector2Subtract(szworldpos, knight.getWorldPos())};
         Rectangle safeZone = {szScreenPos.x, szScreenPos.y, 128*3, 128*3};
-        DrawRectangleRec(safeZone, Color{0, 255, 0, 55});
+        // DrawRectangleRec(safeZone, Color{0, 255, 0, 55});
         knight.setSafeZone(safeZone);
 
-        for (int i = 0; i < 30; i++) {
-            for (int j = 0; j < 20; j++) {
-                switch (mapmat[i][j]) {
-                    case 0:
-                        // DrawRectangle(i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE, GRAY);
-                        break;
-                    case 1:
-                        DrawRectangle(i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE, BLACK);
-                        break;
+        //Colision rata
+        for (auto spectreenemy : enemies){
+            if (spectreenemy->getType() == 0 ?: spectreenemy->getType() == 1 ?: spectreenemy->getType() == 2){
+                for (auto ratenemy : enemies){
+                    if(ratenemy->getType() == 4){
+                        std::vector<Vector2> oldPatrolPoints = spectreenemy->patrolPoints;
+                        if(CheckCollisionRecs(spectreenemy->getVisionRectangle(),ratenemy->getCollisionRec())){
+                            spectreenemy->isARat = true;
+                            spectreenemy->undoMovement();
+                            spectreenemy->patrolPoints = {spectreenemy->getWorldPos()}; 
+                        }
+                        else{
+                            spectreenemy->isARat = false;
+                            spectreenemy->patrolPoints = oldPatrolPoints; 
+                        }
+                    }
                 }
             }
         }
@@ -1164,25 +1642,161 @@ void drawScene4(const int& windowWidth, const int& windowHeight){
         Prop{Vector2{896.f, 1792.f}, LoadTexture("nature_tileset/poison.png"), "nature_tileset/poison.png"}
         };
 
-    Texture2D goblin_idle = LoadTexture("characters/goblin_idle_spritesheet.png");
-    Texture2D goblin_run = LoadTexture("characters/goblin_run_spritesheet.png");
 
-    Texture2D slime_idle = LoadTexture("characters/slime_idle_spritesheet.png");
-    Texture2D slime_run = LoadTexture("characters/slime_run_spritesheet.png");
+    // Carga las imágenes
 
-    Enemy* goblin1 = new Enemy(Vector2{600.f, 400.f}, goblin_idle, goblin_run, 1000.f,0);
-    goblin1->patrolPoints = {Vector2{600.f, 400.f}, Vector2{3000.f, 400.f}, Vector2{3000.f, 2200.f}, Vector2{1700.f, 2200.f},Vector2{400.f, 400.f}};
+    // Espectros
+    Image graySpectreIdleIM = LoadImage("characters/goblin_idle_spritesheet.png");
+    Image graySpectreRunIM = LoadImage("characters/goblin_run_spritesheet.png");
 
-    Enemy* goblin2 = new Enemy(Vector2{1200.f, 400.f}, goblin_idle, goblin_run, 1000.f,0);
-    goblin2->patrolPoints = {Vector2{1200.f, 400.f}, Vector2{3000.f, 400.f}, Vector2{3000.f, 2200.f}, Vector2{1700.f, 2200.f},Vector2{400.f, 400.f}};
+    Image redSpectreIdleIM = LoadImage("characters/goblin_idle_spritesheet.png");
+    Image redSpectreRunIM = LoadImage("characters/goblin_run_spritesheet.png");
 
-    Enemy* goblin3 = new Enemy(Vector2{1800.f, 400.f}, goblin_idle, goblin_run, 1000.f,0);
-    goblin3->patrolPoints = {Vector2{1800.f, 400.f}, Vector2{3000.f, 400.f}, Vector2{3000.f, 2200.f}, Vector2{1700.f, 2200.f},Vector2{400.f, 400.f}};
+    // Aplica el tinte a las imágenes
+    ImageColorTint(&redSpectreIdleIM, RED);
+    ImageColorTint(&redSpectreRunIM, RED);
+
+    Texture2D redSpectreIdle = LoadTextureFromImage(redSpectreIdleIM);
+    Texture2D redSpectreRun = LoadTextureFromImage(redSpectreRunIM);
+
+    Image blueSpectreIdleIM = LoadImage("characters/goblin_idle_spritesheet.png");
+    Image blueSpectreRunIM = LoadImage("characters/goblin_run_spritesheet.png");
+
+    // Aplica el tinte a las imágenes
+    ImageColorTint(&blueSpectreIdleIM, BLUE);
+    ImageColorTint(&blueSpectreRunIM, BLUE);
+
+    Texture2D blueSpectreIdle = LoadTextureFromImage(blueSpectreIdleIM);
+    Texture2D blueSpectreRun = LoadTextureFromImage(blueSpectreRunIM);
+
+    // Ojo espectral
+    Image spectralEyeIM = LoadImage("characters/spectral_eye.png");
+
+    // Chocobo
+    Image chocoboIdleIM = LoadImage ("characters/chocobo_idle_spritesheet.png");
+    Image chocoboRunIM = LoadImage ("characters/chocobo_run_spritesheet.png");
+
+    // Rata
+    Image ratIM = LoadImage ("characters/rat_spritesheet.png");
+
+    // Convierte las imágenes a texturas
+    Texture2D graySpectreIdle = LoadTextureFromImage(graySpectreIdleIM);
+    Texture2D graySpectreRun = LoadTextureFromImage(graySpectreRunIM);
+
+    // Enemigos simples
+
+    // Ojo espectral
+    Texture2D spectralEye = LoadTextureFromImage(spectralEyeIM);
+
+    // Chocobo    
+    Texture2D chocoboIdle = LoadTextureFromImage(chocoboIdleIM);
+    Texture2D chocoboRun = LoadTextureFromImage(chocoboRunIM);
+
+    // Rata
+    Texture2D ratIdle = LoadTextureFromImage(ratIM);
+    Texture2D ratRun = LoadTextureFromImage(ratIM);
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    //Espectros
+    Enemy* greySpectre = new Enemy(Vector2{128*6.f, 128*5.f}, graySpectreIdle, graySpectreIdle, 1000.f, 0);
+    greySpectre->patrolPoints = {Vector2{128*6.f, 128*5.f},Vector2{128*14.f, 128*5.f}, Vector2{128*14.f, 128*4.f}, Vector2{128*28.f, 128*4.f}, Vector2{128*27.f, 128*4.f}, Vector2{128*27.f, 128*13.f}, Vector2{128*3.f, 128*13.f}, Vector2{128*27.f, 128*13.f}, Vector2{128*27.f, 128*4.f}, Vector2{128*28.f, 128*4.f}, Vector2{128*14.f, 128*4.f}, Vector2{128*14.f, 128*5.f}, Vector2{128*6.f, 128*5.f}};
+
+    Enemy* redSpectre = new Enemy(Vector2{128*8.f, 128*5.f}, redSpectreIdle, redSpectreRun, 1000.f, 1);
+    redSpectre->patrolPoints = {Vector2{128*8.f, 128*5.f},Vector2{128*14.f, 128*5.f}, Vector2{128*14.f, 128*4.f}, Vector2{128*28.f, 128*4.f}, Vector2{128*27.f, 128*4.f}, Vector2{128*27.f, 128*13.f}, Vector2{128*3.f, 128*13.f}, Vector2{128*27.f, 128*13.f}, Vector2{128*27.f, 128*4.f}, Vector2{128*28.f, 128*4.f}, Vector2{128*14.f, 128*4.f}, Vector2{128*14.f, 128*5.f}, Vector2{128*6.f, 128*5.f}};
+
+    Enemy* blueSpectre = new Enemy(Vector2{128*10.f, 128*5.f}, blueSpectreIdle, blueSpectreRun, 1000.f, 2);
+    blueSpectre->patrolPoints = {Vector2{128*10.f, 128*5.f},Vector2{128*14.f, 128*5.f}, Vector2{128*14.f, 128*4.f}, Vector2{128*28.f, 128*4.f}, Vector2{128*27.f, 128*4.f}, Vector2{128*27.f, 128*13.f}, Vector2{128*3.f, 128*13.f}, Vector2{128*27.f, 128*13.f}, Vector2{128*27.f, 128*4.f}, Vector2{128*28.f, 128*4.f}, Vector2{128*14.f, 128*4.f}, Vector2{128*14.f, 128*5.f}, Vector2{128*6.f, 128*5.f}};
+
+    // Enemigos simples
+    // Se crean numeros random para el tipo de enemigo simple utilizando algoritmo genetico
+    genAlg randNum(2147483648LL, 1103515245LL, 12345LL, time(0));
+    int randNum1 = randNum.nextInRange(3, 5);
+    int randNum2 = randNum.nextInRange(3, 5);
+    int randNum3 = randNum.nextInRange(3, 5);
+    int randNum4 = randNum.nextInRange(3, 5);
+
+    Texture2D simpleEnemy1IdleTexture;
+    Texture2D simpleEnemy1RunTexture;
+    Texture2D simpleEnemy2IdleTexture;
+    Texture2D simpleEnemy2RunTexture;
+    Texture2D simpleEnemy3IdleTexture;
+    Texture2D simpleEnemy3RunTexture;
+    Texture2D simpleEnemy4IdleTexture;
+    Texture2D simpleEnemy4RunTexture;
+
+    if (randNum1 == 3){
+        simpleEnemy1IdleTexture = spectralEye;
+        simpleEnemy1RunTexture = spectralEye;
+    }
+    else if (randNum1 == 4){
+        simpleEnemy1IdleTexture = ratIdle;
+        simpleEnemy1RunTexture = ratRun;
+    }
+    else if (randNum1 == 5){
+        simpleEnemy1IdleTexture = chocoboIdle;
+        simpleEnemy1RunTexture = chocoboRun;
+    }
+
+    if (randNum2 == 3){
+        simpleEnemy2IdleTexture = spectralEye;
+        simpleEnemy2RunTexture = spectralEye;
+    }
+    else if (randNum2 == 4){
+        simpleEnemy2IdleTexture = ratIdle;
+        simpleEnemy2RunTexture = ratRun;
+    }
+    else if (randNum2 == 5){
+        simpleEnemy2IdleTexture = chocoboIdle;
+        simpleEnemy2RunTexture = chocoboRun;
+    }
+
+    if (randNum3 == 3){
+        simpleEnemy3IdleTexture = spectralEye;
+        simpleEnemy3RunTexture = spectralEye;
+    }
+    else if (randNum3 == 4){
+        simpleEnemy3IdleTexture = ratIdle;
+        simpleEnemy3RunTexture = ratRun;
+    }
+    else if (randNum3 == 5){
+        simpleEnemy3IdleTexture = chocoboIdle;
+        simpleEnemy3RunTexture = chocoboRun;
+    }
+
+    if (randNum4 == 3){
+        simpleEnemy4IdleTexture = spectralEye;
+        simpleEnemy4RunTexture = spectralEye;
+    }
+    else if (randNum4 == 4){
+        simpleEnemy4IdleTexture = ratIdle;
+        simpleEnemy4RunTexture = ratRun;
+    }
+    else if (randNum4 == 5){
+        simpleEnemy4IdleTexture = chocoboIdle;
+        simpleEnemy4RunTexture = chocoboRun;
+    }
+
+    Enemy* simpleEnemy1 = new Enemy(Vector2{128*12.f, 128*5.f}, simpleEnemy1IdleTexture, simpleEnemy1RunTexture, 1000.f, randNum1);
+    simpleEnemy1->patrolPoints = {Vector2{128*12.f, 128*5.f},Vector2{128*14.f, 128*5.f}, Vector2{128*14.f, 128*4.f}, Vector2{128*28.f, 128*4.f}, Vector2{128*27.f, 128*4.f}, Vector2{128*27.f, 128*13.f}, Vector2{128*3.f, 128*13.f}, Vector2{128*27.f, 128*13.f}, Vector2{128*27.f, 128*4.f}, Vector2{128*28.f, 128*4.f}, Vector2{128*14.f, 128*4.f}, Vector2{128*14.f, 128*5.f}, Vector2{128*6.f, 128*5.f}};
+
+    Enemy* simpleEnemy2 = new Enemy(Vector2{128*14.f, 128*5.f}, simpleEnemy2IdleTexture, simpleEnemy2RunTexture, 1000.f, randNum2);
+    simpleEnemy2->patrolPoints = {Vector2{128*14.f, 128*5.f},Vector2{128*14.f, 128*5.f}, Vector2{128*14.f, 128*4.f}, Vector2{128*28.f, 128*4.f}, Vector2{128*27.f, 128*4.f}, Vector2{128*27.f, 128*13.f}, Vector2{128*3.f, 128*13.f}, Vector2{128*27.f, 128*13.f}, Vector2{128*27.f, 128*4.f}, Vector2{128*28.f, 128*4.f}, Vector2{128*14.f, 128*4.f}, Vector2{128*14.f, 128*5.f}, Vector2{128*6.f, 128*5.f}};
+
+    Enemy* simpleEnemy3 = new Enemy(Vector2{128*16.f, 128*5.f}, simpleEnemy3IdleTexture, simpleEnemy3RunTexture, 1000.f, randNum3);
+    simpleEnemy3->patrolPoints = {Vector2{128*16.f, 128*5.f},Vector2{128*14.f, 128*5.f}, Vector2{128*14.f, 128*4.f}, Vector2{128*28.f, 128*4.f}, Vector2{128*27.f, 128*4.f}, Vector2{128*27.f, 128*13.f}, Vector2{128*3.f, 128*13.f}, Vector2{128*27.f, 128*13.f}, Vector2{128*27.f, 128*4.f}, Vector2{128*28.f, 128*4.f}, Vector2{128*14.f, 128*4.f}, Vector2{128*14.f, 128*5.f}, Vector2{128*6.f, 128*5.f}};
+
+    Enemy* simpleEnemy4 = new Enemy(Vector2{128*18.f, 128*5.f}, simpleEnemy4IdleTexture, simpleEnemy4RunTexture, 1000.f, randNum4);
+    simpleEnemy4->patrolPoints = {Vector2{128*18.f, 128*5.f},Vector2{128*14.f, 128*5.f}, Vector2{128*14.f, 128*4.f}, Vector2{128*28.f, 128*4.f}, Vector2{128*27.f, 128*4.f}, Vector2{128*27.f, 128*13.f}, Vector2{128*3.f, 128*13.f}, Vector2{128*27.f, 128*13.f}, Vector2{128*27.f, 128*4.f}, Vector2{128*28.f, 128*4.f}, Vector2{128*14.f, 128*4.f}, Vector2{128*14.f, 128*5.f}, Vector2{128*6.f, 128*5.f}};
 
     Enemy* enemies[]{
-        goblin1,
-        goblin2,
-        goblin3,
+            greySpectre,
+            redSpectre,
+            blueSpectre,
+            simpleEnemy1,
+            simpleEnemy2,
+            simpleEnemy3,
+            simpleEnemy4
     };
 
     for (auto enemy : enemies)
@@ -1252,75 +1866,116 @@ void drawScene4(const int& windowWidth, const int& windowHeight){
         }
 
         for (auto& prop : props) // Iterar sobre props para detectar la colisión con el caballero
-        {   //CheckCollusionRecs de Raylibs compara los rectangulos 
+        {   
+            //CheckCollusionRecs de Raylibs compara los rectangulos 
             if (CheckCollisionRecs(prop.getCollisionRec(knight.getWorldPos()), knight.getCollisionRec()))
             {
                 std::string name = prop.getName();
                 if (name == "nature_tileset/ladder.png" && not collisionLLadder){
                     collisionLLadder= true;
-                    int numHearts = knight.getHealth();
-                    remainignLife = numHearts;
                     actualScene = "scene5";
                     break;
                 }
+                knight.undoMovement();   
+            }
 
-                if ((name == "nature_tileset/spikes.png" || name == "nature_tileset/spikes2.png" || name == "nature_tileset/poison.png" )  
-                && prop.getState(GetFrameTime())){
-                    int numHearts = knight.getHealth();
-                    remainignLife = numHearts - 1;
-                    knight.updateLife(remainignLife);
-                    break;
+            for (auto enemy : enemies) {
+                if (enemy->getType() == 0 || enemy->getType() == 1|| enemy->getType() == 2 || enemy->getType() == 5){
+                    if (CheckCollisionRecs(prop.getCollisionRec(knight.getWorldPos()), enemy->getCollisionRec())){
+                        enemy -> colPath = true;
+                        float ex = round((enemy->getWorldPos().x/128));
+                        float ey = round((enemy->getWorldPos().y/128));
+                        float kx = round((knight.getWorldPos().x/128)+3);
+                        float ky = round((knight.getWorldPos().y/128)+1.6f);
+
+                        Vector2 startPoint = {ex, ey};
+                        Vector2 targetPoint = {kx, ky};
+                        pathList = AStar(startPoint, targetPoint);
+
+                        //Debug camino
+                        // DrawRectangle(startPoint.x * TILE_SIZE, startPoint.y * TILE_SIZE, TILE_SIZE, TILE_SIZE, BLUE);
+                        // DrawRectangle(targetPoint.x * TILE_SIZE, targetPoint.y * TILE_SIZE, TILE_SIZE, TILE_SIZE, RED);
+
+                        std::vector<Vector2> colpathPoints;
+                        if (pathList != nullptr) {
+                            for (int i = 0; i < pathList->size; i++) {
+                                AStarNode* node = static_cast<AStarNode*>(list_get(pathList, i));
+                                std::cout<<node->x*128<<" "<<node->y*128<<std::endl;
+                                if (node != nullptr) {
+                                    Vector2 point = {node->x*128, node->y*128};
+                                    colpathPoints.push_back(point);
+                                }
+                                // DrawRectangle(node->x * TILE_SIZE, node->y * TILE_SIZE, TILE_SIZE, TILE_SIZE, YELLOW);                            
+                            }
+                        }
+                        enemy->colPathPoints = colpathPoints;
+                        if (enemy->getType() == 4 || enemy->getType() == 5){
+                            enemy->undoMovement();
+                            enemy->colPath = true;
+                        }
+                    }
                 }
-                else{
-                    knight.undoMovement();
+                else if (enemy->getType() == 4){// || enemy->getType() == 5){
+                    if (CheckCollisionRecs(prop.getCollisionRec(knight.getWorldPos()), enemy->getCollisionRec())){
+                        enemy->undoMovement();
+                    }
                 }
             }
-        }
+        }    
 
         //sacar camino de astar para cada enemigo si un ojo espectral lo ve (con debug)
         for (auto enemy3 : enemies) {
             if (enemy3->getType() == 3){
-                if (CheckCollisionRecs(knight.getCollisionRec(), enemy3->getVisionRectangle())  && !CheckCollisionRecs(knight.getCollisionRec(),knight.safeZone)  ) {
+                if (CheckCollisionRecs(knight.getCollisionRec(), enemy3->getVisionRectangle())  && !CheckCollisionRecs(knight.getCollisionRec(),knight.safeZone) ) {
                     if (!pathCalculated && count != 1) { // Sólo calcula el camino si no se ha calculado antes
                         float currentTime = GetTime(); // Obtén el tiempo actual
                         if (currentTime - enemy3->lastPathCalculationTime > 1.0f) { // Si ha pasado más de 1 segundo
                             
                             for (auto enemy : enemies){
+                                if (enemy->getType() == 0 || enemy->getType() == 1 || enemy->getType() == 2){
+                                    if (!enemy->getColpath() &&  enemy->getType() != 4 ?: enemy->getType() != 5){
+                                        enemy->colPath = false;
+                                        
 
-                                float ex = round((enemy->getWorldPos().x/128));
-                                float ey = round((enemy->getWorldPos().y/128));
-                                float kx = round((knight.getWorldPos().x/128)+3);
-                                float ky = round((knight.getWorldPos().y/128)+1.6f);
+                                        float ex = round((enemy->getWorldPos().x/128));
+                                        float ey = round((enemy->getWorldPos().y/128));
+                                        float kx = round((knight.getWorldPos().x/128)+3);
+                                        float ky = round((knight.getWorldPos().y/128)+1.6f);
 
-                                Vector2 startPoint = {ex, ey};
-                                Vector2 targetPoint = {kx, ky};
-                                pathList = AStar(startPoint, targetPoint);
+                                        Vector2 startPoint = {ex, ey};
+                                        Vector2 targetPoint = {kx, ky};
+                                        pathList = AStar(startPoint, targetPoint);
 
-                                //Debug camino
-                                DrawRectangle(startPoint.x * TILE_SIZE, startPoint.y * TILE_SIZE, TILE_SIZE, TILE_SIZE, BLUE);
-                                DrawRectangle(targetPoint.x * TILE_SIZE, targetPoint.y * TILE_SIZE, TILE_SIZE, TILE_SIZE, RED);
+                                        //Debug camino
+                                        // DrawRectangle(startPoint.x * TILE_SIZE, startPoint.y * TILE_SIZE, TILE_SIZE, TILE_SIZE, BLUE);
+                                        // DrawRectangle(targetPoint.x * TILE_SIZE, targetPoint.y * TILE_SIZE, TILE_SIZE, TILE_SIZE, RED);
 
-                                std::vector<Vector2> pathPoints;
-                                if (pathList != nullptr) {
-                                    for (int i = 0; i < pathList->size; i++) {
-                                        AStarNode* node = static_cast<AStarNode*>(list_get(pathList, i));
-                                        std::cout<<node->x*128<<" "<<node->y*128<<std::endl;
-                                        if (node != nullptr) {
-                                            Vector2 point = {node->x*128, node->y*128};
-                                            pathPoints.push_back(point);
-                                        }
-                                        DrawRectangle(node->x * TILE_SIZE, node->y * TILE_SIZE, TILE_SIZE, TILE_SIZE, YELLOW);
-                                        for (auto enemy : enemies)
-                                        {   
-                                            enemy->pathPoints = pathPoints;
-                                            enemy->callEnemies();
-                                            if (enemy->getType() == 2){
-                                                enemy->teleport(Vector2{enemy3->getWorldPos().x, enemy3->getWorldPos().y});
+                                        std::vector<Vector2> pathPoints;
+                                        if (pathList != nullptr) {
+                                            for (int i = 0; i < pathList->size; i++) {
+                                                AStarNode* node = static_cast<AStarNode*>(list_get(pathList, i));
+                                                std::cout<<node->x*128<<" "<<node->y*128<<std::endl;
+                                                if (node != nullptr) {
+                                                    Vector2 point = {node->x*128, node->y*128};
+                                                    pathPoints.push_back(point);
+                                                }
+                                                // DrawRectangle(node->x * TILE_SIZE, node->y * TILE_SIZE, TILE_SIZE, TILE_SIZE, YELLOW);
+                                                for (auto enemy : enemies)
+                                                {   
+                                                    if (enemy->getType() == 0 || enemy->getType() == 1 || enemy->getType() == 2){
+                                                        if (!enemy->getColpath() && enemy->getType() != 4 ?: enemy->getType() != 5){
+                                                            enemy->pathPoints = pathPoints;
+                                                            enemy->callEnemies();
+                                                            if (enemy->getType() == 2){
+                                                                enemy->teleport(Vector2{enemy3->getWorldPos().x, enemy3->getWorldPos().y});
+                                                            }
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }
                                 }
-
                                 pathCalculated = true; // Establece pathCalculated en true después de calcular el camino
                                 count = 1;
                                 enemy->uncallEnemies();
@@ -1334,8 +1989,8 @@ void drawScene4(const int& windowWidth, const int& windowHeight){
                     enemy3->uncallEnemies();
                 }
             }
-        }
-
+        }        
+        
         for (auto enemy : enemies)
         {
             enemy->tick(GetFrameTime());
@@ -1409,18 +2064,25 @@ void drawScene4(const int& windowWidth, const int& windowHeight){
         Vector2 szworldpos = {128*10,128*2};
         Vector2 szScreenPos{Vector2Subtract(szworldpos, knight.getWorldPos())};
         Rectangle safeZone = {szScreenPos.x, szScreenPos.y, 128*3, 128*3};
-        DrawRectangleRec(safeZone, Color{0, 255, 0, 55});
+        // DrawRectangleRec(safeZone, Color{0, 255, 0, 55});
         knight.setSafeZone(safeZone);
 
-        for (int i = 0; i < 30; i++) {
-            for (int j = 0; j < 20; j++) {
-                switch (mapmat[i][j]) {
-                    case 0:
-                        // DrawRectangle(i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE, GRAY);
-                        break;
-                    case 1:
-                        DrawRectangle(i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE, BLACK);
-                        break;
+        //Colision rata
+        for (auto spectreenemy : enemies){
+            if (spectreenemy->getType() == 0 ?: spectreenemy->getType() == 1 ?: spectreenemy->getType() == 2){
+                for (auto ratenemy : enemies){
+                    if(ratenemy->getType() == 4){
+                        std::vector<Vector2> oldPatrolPoints = spectreenemy->patrolPoints;
+                        if(CheckCollisionRecs(spectreenemy->getVisionRectangle(),ratenemy->getCollisionRec())){
+                            spectreenemy->isARat = true;
+                            spectreenemy->undoMovement();
+                            spectreenemy->patrolPoints = {spectreenemy->getWorldPos()}; 
+                        }
+                        else{
+                            spectreenemy->isARat = false;
+                            spectreenemy->patrolPoints = oldPatrolPoints; 
+                        }
+                    }
                 }
             }
         }
@@ -1511,9 +2173,9 @@ void drawScene5(const int& windowWidth, const int& windowHeight){
     goblin3->patrolPoints = {Vector2{1800.f, 400.f}, Vector2{3000.f, 400.f}, Vector2{3000.f, 2200.f}, Vector2{1700.f, 2200.f},Vector2{400.f, 400.f}};
 
     Enemy* enemies[]{
-        goblin1,
-        goblin2,
-        goblin3,
+        // goblin1,
+        // goblin2,
+        // goblin3,
     };
 
     for (auto enemy : enemies)
@@ -1581,75 +2243,116 @@ void drawScene5(const int& windowWidth, const int& windowHeight){
         }
 
         for (auto& prop : props) // Iterar sobre props para detectar la colisión con el caballero
-        {   //CheckCollusionRecs de Raylibs compara los rectangulos 
+        {   
+            //CheckCollusionRecs de Raylibs compara los rectangulos 
             if (CheckCollisionRecs(prop.getCollisionRec(knight.getWorldPos()), knight.getCollisionRec()))
             {
                 std::string name = prop.getName();
                 if (name == "nature_tileset/ladder.png" && not collisionLLadder){
                     collisionLLadder= true;
-                    int numHearts = knight.getHealth();
-                    remainignLife = numHearts;
-                    //actualScene = "win";
+                    actualScene = "win";
                     break;
                 }
+                knight.undoMovement();   
+            }
 
-                if ((name == "nature_tileset/spikes.png" || name == "nature_tileset/spikes2.png" || name == "nature_tileset/poison.png" )  
-                && prop.getState(GetFrameTime())){
-                    int numHearts = knight.getHealth();
-                    remainignLife = numHearts - 1;
-                    knight.updateLife(remainignLife);
-                    break;
+            for (auto enemy : enemies) {
+                if (enemy->getType() == 0 || enemy->getType() == 1|| enemy->getType() == 2 || enemy->getType() == 5){
+                    if (CheckCollisionRecs(prop.getCollisionRec(knight.getWorldPos()), enemy->getCollisionRec())){
+                        enemy -> colPath = true;
+                        float ex = round((enemy->getWorldPos().x/128));
+                        float ey = round((enemy->getWorldPos().y/128));
+                        float kx = round((knight.getWorldPos().x/128)+3);
+                        float ky = round((knight.getWorldPos().y/128)+1.6f);
+
+                        Vector2 startPoint = {ex, ey};
+                        Vector2 targetPoint = {kx, ky};
+                        pathList = AStar(startPoint, targetPoint);
+
+                        //Debug camino
+                        // DrawRectangle(startPoint.x * TILE_SIZE, startPoint.y * TILE_SIZE, TILE_SIZE, TILE_SIZE, BLUE);
+                        // DrawRectangle(targetPoint.x * TILE_SIZE, targetPoint.y * TILE_SIZE, TILE_SIZE, TILE_SIZE, RED);
+
+                        std::vector<Vector2> colpathPoints;
+                        if (pathList != nullptr) {
+                            for (int i = 0; i < pathList->size; i++) {
+                                AStarNode* node = static_cast<AStarNode*>(list_get(pathList, i));
+                                std::cout<<node->x*128<<" "<<node->y*128<<std::endl;
+                                if (node != nullptr) {
+                                    Vector2 point = {node->x*128, node->y*128};
+                                    colpathPoints.push_back(point);
+                                }
+                                // DrawRectangle(node->x * TILE_SIZE, node->y * TILE_SIZE, TILE_SIZE, TILE_SIZE, YELLOW);                            
+                            }
+                        }
+                        enemy->colPathPoints = colpathPoints;
+                        if (enemy->getType() == 4 || enemy->getType() == 5){
+                            enemy->undoMovement();
+                            enemy->colPath = true;
+                        }
+                    }
                 }
-                else{
-                    knight.undoMovement();
+                else if (enemy->getType() == 4){// || enemy->getType() == 5){
+                    if (CheckCollisionRecs(prop.getCollisionRec(knight.getWorldPos()), enemy->getCollisionRec())){
+                        enemy->undoMovement();
+                    }
                 }
             }
-        }
+        }    
 
         //sacar camino de astar para cada enemigo si un ojo espectral lo ve (con debug)
         for (auto enemy3 : enemies) {
             if (enemy3->getType() == 3){
-                if (CheckCollisionRecs(knight.getCollisionRec(), enemy3->getVisionRectangle())  && !CheckCollisionRecs(knight.getCollisionRec(),knight.safeZone)  ) {
+                if (CheckCollisionRecs(knight.getCollisionRec(), enemy3->getVisionRectangle())  && !CheckCollisionRecs(knight.getCollisionRec(),knight.safeZone) ) {
                     if (!pathCalculated && count != 1) { // Sólo calcula el camino si no se ha calculado antes
                         float currentTime = GetTime(); // Obtén el tiempo actual
                         if (currentTime - enemy3->lastPathCalculationTime > 1.0f) { // Si ha pasado más de 1 segundo
                             
                             for (auto enemy : enemies){
+                                if (enemy->getType() == 0 || enemy->getType() == 1 || enemy->getType() == 2){
+                                    if (!enemy->getColpath() &&  enemy->getType() != 4 ?: enemy->getType() != 5){
+                                        enemy->colPath = false;
+                                        
 
-                                float ex = round((enemy->getWorldPos().x/128));
-                                float ey = round((enemy->getWorldPos().y/128));
-                                float kx = round((knight.getWorldPos().x/128)+3);
-                                float ky = round((knight.getWorldPos().y/128)+1.6f);
+                                        float ex = round((enemy->getWorldPos().x/128));
+                                        float ey = round((enemy->getWorldPos().y/128));
+                                        float kx = round((knight.getWorldPos().x/128)+3);
+                                        float ky = round((knight.getWorldPos().y/128)+1.6f);
 
-                                Vector2 startPoint = {ex, ey};
-                                Vector2 targetPoint = {kx, ky};
-                                pathList = AStar(startPoint, targetPoint);
+                                        Vector2 startPoint = {ex, ey};
+                                        Vector2 targetPoint = {kx, ky};
+                                        pathList = AStar(startPoint, targetPoint);
 
-                                //Debug camino
-                                DrawRectangle(startPoint.x * TILE_SIZE, startPoint.y * TILE_SIZE, TILE_SIZE, TILE_SIZE, BLUE);
-                                DrawRectangle(targetPoint.x * TILE_SIZE, targetPoint.y * TILE_SIZE, TILE_SIZE, TILE_SIZE, RED);
+                                        //Debug camino
+                                        // DrawRectangle(startPoint.x * TILE_SIZE, startPoint.y * TILE_SIZE, TILE_SIZE, TILE_SIZE, BLUE);
+                                        // DrawRectangle(targetPoint.x * TILE_SIZE, targetPoint.y * TILE_SIZE, TILE_SIZE, TILE_SIZE, RED);
 
-                                std::vector<Vector2> pathPoints;
-                                if (pathList != nullptr) {
-                                    for (int i = 0; i < pathList->size; i++) {
-                                        AStarNode* node = static_cast<AStarNode*>(list_get(pathList, i));
-                                        std::cout<<node->x*128<<" "<<node->y*128<<std::endl;
-                                        if (node != nullptr) {
-                                            Vector2 point = {node->x*128, node->y*128};
-                                            pathPoints.push_back(point);
-                                        }
-                                        DrawRectangle(node->x * TILE_SIZE, node->y * TILE_SIZE, TILE_SIZE, TILE_SIZE, YELLOW);
-                                        for (auto enemy : enemies)
-                                        {   
-                                            enemy->pathPoints = pathPoints;
-                                            enemy->callEnemies();
-                                            if (enemy->getType() == 2){
-                                                enemy->teleport(Vector2{enemy3->getWorldPos().x, enemy3->getWorldPos().y});
+                                        std::vector<Vector2> pathPoints;
+                                        if (pathList != nullptr) {
+                                            for (int i = 0; i < pathList->size; i++) {
+                                                AStarNode* node = static_cast<AStarNode*>(list_get(pathList, i));
+                                                std::cout<<node->x*128<<" "<<node->y*128<<std::endl;
+                                                if (node != nullptr) {
+                                                    Vector2 point = {node->x*128, node->y*128};
+                                                    pathPoints.push_back(point);
+                                                }
+                                                // DrawRectangle(node->x * TILE_SIZE, node->y * TILE_SIZE, TILE_SIZE, TILE_SIZE, YELLOW);
+                                                for (auto enemy : enemies)
+                                                {   
+                                                    if (enemy->getType() == 0 || enemy->getType() == 1 || enemy->getType() == 2){
+                                                        if (!enemy->getColpath() && enemy->getType() != 4 ?: enemy->getType() != 5){
+                                                            enemy->pathPoints = pathPoints;
+                                                            enemy->callEnemies();
+                                                            if (enemy->getType() == 2){
+                                                                enemy->teleport(Vector2{enemy3->getWorldPos().x, enemy3->getWorldPos().y});
+                                                            }
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }
                                 }
-
                                 pathCalculated = true; // Establece pathCalculated en true después de calcular el camino
                                 count = 1;
                                 enemy->uncallEnemies();
@@ -1663,7 +2366,7 @@ void drawScene5(const int& windowWidth, const int& windowHeight){
                     enemy3->uncallEnemies();
                 }
             }
-        }
+        }        
 
         for (auto enemy : enemies)
         {
@@ -1738,18 +2441,25 @@ void drawScene5(const int& windowWidth, const int& windowHeight){
         Vector2 szworldpos = {128*18,128*2};
         Vector2 szScreenPos{Vector2Subtract(szworldpos, knight.getWorldPos())};
         Rectangle safeZone = {szScreenPos.x, szScreenPos.y, 128*3, 128*2};
-        DrawRectangleRec(safeZone, Color{0, 255, 0, 55});
+        // DrawRectangleRec(safeZone, Color{0, 255, 0, 55});
         knight.setSafeZone(safeZone);
 
-        for (int i = 0; i < 30; i++) {
-            for (int j = 0; j < 20; j++) {
-                switch (mapmat[i][j]) {
-                    case 0:
-                        // DrawRectangle(i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE, GRAY);
-                        break;
-                    case 1:
-                        DrawRectangle(i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE, BLACK);
-                        break;
+        //Colision rata
+        for (auto spectreenemy : enemies){
+            if (spectreenemy->getType() == 0 ?: spectreenemy->getType() == 1 ?: spectreenemy->getType() == 2){
+                for (auto ratenemy : enemies){
+                    if(ratenemy->getType() == 4){
+                        std::vector<Vector2> oldPatrolPoints = spectreenemy->patrolPoints;
+                        if(CheckCollisionRecs(spectreenemy->getVisionRectangle(),ratenemy->getCollisionRec())){
+                            spectreenemy->isARat = true;
+                            spectreenemy->undoMovement();
+                            spectreenemy->patrolPoints = {spectreenemy->getWorldPos()}; 
+                        }
+                        else{
+                            spectreenemy->isARat = false;
+                            spectreenemy->patrolPoints = oldPatrolPoints; 
+                        }
+                    }
                 }
             }
         }

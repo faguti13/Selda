@@ -97,8 +97,8 @@ void Character::tick(float deltaTime)
             Vector2 screenPos = getScreenPos();
             visionRectangle = { screenPos.x + (width*scale), screenPos.y , height*scale, width*scale };
             //debug collision rectangle
-            Color visionColor = {255, 0, 0, 50}; // Color rojo completamente opaco
-            DrawRectangleRec(visionRectangle, visionColor);
+            // Color visionColor = {255, 0, 0, 50}; // Color rojo completamente opaco
+            // DrawRectangleRec(visionRectangle, visionColor);
         }
         else
         {
@@ -131,8 +131,8 @@ void Character::tick(float deltaTime)
             Vector2 screenPos = getScreenPos();
             visionRectangle = { screenPos.x - width*scale + (width*scale/4), screenPos.y, height*scale, width*scale };
             //debug collision rectangle
-            Color visionColor = {255, 0, 0, 50}; // Color rojo completamente opaco
-            DrawRectangleRec(visionRectangle, visionColor);
+            // Color visionColor = {255, 0, 0, 50}; // Color rojo completamente opaco
+            // DrawRectangleRec(visionRectangle, visionColor);
         }
         else
         {
